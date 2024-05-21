@@ -100,6 +100,17 @@ void mat_mult(mat3 left, mat3 right, mat3 *output);
 double mat_det(mat3 matrix);
 
 
+/**@breif Calculate the inverse of a matrix.
+ *
+ * @param matrix The matrix for which to calculate the inverse.
+ * @param output The mat3* that will hold the result.
+ *
+ * @return int Error code:  -1 if det(matrix) == 0
+ *                          0 if success.
+ */
+int mat_inverse(mat3 matrix, mat3 *output);
+
+
 #endif//MATRIX_H
 
 

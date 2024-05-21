@@ -10,6 +10,8 @@
  * @author Jacob Tkeio (jacobtkeio@gmail.com) 7/13/2023
  */
 
+#include <math.h>
+
 #include "matrix.h"
 
 
@@ -91,6 +93,29 @@ double mat_det(mat3 mat) {
 		mat.x1 * (mat.y2*mat.z3 - mat.z2*mat.y3) -
 		mat.x2 * (mat.y1*mat.z3 - mat.z1*mat.y3) +
 		mat.x3 * (mat.y1*mat.z2 - mat.z1*mat.y2);
+}
+
+int mat_inverse(mat3 mat, mat3 *output) {
+    double determinant = mat_det(mat);
+
+    if (fabs(determinant) < 1e-6) {
+        return -1;
+    }
+
+    mat3 new_mat = (mat3) {
+        mat.y2*mat.z3-mat.y3*mat.z2,
+        mat.x3*mat.z2-mat.x2*mat.z3,
+        mat.x2*mat.y3-mat.x3*mat.y2,
+        mat.y3*mat.z1-mat.y1*mat.z3,
+        mat.x1*mat.z3-mat.x3*mat.z1,
+        mat.x3*mat.y1-mat.x1*mat.y3,
+        mat.y1*mat.z2-mat.y2*mat.z1,
+        mat.x2*mat.z1-mat.x1*mat.z2,
+        mat.x1*mat.y2-mat.x2*mat.y1
+    };
+
+    mat_scalar(1/determinant, mat, output);
+    return 0;
 }
 
 
