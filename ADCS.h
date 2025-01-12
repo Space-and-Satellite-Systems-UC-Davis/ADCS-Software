@@ -10,7 +10,6 @@
 #ifndef ADCS_H
 #define ADCS_H
 
-#include "adcs_math/matrix.h"
 #include "virtual_intellisat.h"
 
 
