@@ -8,9 +8,19 @@
 #ifndef SENSORS_H
 #define SENSORS_H
 
+#include "determination/novasc3.1/novas.h"
 #include <limits.h>
 #include "virtual_intellisat.h"
 
+typedef struct Sensor_Calibration {
+    double last_update_time; 
+
+    float offset;
+    float gain;
+    float filterConstant;
+} sensor_calibration;
+
+static sensor_calibration* cache;
 /**
  * @brief Implement lowpass filter on sensor raw values to mitigate the effect of noise from abnormally high values
  * 

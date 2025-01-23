@@ -13,6 +13,23 @@
 #include "adcs_math/vector.h"
 #include "adcs_math/matrix.h"
 
+typedef struct Determination_Cache {
+    double last_update_time;
+
+    // for pos_lookup 
+    double longitude;
+    double latitude;
+    double altitude;
+    double geocentric_radius;
+    double geocentric_latitude;
+    pos_lookup_status pos_status;
+
+    vec3 reference_sun;
+    sun_lookup_status sun_status;
+    vec3 reference_mag;
+} determination_cache;
+
+static determination_cache cache;
 
 typedef enum {
     DET_SUCCESS,
