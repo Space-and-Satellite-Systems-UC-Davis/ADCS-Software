@@ -8,8 +8,8 @@
 
 #include "ADCS.h"
 #include "virtual_intellisat.h"
-#include "determination.h"
-#include "detumble.h"
+#include "determination/determination.h"
+#include "control/detumble/detumble.h"
 
 
 adcs_main_status
@@ -18,8 +18,8 @@ ADCS_MAIN(adcs_mode mode) {
         case ADCS_DETUMBLE:
             detumble_status detumble_status = detumble();
             switch(detumble_status) {
-                case DETUMBLE_ERROR:
-                    return ADCS_MAIN_DETUMBLE_ERROR;
+                case DETUMBLING_FAILURE:
+                    return ADCS_MAIN_DETUMBLE_ERR;
                     break;
             }
             break;
