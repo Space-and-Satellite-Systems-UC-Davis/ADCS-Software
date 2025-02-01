@@ -19,7 +19,7 @@ all: $(TARGET)
 
 $(TARGET): $(SOURCES)
 	$(CC) $(SOURCES) $(CFLAGS)
-	ar rcs $@
+	ar rcs $@ *.o
 	rm *.o
 
 run:
