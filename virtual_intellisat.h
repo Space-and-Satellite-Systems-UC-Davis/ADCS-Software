@@ -239,6 +239,7 @@ typedef enum {
  * @param ms The number of milliseconds to sleep for.
  *
  * @return vi_delay_ms_status A return code, success/failure.
+ */
 vi_delay_ms_status
 vi_delay_ms(
     int ms
