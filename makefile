@@ -13,13 +13,13 @@ SOURCES := determination/determination.c determination/mag_lookup/mag_lookup.c d
 		   control/ramp/ramp.c ADCS.c
 
 # Target executable name
-TARGET := ADCS.a
+TARGET := libADCS.a
 
 all: $(TARGET)
 
 $(TARGET): $(SOURCES)
 	$(CC) $(SOURCES) $(CFLAGS)
-	ar rcs $@
+	ar rcs $@ *.o
 	rm *.o
 
 run:
