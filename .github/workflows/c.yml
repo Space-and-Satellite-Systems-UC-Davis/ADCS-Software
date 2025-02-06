@@ -16,7 +16,8 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: master
-      run: make
+      run: sudo apt-get install gcc-arm-none-eabi
+      run: make CC=arm-none-eabi-gcc
     - name: groundstation
       run: cd groundstation && make
     - name: upload compiled file artifact
