@@ -91,8 +91,7 @@ detumble_status detumble()
 		//Get the current time
 		if(vi_get_curr_millis(&curr_millis) == GET_CURR_MILLIS_FAILURE)
 			return DETUMBLING_FAILURE;
-		}
-
+		
 		vi_get_mag(&(mag.x), &(mag.y), &(mag.z));
 
 		delta_t = get_delta_t(curr_millis, prev_millis);
