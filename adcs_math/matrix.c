@@ -58,6 +58,26 @@ void mat_transpose(mat3 mat, mat3 *output) {
 	);
 }
 
+void mat_add(mat3 left, mat3 right, mat3 *output) {
+    mat_set(
+        left.x1+right.x1,
+        left.x2+right.x2,
+        left.x3+right.x3,
+        left.y1+right.y1,
+        left.y2+right.y2,
+        left.y3+right.y3,
+        left.z1+right.z1,
+        left.z2+right.z2,
+        left.z3+right.z3,
+        output
+    );
+}
+
+void mat_sub(mat3 left, mat3 right, mat3 *output) {
+    mat_scalar(-1.0, right, &right);
+    mat_add(left, right, output);
+}
+
 void mat_scalar(double scalar, mat3 mat, mat3 *output) {
 	mat_set(
 		scalar * mat.x1,
