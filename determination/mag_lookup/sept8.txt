@@ -1,0 +1,153 @@
+diff --git a/determination/determination.c b/determination/determination.c
+index f2386a7..acab54f 100644
+--- a/determination/determination.c
++++ b/determination/determination.c
+@@ -3,7 +3,7 @@
+ 
+ #include "determination/pos_lookup/pos_lookup.h"
+ #include "determination/sun_lookup/sun_lookup.h"
+-#include "determination/IGRF_C/igrf.h"
++#include "determination/mag_lookup/mag_lookup.h"
+ #include "determination/TRIAD/triad.h"
+ 
+ #include "adcs_math/vector.h"
+diff --git a/determination/IGRF_C/igrf.c b/determination/mag_lookup/mag_lookup.c
+similarity index 91%
+rename from determination/IGRF_C/igrf.c
+rename to determination/mag_lookup/mag_lookup.c
+index d70eb97..e02590a 100644
+--- a/determination/IGRF_C/igrf.c
++++ b/determination/mag_lookup/mag_lookup.c
+@@ -1,4 +1,4 @@
+-#include "determination/IGRF_C/igrf.h"
++#include "determination/mag_lookup/mag_lookup.h"
+ #include "adcs_math/vector.h"
+ 
+ 
+@@ -6,7 +6,7 @@
+ float g[IGRF_GEN][IGRF_GEN + 1];
+ float h[IGRF_GEN][IGRF_GEN + 1];
+ 
+-float decimal_years = 0;                   // Decimal days since January 1, IGRF_START_YEAR
++float decimal_years = 0;    // Decimal days since January 1, IGRF_START_YEAR
+ 
+ float igrf_B_ned[3] = {0.0, 0.0, 0.0};
+ float igrf_B_sph[3] = {0.0, 0.0, 0.0};
+@@ -98,19 +98,6 @@ void compute_gauss_coeffs(float decimal_years_) {
+     }
+ }
+ 
+-/*
+-   ~ Compute magnetic field strength in local coordinates, nT ~
+-
+-Inputs:
+-    latitude    = Latitude measured in degrees positive from equator, radians
+-    longitude   = Longitude measured in degrees positive east from Greenwich, radians
+-    r           = Geocentric radius, km
+-	*B_ned      = Return by reference vector for magnetic field, nT
+-
+-Outputs:
+-    igrf_B_ned[3] = B in North, East and Up direction respectively, nT
+-    igrf_B_sph[3] = B in radial, theta and phi direction respectively, nT
+-*/
+ void igrf_update(float latitude, float longitude, float radius, int interpolate_flag, vec3 *B_ned)
+ {
+ 
+@@ -206,13 +193,13 @@ void igrf_update(float latitude, float longitude, float radius, int interpolate_
+     igrf_B_sph[1] = -B_theta;
+     igrf_B_sph[2] = -B_phi / sin(theta);
+     igrf_B_ned[0] = -igrf_B_sph[1];
+-    igrf_B_ned[1] = -igrf_B_sph[2];
++    igrf_B_ned[1] =  igrf_B_sph[2];
+     igrf_B_ned[2] = -igrf_B_sph[0];
+ 
+-	vec_set((double) igrf_B_ned[0], 
+-			(double) igrf_B_ned[1],
+-			(double) igrf_B_ned[2], 
+-			B_ned);
++    vec_set((double) igrf_B_ned[0], 
++            (double) igrf_B_ned[1],
++            (double) igrf_B_ned[2], 
++            B_ned);
+ }
+ 
+ float igrf_get_horizontal_intensity()
+diff --git a/determination/IGRF_C/igrf.h b/determination/mag_lookup/mag_lookup.h
+similarity index 63%
+rename from determination/IGRF_C/igrf.h
+rename to determination/mag_lookup/mag_lookup.h
+index 3924fe8..5aaec90 100644
+--- a/determination/IGRF_C/igrf.h
++++ b/determination/mag_lookup/mag_lookup.h
+@@ -5,10 +5,10 @@ References:
+     [1] Davis - Mathematical Modeling of Earth's Magnetic Field (2004)
+     [2] Yaguang - Spacecraft Modeling Attitude Determination and Control:
+             Quaternion Based Approach (2019)
+-
+ Note:
+     Variable names used in this code follows reference [2].
+ 
++Author:
+     Rishav (2021/12/26)
+ */
+ 
+@@ -17,6 +17,7 @@ Note:
+ 
+ #include <math.h>
+ #include <inttypes.h>
++
+ #include "adcs_math/vector.h"
+ 
+ #define PI 3.14159265358979323846
+@@ -26,29 +27,34 @@ Note:
+ #define IGRF_END_YEAR 2030
+ #define IGRF_GEN 13
+ 
+-//IGRF13 outputs
+-extern float igrf_B_ned[3]; // {N,E,D}
+-extern float igrf_B_sph[3]; // {Radial, Theta, Phi}
+-
+ 
++/**@brief Update IGRF's date/time state variable.
++ *
++ * The time only needs to be updated before running
++ * igrf_update() with interpolate_flag set to true.
++ *
++ * @param year,month,day,hour,min,sec The current date/time.
++ *
++ * @return Status code.
++ */
+ uint8_t igrf_set_date_time(uint16_t year, uint8_t month, uint8_t day,
+                            uint8_t hour, uint8_t min, uint8_t sec);
+ 
+-void compute_gauss_coeffs(float decimal_years_);
+-
+ /*
+    ~ Compute magnetic field strength in local coordinates, nT ~
+ 
+ Inputs:
+     latitude    = Latitude measured in degrees positive from equator, radians
+     longitude   = Longitude measured in degrees positive east from Greenwich, radians
+-    r           = Geocentric radius, km
++    radius      = Geocentric radius, km
++    interpolate = Run compute_gauss_coeffs(), which updates the model
++                  based on the date, if true. This is expensive.
+ 
+ Outputs:
+-    igrf_B_ned[3] = B in North, East and Up direction respectively, nT
+-    igrf_B_sph[3] = B in radial, theta and phi direction respectively, nT
+-	
+-	B_ned = pointer to an adcs_math vec3 struct to be modified
++	*B_ned = return-by-reference pointer to an adcs_math vec3 struct.
++             After igrf_update runs, B_ned will hold the the magnetic
++             field vector's North, East and Up components in its X, Y,
++             and Z components, respectively (nT).
+ */
+ void igrf_update(float latitude, float longitude, float radius, int interpolate_flag, vec3* B_ned);
+ 
+@@ -57,4 +63,4 @@ float igrf_get_inclination();
+ float igrf_get_declination();
+ float igrf_get_norm();
+ 
+-#endif // igrf.h
++#endif//_IGRF_H_

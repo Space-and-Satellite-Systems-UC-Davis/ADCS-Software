@@ -33,7 +33,7 @@ float get_sensor_calibration(vi_sensors sensor, float currValue, float prevValue
         cache[sensor].gain = gain;
         cache[sensor].filterConstant = filterConstant;
     }
-    
+ 
     return (lowpass_filter(currValue, prevValue, filterConstant) + offset) * gain;
 }
 

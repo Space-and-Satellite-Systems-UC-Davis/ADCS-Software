@@ -210,16 +210,49 @@ vi_get_sensor_status(
 	int *sensor_status
 );
 
+
 typedef enum {
 	VI_GET_MAG_SUCCESS,
 	VI_GET_MAG_FAILURE
 } vi_get_mag_status;
 
+/**@brief Get the current magnetic field value.
+ *
+ * @param mag_x,mag_y,mag_z The magnetic field vector.
+ *
+ * @return vi_get_mag_status A return code, success/failure.
+ */
 vi_get_mag_status
 vi_get_mag(
 	double *mag_x,
 	double *mag_y,
 	double *mag_z
 );
+
+
+typedef enum {
+    VI_DELAY_MS_SUCCESS,
+    VI_DELAY_MS_FAILURE
+} vi_delay_ms_status;
+
+/**@brief Sleep for some number of milliseconds.
+ *
+ * @param ms The number of milliseconds to sleep for.
+ *
+ * @return vi_delay_ms_status A return code, success/failure.
+ */
+vi_delay_ms_status
+vi_delay_ms(
+    int ms
+);
+
+
+/**@brief printing string
+ *
+ * @param string to print
+ *
+ */
+
+void vi_print (const char*);
 
 #endif//VIRTUAL_INTELLISAT_H
