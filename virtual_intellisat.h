@@ -246,4 +246,12 @@ vi_delay_ms(
 );
 
 
+/**@brief printing string
+ *
+ * @param string to print
+ *
+ */
+
+void vi_print (const char*);
+
 #endif//VIRTUAL_INTELLISAT_H
