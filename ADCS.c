@@ -21,6 +21,8 @@ ADCS_MAIN(adcs_mode mode) {
                 case DETUMBLING_FAILURE:
                     return ADCS_MAIN_DETUMBLE_ERR;
                     break;
+                case DETUMBLING_SUCCESS:
+                    break;
             }
             break;
         case ADCS_HDD_EXP_ANGVEL:

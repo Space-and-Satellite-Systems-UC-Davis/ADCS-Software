@@ -46,5 +46,10 @@ float get_sensor_calibration(vi_sensors sensor, float currValue, float prevValue
 */
 int get_delta_t(int currTime, int prevTime);
 
+/**
+ * @brief Generate a permutation of active sensors.:qa
+ */
+char get_alternation(vi_sensors sensor, unsigned int generation);
+
 #endif
 
