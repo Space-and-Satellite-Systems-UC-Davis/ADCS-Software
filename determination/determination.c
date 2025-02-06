@@ -12,7 +12,6 @@
 #include "virtual_intellisat.h"
 #include "ADCS.h"
 
-
 typedef struct Determination_Cache {
     double last_update_time;
 

@@ -12,6 +12,7 @@
 #include "virtual_intellisat.h"
 #include "control/bdot/bdot_control.h"
 #include "adcs_math/sensors.h"
+
 #include <math.h>
 #include <stdbool.h>
 
@@ -90,6 +91,10 @@ detumble_status detumble()
 		//Get the current time
 		if(vi_get_curr_millis(&curr_millis) == GET_CURR_MILLIS_FAILURE)
 			return DETUMBLING_FAILURE;
+		
+		vi_get_mag(&(mag.x), &(mag.y), &(mag.z));
+
+		delta_t = get_delta_t(curr_millis, prev_millis);
 
 		delta_t = curr_millis - prev_millis;
 		bdot_control(mag, mag_prev, delta_t, &coils_curr);

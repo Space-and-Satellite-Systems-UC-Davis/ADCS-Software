@@ -164,7 +164,8 @@ typedef enum{
  *
  * @param sensor we want calibration for.
  * @param offset and scalar Return-by-reference ptrs.
- * @param filter_constant attenuation constant between 0.0 - 1.0 for lowpass filter calculation; a greater value is a greater damp on unusually large jumps in sensor data
+ * @param filter_constant attenuation constant between 0.0 - 1.0 for lowpass filter calculation; 
+ * 						  a greater value is a greater damp on unusually large jumps in sensor data
  *
  * @return vi_get_constant_status A return code, success/failure.
  */
