@@ -66,6 +66,28 @@ void mat_set_from_vec(
 void mat_transpose(mat3 matrix, mat3 *output);
 
 
+/**@brief Add each element of a matrix by each element of another.
+ *
+ * @param left  One matrix being added.
+ * @param right The other matrix being added.
+ * @param output The mat3* that will hold the result.
+ *
+ * @return Void.
+ */
+void mat_add(mat3 left, mat3 right, mat3 *output);
+
+
+/**@brief Subtract each element of a matrix by each element of another.
+ *
+ * @param left  The matrix being subtracted from.
+ * @param right The matrix being subtracted.
+ * @param output The mat3* that will hold the result.
+ *
+ * @return Void.
+ */
+void mat_sub(mat3 left, mat3 right, mat3 *output);
+
+
 /**@brief Multiply each element of a matrix by a scalar value.
  *
  * @param scalar The scalar by which to multiply.
