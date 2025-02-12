@@ -18,7 +18,7 @@ jobs:
     - name: get_gcc-arm
       run: sudo apt-get install gcc-arm-none-eabi
     - name: main
-      run: make CC=arm-none-eabi-gcc CFLAGS='-I. -lm -Wswitch -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32L4 -DSTM32 -DSTM32L476ZGTx -c -I"C:\Users\Jacob Tkeio\git\IntelliSat\Drivers\Device" -I"C:\Users\Jacob Tkeio\git\IntelliSat\Src\inc" -I"C:\Users\Jacob Tkeio\git\IntelliSat\Src\peripherals" -I"C:\Users\Jacob Tkeio\git\IntelliSat\Src\system_config" -I"C:\Users\Jacob Tkeio\git\IntelliSat\Src\tools" -I"C:\Users\Jacob Tkeio\git\IntelliSat\ADCS" -I"C:\Users\Jacob Tkeio\git\IntelliSat\ADCS-Software" -O0 -ffunction-sections -fdata-sections -Wall -Wextra -fstack-usage -fcyclomatic-complexity --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -c'
+      run: make CC=arm-none-eabi-gcc CFLAGS='-I. -lm -Wswitch -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32L4 -DSTM32 -DSTM32L476ZGTx -c -O0 -ffunction-sections -fdata-sections -Wall -Wextra -fstack-usage -fcyclomatic-complexity --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -c'
     - name: groundstation
       run: cd groundstation && make
     - name: upload compiled file artifact
