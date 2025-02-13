@@ -1,5 +1,5 @@
 CC := gcc
-CFLAGS := -I. -lm -shared -Wswitch -fpic
+CFLAGS := -I. -lm -Wswitch -c
 
 # Source files
 SOURCES := determination/determination.c determination/mag_lookup/mag_lookup.c determination/TRIAD/triad.c \
@@ -9,21 +9,25 @@ SOURCES := determination/determination.c determination/mag_lookup/mag_lookup.c d
            determination/novasc3.1/novas.c determination/novasc3.1/novascon.c \
            determination/novasc3.1/solsys1.c determination/novasc3.1/eph_manager.c \
            determination/novasc3.1/readeph0.c determination/pos_lookup/ECEF_to_geodetic.c \
-           determination/novasc3.1/nutation.c control/detumble/detumble.c control/bdot/bdot_control.c
+           determination/novasc3.1/nutation.c control/detumble/detumble.c control/bdot/bdot_control.c \
+		   control/ramp/ramp.c control/experiment/ramp_experiment.c ADCS.c
 
 # Target executable name
-TARGET := libADCS.so
+TARGET := libADCS.a
 
 all: $(TARGET)
 
 $(TARGET): $(SOURCES)
-	$(CC) $(SOURCES) $(CFLAGS) -o $@
+	$(CC) $(SOURCES) $(CFLAGS)
+	ar rcs $@ *.o
+	rm *.o
 
 run:
 	./$(TARGET)
 
 clean:
-	rm -f $(TARGET)
+	rm -f $(TARGET) 
+	rm -f *.o
 
 
-.PHONY: all clean
+.PHONY: all clean run

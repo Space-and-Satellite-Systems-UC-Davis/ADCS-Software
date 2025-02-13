@@ -10,7 +10,6 @@
 #ifndef ADCS_H
 #define ADCS_H
 
-#include "adcs_math/matrix.h"
 #include "virtual_intellisat.h"
 
 
@@ -26,7 +25,8 @@ typedef enum {
    ADCS_MAIN_UNKNOWN,
    ADCS_MAIN_ECLIPSE,
    ADCS_MAIN_HDD_ERR,
-   ADCS_MAIN_IMU_ERR
+   ADCS_MAIN_IMU_ERR,
+   ADCS_MAIN_DETUMBLE_ERR
 } adcs_main_status; //TODO: full list
 
 

@@ -26,6 +26,7 @@ PID_experiment_status PID_experiment()
 
         //PLug it into the control function
         double throttle = PID_command(target, angvel_z, curr_millis, &controller);
+
         //Take output and plug it into HDD 
         if(vi_hdd_command(throttle) == HDD_COMMAND_FAILURE)
             return PID_EXPERIMENT_FAILURE;

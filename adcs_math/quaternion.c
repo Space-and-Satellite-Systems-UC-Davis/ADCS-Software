@@ -67,7 +67,7 @@ int quat_norm(quat quaternion, quat *output) {
         return -1;
 
 	quat_scalar(
-		1 / mag
+		1 / mag,
 		quaternion,
 		output	
 	);
