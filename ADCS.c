@@ -31,6 +31,9 @@ ADCS_MAIN(adcs_mode mode) {
             break;
         case ADCS_HDD_EXP_RAMP:
             break;
+        case ADCS_TESTING:
+            vi_print("Testing!");
+            break;
     }
 }
 

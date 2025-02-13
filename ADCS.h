@@ -17,7 +17,8 @@ typedef enum {
 	ADCS_DETUMBLE,
 	ADCS_HDD_EXP_ANGVEL,
 	ADCS_HDD_EXP_TRIAD,
-    ADCS_HDD_EXP_RAMP
+    ADCS_HDD_EXP_RAMP,
+    ADCS_TESTING
 } adcs_mode; //TODO: full list
 
 typedef enum {
