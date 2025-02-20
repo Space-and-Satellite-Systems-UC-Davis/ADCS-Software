@@ -5,16 +5,16 @@
 #include "control/PID/PID.h"
 #include "virtual_intellisat.h"
 
-typedef enum PID_experiment{
-    PID_EXPERIMENT_SUCCESS,
-    PID_EXPERIMENT_FAILURE
-} PID_status;
+typedef enum determination_experiment{
+    DETERMINATION_EXPERIMENT_SUCCESS,
+    DETERMINATION_EXPERIMENT_FAILURE
+}determination_exp_status;
 
 /**@brief Performs an experiement for the PID function.
  *
  * @return PID_status A return code.
  */
-PID_status PID_experiment();
+determination_exp_status determination_experiment();
 
 
 #endif//PID_EXPERIMENT_H

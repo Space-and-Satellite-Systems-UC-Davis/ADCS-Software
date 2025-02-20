@@ -1,6 +1,6 @@
 #include "PID_experiment.h"
 
-PID_status PID_experiment()
+PID_experiment_status PID_experiment()
 {
     //Get current angular velocity for z axis
     double angvel_x = 0, angvel_y = 0, angvel_z = 0;
@@ -25,7 +25,8 @@ PID_status PID_experiment()
             return PID_EXPERIMENT_FAILURE;
 
         //PLug it into the control function
-        double throttle = PID_command(target, state, curr_millis, &controller);
+        double throttle = PID_command(target, angvel_z, curr_millis, &controller);
+
         //Take output and plug it into HDD 
         if(vi_hdd_command(throttle) == HDD_COMMAND_FAILURE)
             return PID_EXPERIMENT_FAILURE;
