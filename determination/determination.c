@@ -3,7 +3,7 @@
 
 #include "determination/pos_lookup/pos_lookup.h"
 #include "determination/sun_lookup/sun_lookup.h"
-#include "determination/mag_lookup/mag_lookup.h"
+#include "determination/mag_lookup/igrf.h"
 #include "determination/TRIAD/triad.h"
 
 #include "adcs_math/vector.h"
@@ -148,38 +148,55 @@ determination(
 
 
     vec3 reference_mag;
+    igrf_time_t igrf_time;
 
     // Only update IGRF date before recalculating coeffs
     if (update_IGRF) {
-        int igrf_time_status =
-        igrf_set_date_time(
-            year,
-            month,
-            day,
-            hour,
-            minute,
-            second
-        );
+        // int igrf_time_status =
+        // igrf_set_date_time(
+        //     year,
+        //     month,
+        //     day,
+        //     hour,
+        //     minute,
+        //     second
+        // );
 
-        switch (igrf_time_status) {
-            //TODO: use 'default' approximate time if out of bounds?
-            case IGRF_SET_DATE_OUT_OF_BOUNDS:
-                return DET_IGRF_TIME_ERROR;
-            case IGRF_SET_DATE_SUCCESS:
-                break;
-        }
+        igrf_time.year = year;
+        igrf_time.month = month;
+        igrf_time.day = day;
+        igrf_time.hour = hour;
+        igrf_time.second = second;
+        // switch (igrf_time_status) {
+        //     //TODO: use 'default' approximate time if out of bounds?
+        //     case IGRF_SET_DATE_OUT_OF_BOUNDS:
+        //         return DET_IGRF_TIME_ERROR;
+        //     case IGRF_SET_DATE_SUCCESS:
+        //         break;
+        // }
     } 
 
     if (recent_lookup) {
         reference_mag = cache.reference_mag;
     } else {
-        igrf_update(
-            geocentric_latitude,
-            longitude,
-            geocentric_radius,
-            update_IGRF, //recalculate coefficients only on new TLE
-            &reference_mag
-        );
+        // igrf_update(
+        //     geocentric_latitude,
+        //     longitude,
+        //     geocentric_radius,
+        //     update_IGRF, //recalculate coefficients only on new TLE
+        //     &reference_mag
+        // );
+        double x[3] = {geocentric_latitude, longitude, geocentric_radius/1000.0};
+        double b[3] = {reference_mag.x, reference_mag.y, reference_mag.z};
+        bool success_status = igrf(igrf_time, x, IGRF_GEOCENTRIC, b);
+        if (!success_status) {
+            return DET_IGRF_TIME_ERROR;
+        }
+        
+        reference_mag.x = b[0];
+        reference_mag.y = b[1];
+        reference_mag.z = b[2];
+
         cache.reference_mag = reference_mag;
     }
 

@@ -2,7 +2,7 @@ CC := gcc
 CFLAGS := -I. -lm -Wswitch -c
 
 # Source files
-SOURCES := determination/determination.c determination/mag_lookup/mag_lookup.c determination/TRIAD/triad.c \
+SOURCES := determination/determination.c determination/mag_lookup/igrf.c determination/TRIAD/triad.c \
            determination/sun_lookup/sun_lookup.c adcs_math/vector.c adcs_math/matrix.c \
            determination/sun_lookup/spa.c determination/pos_lookup/pos_lookup.c \
            determination/pos_lookup/sgp4/src/c/SGP4.c determination/pos_lookup/sgp4/src/c/TLE.c \
