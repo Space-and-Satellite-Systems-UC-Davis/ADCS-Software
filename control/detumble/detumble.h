@@ -13,6 +13,7 @@
 
 #ifndef DETUMBLE_H
 #define DETUMBLE_H
+#include "adcs_math/vector.h"
 
 typedef enum detumble{
     DETUMBLING_SUCCESS,
@@ -22,8 +23,9 @@ typedef enum detumble{
 
 /**@brief Detumbling function.
  *
+ * @param needle a vector to give the detumbling a biase
  * @return detumble_status A return code.
  */
-detumble_status detumble();
+detumble_status detumble(vec3 needle);
 
 #endif//DETUMBLE_H
