@@ -10,14 +10,14 @@
 #include "virtual_intellisat.h"
 #include "determination/determination.h"
 #include "control/detumble/detumble.h"
+#include "adcs_math/vector.h"
 
 
 adcs_main_status
 ADCS_MAIN(adcs_mode mode) {
     switch(mode) {
         case ADCS_DETUMBLE:
-            detumble_status detumble_status = detumble();
-            switch(detumble_status) {
+            switch(detumble((vec3){0,0,0})) {
                 case DETUMBLING_FAILURE:
                     return ADCS_MAIN_DETUMBLE_ERR;
                     break;
