@@ -76,7 +76,7 @@ void capCurrent(vec3 *mdm)
 detumble_status detumble(vec3 needle)
 {
 	vec3 mag, mag_prev;
-	int delta_t;
+	int delta_t = 0;
 	vec3 coils_curr;
 	int curr_millis = 0, prev_millis = 0;
 	int startTime = 0;
