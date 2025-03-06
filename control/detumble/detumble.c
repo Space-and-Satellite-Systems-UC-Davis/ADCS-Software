@@ -95,16 +95,16 @@ detumble_status detumble(vec3 needle, bool isTesting)
 
 	//Get current magnetic field reading
 	if(vi_get_mag(&(mag.x), &(mag.y), &(mag.z)) == VI_GET_MAG_FAILURE)
-  {
+	{
 		if (isTesting == false) return DETUMBLING_FAILURE;
 		else return COILS_TESTING_FAILURE;
-  }
+	}
 
 	//Compute the delta angle 
 	vec3 angVel = findAngVel(mag_prev, mag, delta_t);
   
-  //Boolean variable to decide if detumbling is needed to continue
-  bool keepDetumbling = true
+	//Boolean variable to decide if detumbling is needed to continue
+	bool keepDetumbling = true;
 
 	//Note: May be do something to account for integer overflow
 	while(isTesting || keepDetumbling)
@@ -112,22 +112,22 @@ detumble_status detumble(vec3 needle, bool isTesting)
 		mag_prev = mag;
 		//Get new magnectic field reading
 		if(vi_get_mag(&(mag.x), &(mag.y), &(mag.z)) == VI_GET_MAG_FAILURE)
-    {
+    	{
 			if (isTesting == false) return DETUMBLING_FAILURE;
 			else return COILS_TESTING_FAILURE;
-    }
+    	}
 
 		prev_millis = curr_millis;
 		//Get the current time
 		if(vi_get_curr_millis(&curr_millis) == GET_CURR_MILLIS_FAILURE)
-    {
+    	{
 			if (isTesting == false) return DETUMBLING_FAILURE;
 			else return COILS_TESTING_FAILURE;
-    }
+    	}
 		
 		vi_get_mag(&(mag.x), &(mag.y), &(mag.z));
 
-    //Compute the delta_t
+		//Compute the delta_t
 		delta_t = get_delta_t(curr_millis, prev_millis);
 		delta_t = curr_millis - prev_millis;
 		
@@ -146,9 +146,10 @@ detumble_status detumble(vec3 needle, bool isTesting)
 		//Compute new angular velocity
 		angVel = findAngVel(mag_prev, mag, delta_t);
     
-    //Decide whether detumbling needs to continue
-    int timeElapsed = curr_millis - startTime;
-    keepDetumbling = aboveThreshold(angVel, 0.5) && timeElapsed < LIMIT);
+    	//Decide whether detumbling needs to continue
+    	int timeElapsed = curr_millis - startTime;
+		bool timeout = timeElapsed > LIMIT;
+    	keepDetumbling = aboveThreshold(angVel, 0.5) && !timeout;
       
 	}
 

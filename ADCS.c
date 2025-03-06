@@ -26,8 +26,7 @@ ADCS_MAIN(adcs_mode mode) {
             }
             break;
         case ADCS_COILS_TESTING:
-            detumble_status coils_testing_status = detumble((vec3){0,0,0}, true);
-            switch(coils_testing_status) {
+            switch(detumble((vec3){0,0,0}, true)) {
                 case COILS_TESTING_FAILURE:
                     return ADCS_MAIN_COILS_TESTING_ERR;
                     break;
