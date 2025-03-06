@@ -14,16 +14,22 @@
 #ifndef DETUMBLE_H
 #define DETUMBLE_H
 
+#include <stdbool.h>
+
 typedef enum detumble{
     DETUMBLING_SUCCESS,
-    DETUMBLING_FAILURE
+    DETUMBLING_FAILURE,
+    COILS_TESTING_SUCCESS,
+    COILS_TESTING_FAILURE
 } detumble_status;
 
 
 /**@brief Detumbling function.
- *
+ * 
  * @return detumble_status A return code.
  */
-detumble_status detumble();
+detumble_status detumble(bool isTesting);
+
+void getDetumbleStuff();
 
 #endif//DETUMBLE_H

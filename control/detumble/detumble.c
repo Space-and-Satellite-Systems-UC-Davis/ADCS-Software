@@ -14,7 +14,6 @@
 #include "adcs_math/sensors.h"
 
 #include <math.h>
-#include <stdbool.h>
 
 /**@brief find the angular velocity through change in magnetic vector
  * 
@@ -58,7 +57,7 @@ bool aboveThreshold(vec3 input, double threshold)
 	return false;
 }
 
-detumble_status detumble()
+detumble_status detumble(bool isTesting)
 {
 	vec3 mag, mag_prev;
 	int delta_t;
@@ -68,29 +67,33 @@ detumble_status detumble()
 
 	//Get the current time
 	if(vi_get_curr_millis(&curr_millis) == GET_CURR_MILLIS_FAILURE)
-		return DETUMBLING_FAILURE;
+		if (isTesting==false){return DETUMBLING_FAILURE;}
+		else{return COILS_TESTING_FAILURE;}
 
 	startTime = curr_millis;
 
 	//Get current magnetic field reading
 	if(vi_get_mag(&(mag.x), &(mag.y), &(mag.z)) == VI_GET_MAG_FAILURE)
-			return DETUMBLING_FAILURE;
+		if (isTesting==false){return DETUMBLING_FAILURE;}
+		else{return COILS_TESTING_FAILURE;}
 
 	//Compute the delta angle 
 	vec3 angVel = findAngVel(mag_prev, mag, delta_t);
 
 	//Note: May be do something to account for integer overflow
-	while(aboveThreshold(angVel, 0.5) && curr_millis - startTime < LIMIT)
+	while((isTesting) || (aboveThreshold(angVel, 0.5) && curr_millis - startTime < LIMIT))
 	{
 		mag_prev = mag;
 		//Get new magnectic field reading
 		if(vi_get_mag(&(mag.x), &(mag.y), &(mag.z)) == VI_GET_MAG_FAILURE)
-			return DETUMBLING_FAILURE;
+			if (isTesting == false) {return DETUMBLING_FAILURE;}
+			else{return COILS_TESTING_FAILURE;}
 
 		prev_millis = curr_millis;
 		//Get the current time
 		if(vi_get_curr_millis(&curr_millis) == GET_CURR_MILLIS_FAILURE)
-			return DETUMBLING_FAILURE;
+			if (isTesting==false) {return DETUMBLING_FAILURE;}
+			else{return COILS_TESTING_FAILURE;}
 		
 		vi_get_mag(&(mag.x), &(mag.y), &(mag.z));
 
@@ -100,6 +103,7 @@ detumble_status detumble()
 		bdot_control(mag, mag_prev, delta_t, &coils_curr);
 		angVel = findAngVel(mag_prev, mag, delta_t);
 	}
+
 
 	return DETUMBLING_SUCCESS;
 }
