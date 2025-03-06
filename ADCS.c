@@ -17,11 +17,20 @@ adcs_main_status
 ADCS_MAIN(adcs_mode mode) {
     switch(mode) {
         case ADCS_DETUMBLE:
-            switch(detumble((vec3){0,0,0})) {
+            switch(detumble((vec3){0,0,0}, false)) {
                 case DETUMBLING_FAILURE:
                     return ADCS_MAIN_DETUMBLE_ERR;
                     break;
                 case DETUMBLING_SUCCESS:
+                    break;
+            }
+            break;
+        case ADCS_COILS_TESTING:
+            switch(detumble((vec3){0,0,0}, true)) {
+                case COILS_TESTING_FAILURE:
+                    return ADCS_MAIN_COILS_TESTING_ERR;
+                    break;
+                case COILS_TESTING_SUCCESS:
                     break;
             }
             break;
