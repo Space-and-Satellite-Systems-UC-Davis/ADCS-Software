@@ -255,4 +255,16 @@ vi_delay_ms(
 
 void vi_print (const char*);
 
+typedef enum {
+	VI_CONTROL_COIL_SUCCESS,
+	VI_CONTROL_COIL_FAILURE
+} vi_control_coil_status;
+
+vi_control_coil_status 
+vi_control_coil(
+	double command_x,
+	double command_y,
+	double command_z
+);
+
 #endif//VIRTUAL_INTELLISAT_H

@@ -13,6 +13,7 @@
 
 #ifndef DETUMBLE_H
 #define DETUMBLE_H
+#include "adcs_math/vector.h"
 
 #include <stdbool.h>
 
@@ -25,11 +26,10 @@ typedef enum detumble{
 
 
 /**@brief Detumbling function.
- * 
+ *
+ * @param needle a vector to give the detumbling a biase
  * @return detumble_status A return code.
  */
-detumble_status detumble(bool isTesting);
-
-void getDetumbleStuff();
+detumble_status detumble(vec3 needle, bool isTesting);
 
 #endif//DETUMBLE_H
