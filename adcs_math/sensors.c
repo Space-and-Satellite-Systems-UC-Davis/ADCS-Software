@@ -22,7 +22,6 @@ float get_sensor_calibration(vi_sensors sensor, float currValue, float prevValue
         cache[sensor].last_update_time = UTC;
     }
 
-    float offset, gain, filterConstant;
     if (recent_lookup) {
         offset = cache[sensor].offset;
         gain = cache[sensor].gain;
