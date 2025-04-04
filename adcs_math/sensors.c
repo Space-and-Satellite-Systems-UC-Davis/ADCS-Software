@@ -4,7 +4,7 @@ float lowpass_filter(float currValue, float prevValue, float filterConstant) {
     return ((1-filterConstant) * currValue) + (filterConstant * prevValue);
 }
 
-float get_sensor_calibration(vi_sensors sensor, float currValue, float prevValue)
+float get_sensor_calibration(vi_sensors sensor, float currValue, float prevValue, float offset, float gain, float filterConstant)
 {
     int year, month, day, hour, minute, second;
     vi_get_epoch(&year, &month, &day, &hour, &minute, &second);
