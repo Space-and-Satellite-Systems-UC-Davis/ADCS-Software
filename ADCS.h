@@ -10,7 +10,6 @@
 #ifndef ADCS_H
 #define ADCS_H
 
-#include "adcs_math/matrix.h"
 #include "virtual_intellisat.h"
 
 
@@ -18,7 +17,9 @@ typedef enum {
 	ADCS_DETUMBLE,
 	ADCS_HDD_EXP_ANGVEL,
 	ADCS_HDD_EXP_TRIAD,
-    ADCS_HDD_EXP_RAMP
+    ADCS_HDD_EXP_RAMP,
+    ADCS_TESTING,
+    ADCS_COILS_TESTING
 } adcs_mode; //TODO: full list
 
 typedef enum {
@@ -26,7 +27,9 @@ typedef enum {
    ADCS_MAIN_UNKNOWN,
    ADCS_MAIN_ECLIPSE,
    ADCS_MAIN_HDD_ERR,
-   ADCS_MAIN_IMU_ERR
+   ADCS_MAIN_IMU_ERR,
+   ADCS_MAIN_DETUMBLE_ERR,
+   ADCS_MAIN_COILS_TESTING_ERR
 } adcs_main_status; //TODO: full list
 
 

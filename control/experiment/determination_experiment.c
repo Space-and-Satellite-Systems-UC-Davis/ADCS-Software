@@ -3,6 +3,7 @@
 #include "adcs_math/vector.h"
 #include "adcs_math/sensors.h"
 
+
 determination_exp_status determination_experiment()
 {
     mat3 prevAttitude;

@@ -8,18 +8,29 @@
 
 #include "ADCS.h"
 #include "virtual_intellisat.h"
-#include "determination.h"
-#include "detumble.h"
+#include "determination/determination.h"
+#include "control/detumble/detumble.h"
+#include "adcs_math/vector.h"
 
 
 adcs_main_status
 ADCS_MAIN(adcs_mode mode) {
     switch(mode) {
         case ADCS_DETUMBLE:
-            detumble_status detumble_status = detumble();
-            switch(detumble_status) {
-                case DETUMBLE_ERROR:
-                    return ADCS_MAIN_DETUMBLE_ERROR;
+            switch(detumble((vec3){0,0,0}, false)) {
+                case DETUMBLING_FAILURE:
+                    return ADCS_MAIN_DETUMBLE_ERR;
+                    break;
+                case DETUMBLING_SUCCESS:
+                    break;
+            }
+            break;
+        case ADCS_COILS_TESTING:
+            switch(detumble((vec3){0,0,0}, true)) {
+                case COILS_TESTING_FAILURE:
+                    return ADCS_MAIN_COILS_TESTING_ERR;
+                    break;
+                case COILS_TESTING_SUCCESS:
                     break;
             }
             break;
@@ -28,6 +39,9 @@ ADCS_MAIN(adcs_mode mode) {
         case ADCS_HDD_EXP_TRIAD:
             break;
         case ADCS_HDD_EXP_RAMP:
+            break;
+        case ADCS_TESTING:
+            vi_print("Testing!");
             break;
     }
 }

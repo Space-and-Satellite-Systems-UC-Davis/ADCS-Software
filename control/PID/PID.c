@@ -1,4 +1,5 @@
 #include "PID.h"
+#include "adcs_math/sensors.h"
 
 double PID_command(
 	double target,
@@ -7,7 +8,7 @@ double PID_command(
 	PID_controller *controller
 ) {
 	double e_curr = target - state;
-	double dt = t_curr - (controller->t_prev);
+	double dt = get_delta_t(t_curr, (controller->t_prev));
 	double e_derivative = (e_curr - controller->e_prev)/dt;
 
 	double command = (controller->P_gain)*e_curr

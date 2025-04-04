@@ -17,6 +17,7 @@ Author:
 
 #include <math.h>
 #include <inttypes.h>
+#include "adcs_math/vector.h"
 
 #include "adcs_math/vector.h"
 
