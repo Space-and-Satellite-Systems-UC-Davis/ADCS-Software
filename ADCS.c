@@ -47,11 +47,18 @@ ADCS_MAIN(adcs_mode mode) {
 }
 
 adcs_mode ADCS_recommend_mode(){
-    static int first_time = 1; //Starts as true on reboot
+    static int iteration = 0; //Starts as true on reboot
 
-    if (first_time) {
+    if (iteration == 0) {
         return ADCS_HDD_EXP_ANGVEL;
-    } else {
         // loop through other experiments
-    }
+    } else if (iteration % 3 == 1) {
+        return ADCS_HDD_EXP_TRIAD;
+    } else if (iteration % 3 == 2) {
+        return ADCS_HDD_EXP_RAMP;
+    } else if (iteration % 3 == 0) {
+        return ADCS_HDD_EXP_ANGVEL;
+    } 
+
+    iteration++;
 }
