@@ -1,7 +1,8 @@
-#include "determination_experiment.h"
-#include "determination.h"
-#include "vector.h"
-#include "sensors.h"
+#include "control/experiment/determination_experiment.h"
+#include "determination/determination.h"
+#include "adcs_math/vector.h"
+#include "adcs_math/sensors.h"
+
 
 determination_exp_status determination_experiment()
 {
