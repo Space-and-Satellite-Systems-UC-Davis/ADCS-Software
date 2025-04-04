@@ -1,6 +1,6 @@
 #include "PID_experiment.h"
 
-PID_experiment_status PID_experiment()
+PID_status PID_experiment()
 {
     //Get current angular velocity for z axis
     double angvel_x = 0, angvel_y = 0, angvel_z = 0;
