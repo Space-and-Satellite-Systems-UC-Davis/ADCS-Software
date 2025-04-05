@@ -88,16 +88,18 @@ detumble_status detumble(vec3 needle, bool isTesting)
 
 	//Get the current time
 	if(vi_get_curr_millis(&curr_millis) == GET_CURR_MILLIS_FAILURE)
-		if (isTesting == false) return DETUMBLING_FAILURE;
-		else return COILS_TESTING_FAILURE;
+    {
+	    if (isTesting) return COILS_TESTING_FAILURE;
+	    else return DETUMBLING_FAILURE;
+    }
 
 	startTime = curr_millis;
 
 	//Get current magnetic field reading
 	if(vi_get_mag(&(mag.x), &(mag.y), &(mag.z)) == VI_GET_MAG_FAILURE)
 	{
-		if (isTesting == false) return DETUMBLING_FAILURE;
-		else return COILS_TESTING_FAILURE;
+	    if (isTesting) return COILS_TESTING_FAILURE;
+	    else return DETUMBLING_FAILURE;
 	}
 
 	//Compute the delta angle 
@@ -113,19 +115,23 @@ detumble_status detumble(vec3 needle, bool isTesting)
 		//Get new magnectic field reading
 		if(vi_get_mag(&(mag.x), &(mag.y), &(mag.z)) == VI_GET_MAG_FAILURE)
     	{
-			if (isTesting == false) return DETUMBLING_FAILURE;
-			else return COILS_TESTING_FAILURE;
+			if (isTesting) return COILS_TESTING_FAILURE;
+			else return DETUMBLING_FAILURE;
     	}
 
 		prev_millis = curr_millis;
 		//Get the current time
 		if(vi_get_curr_millis(&curr_millis) == GET_CURR_MILLIS_FAILURE)
     	{
-			if (isTesting == false) return DETUMBLING_FAILURE;
-			else return COILS_TESTING_FAILURE;
+			if (isTesting) return COILS_TESTING_FAILURE;
+			else return DETUMBLING_FAILURE;
     	}
 		
-		vi_get_mag(&(mag.x), &(mag.y), &(mag.z));
+		if(vi_get_mag(&(mag.x), &(mag.y), &(mag.z)) == VI_GET_MAG_FAILURE)
+    	{
+			if (isTesting) return COILS_TESTING_FAILURE;
+			else return DETUMBLING_FAILURE;
+    	}
 
 		//Compute the delta_t
 		delta_t = get_delta_t(curr_millis, prev_millis);
@@ -141,7 +147,11 @@ detumble_status detumble(vec3 needle, bool isTesting)
 		capCurrent(&mdm);
 
 		//Send control command to coils
-		vi_control_coil(mdm.x, mdm.y, mdm.z);
+		if (vi_control_coil(mdm.x, mdm.y, mdm.z) == VI_CONTROL_COIL_FAILURE)
+        {
+			if (isTesting) return COILS_TESTING_FAILURE;
+			else return DETUMBLING_FAILURE;
+        }
 
 		//Compute new angular velocity
 		angVel = findAngVel(mag_prev, mag, delta_t);
