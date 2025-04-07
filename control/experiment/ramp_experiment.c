@@ -2,7 +2,7 @@
 #include "virtual_intellisat.h"
 
 //TODO: HDD alternation?
-#define HDD_CHOICE HDD1
+#define HDD_CHOICE VI_HDD1
 
 
 run_ramp_experiment_status ramp_experiment(){
