@@ -19,6 +19,65 @@
 #ifndef VIRTUAL_INTELLISAT_H
 #define VIRTUAL_INTELLISAT_H
 
+
+typedef enum {
+    MAG1,
+    MAG2
+} vi_MAG;
+
+typedef enum {
+    IMU1,
+    IMU2
+} vi_IMU;
+
+typedef enum {
+    HDD1,
+    HDD2
+} vi_HDD;
+
+typedef enum {
+//Start CSS
+	CSS_PX1,
+	CSS_PX2,
+	
+	CSS_NX1,
+	CSS_NX2,
+	
+	CSS_PY1,
+	CSS_PY2,
+
+	CSS_NY1,
+	CSS_NY2,
+	
+	CSS_PZ1,
+	CSS_PZ2,
+	
+	CSS_NZ1,
+	CSS_NZ2,
+//End CSS
+//Start MAG
+	MAG1_X,
+	MAG2_X,
+	
+	MAG1_Y,
+	MAG2_Y,
+	
+	MAG1_Z,
+	MAG2_Z,
+//End MAG
+//Start IMU
+	IMU1_X,
+	IMU2_X,
+	
+	IMU1_Y,
+	IMU2_Y,
+	
+	IMU1_Z,
+	IMU2_Z,
+//End IMU
+} vi_sensor;
+
+
 typedef enum {
     GET_EPOCH_SUCCESS,
     GET_EPOCH_FAILURE
@@ -41,7 +100,6 @@ vi_get_epoch(
 );
 
 
-
 typedef enum {
     GET_CURR_MILLIS_SUCCESS,
     GET_CURR_MILLIS_FAILURE
@@ -61,7 +119,6 @@ vi_get_curr_millis(
 );
 
 
-
 typedef enum {
     GET_ANGVEL_SUCCESS,
     GET_ANGVEL_FAILURE
@@ -69,6 +126,7 @@ typedef enum {
 
 /**@brief Retrieve angular velocity data from the IMU.
  *
+ * @param imu Which inertial measurement unit to read from.
  * @param angvel_x,angvel_y,angvel_z Return-by-reference ptrs.
  *
  * The sign of the angular velocity values must adhere to the
@@ -78,11 +136,11 @@ typedef enum {
  */
 vi_get_angvel_status
 vi_get_angvel(
+    vi_IMU imu,
     double *angvel_x, 
     double *angvel_y,
     double *angvel_z
 );
-
 
 
 typedef enum {
@@ -92,6 +150,7 @@ typedef enum {
 
 /**@brief Send a throttle command to the HDD.
  *
+ * @param hdd Which HDD to command.
  * @param throttle The desired throttle in the range [-1.0, 1.0].
  *
  * Intellisat must check these bounds for the input.
@@ -104,61 +163,15 @@ typedef enum {
  */
 vi_hdd_command_status
 vi_hdd_command(
+    vi_HDD hdd,
     double throttle
 );
 
-
-
-typedef enum{
-//Start CSS
-	CSS_PX1,
-	CSS_PX2,
-	
-	CSS_NX1,
-	CSS_NX2,
-	
-	CSS_PY1,
-	CSS_PY2,
-
-	CSS_NY1,
-	CSS_NY2,
-	
-	CSS_PZ1,
-	CSS_PZ2,
-	
-	CSS_NZ1,
-	CSS_NZ2,
-//End CSS
-	
-//Start MAG
-	MAG1_X,
-	MAG2_X,
-	
-	MAG1_Y,
-	MAG2_Y,
-	
-	MAG1_Z,
-	MAG2_Z,
-//End MAG
-	
-	
-//Start IMU
-	IMU1_X,
-	IMU2_X,
-	
-	IMU1_Y,
-	IMU2_Y,
-	
-	IMU1_Z,
-	IMU2_Z,
-//End IMU
-} vi_sensors;
 
 typedef enum{
 	GET_CONSTANT_SUCCESS,
 	GET_CONSTANT_FAILURE
 } vi_get_constant_status;
-
 
 /**@brief Get the current calibration values for a sensor.
  *
@@ -171,7 +184,7 @@ typedef enum{
  */
 vi_get_constant_status
 vi_get_sensor_calibration(
-	vi_sensors sensor, 
+	vi_sensor sensor, 
 	float *offset,
 	float *scalar,
 	float *filter_constant
@@ -206,7 +219,7 @@ vi_get_TLE(
  */
 vi_get_constant_status
 vi_get_sensor_status(
-	vi_sensors sensor,
+	vi_sensor sensor,
 	int *sensor_status
 );
 
@@ -218,12 +231,14 @@ typedef enum {
 
 /**@brief Get the current magnetic field value.
  *
+ * @param mag Which magnetometer to read from.
  * @param mag_x,mag_y,mag_z The magnetic field vector.
  *
  * @return vi_get_mag_status A return code, success/failure.
  */
 vi_get_mag_status
 vi_get_mag(
+    vi_MAG mag,
 	double *mag_x,
 	double *mag_y,
 	double *mag_z
@@ -247,24 +262,32 @@ vi_delay_ms(
 );
 
 
-/**@brief printing string
+/**@brief Print a string.
  *
- * @param string to print
+ * @param The string to print.
  *
+ * @return Void.
  */
-
 void vi_print (const char*);
+
 
 typedef enum {
 	VI_CONTROL_COIL_SUCCESS,
 	VI_CONTROL_COIL_FAILURE
 } vi_control_coil_status;
 
+/**@brief Set the coils' dipole vector.
+ *
+ * @param command_x,command_y,command_z The dipole vector.
+ *
+ * @return vi_control_coil_status A return code, success/failure.
+ */
 vi_control_coil_status 
 vi_control_coil(
 	double command_x,
 	double command_y,
 	double command_z
 );
+
 
 #endif//VIRTUAL_INTELLISAT_H

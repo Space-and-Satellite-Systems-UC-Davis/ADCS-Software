@@ -23,6 +23,9 @@ ADCS_MAIN(adcs_mode mode) {
                     break;
                 case DETUMBLING_SUCCESS:
                     break;
+
+                case COILS_TESTING_SUCCESS: //noop
+                case COILS_TESTING_FAILURE: //noop
             }
             break;
         case ADCS_COILS_TESTING:
@@ -32,6 +35,9 @@ ADCS_MAIN(adcs_mode mode) {
                     break;
                 case COILS_TESTING_SUCCESS:
                     break;
+
+                case DETUMBLING_SUCCESS: //noop
+                case DETUMBLING_FAILURE: //noop
             }
             break;
         case ADCS_HDD_EXP_ANGVEL:

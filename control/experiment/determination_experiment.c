@@ -3,6 +3,10 @@
 #include "adcs_math/vector.h"
 #include "adcs_math/sensors.h"
 
+//TODO: MAG, HDD alternation?
+#define MAG_CHOICE MAG1
+#define HDD_CHOICE HDD1
+
 
 determination_exp_status determination_experiment()
 {
@@ -13,7 +17,7 @@ determination_exp_status determination_experiment()
     vec3 sun;
 
     vi_get_epoch(&year, &month, &day, &hour, &minute, &second);
-    vi_get_mag(&mag.x, &mag.y, &mag.z);
+    vi_get_mag(MAG_CHOICE, &mag.x, &mag.y, &mag.z);
     
     //TODO: default values for now, waiting for sun sensors to implement get_sun
     sun.x = 0;
@@ -41,7 +45,7 @@ determination_exp_status determination_experiment()
     {
         vi_delay_ms(100);
         vi_get_epoch(&year, &month, &day, &hour, &minute, &second);
-        vi_get_mag(&mag.x, &mag.y, &mag.z);
+        vi_get_mag(MAG_CHOICE, &mag.x, &mag.y, &mag.z);
         // default values for now, waiting for sun sensors to implement get_sun
         sun.x = 0;
         sun.y = 0;
@@ -62,7 +66,7 @@ determination_exp_status determination_experiment()
         //PLug it into the control function
         double throttle = PID_command(target, zrotation, curr_millis, &controller);
         //Take output and plug it into HDD 
-        if(vi_hdd_command(throttle) == HDD_COMMAND_FAILURE)
+        if(vi_hdd_command(HDD_CHOICE, throttle) == HDD_COMMAND_FAILURE)
             return DETERMINATION_EXPERIMENT_FAILURE;
         prevAttitude = currAttitude;
         prev_millis = curr_millis;
