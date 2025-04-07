@@ -21,59 +21,59 @@
 
 
 typedef enum {
-    MAG1,
-    MAG2
+    VI_MAG1,
+    VI_MAG2
 } vi_MAG;
 
 typedef enum {
-    IMU1,
-    IMU2
+    VI_IMU1,
+    VI_IMU2
 } vi_IMU;
 
 typedef enum {
-    HDD1,
-    HDD2
+    VI_HDD1,
+    VI_HDD2
 } vi_HDD;
 
 typedef enum {
 //Start CSS
-	CSS_PX1,
-	CSS_PX2,
+	VI_CSS_PX1,
+	VI_CSS_PX2,
 	
-	CSS_NX1,
-	CSS_NX2,
+	VI_CSS_NX1,
+	VI_CSS_NX2,
 	
-	CSS_PY1,
-	CSS_PY2,
+	VI_CSS_PY1,
+	VI_CSS_PY2,
 
-	CSS_NY1,
-	CSS_NY2,
+	VI_CSS_NY1,
+	VI_CSS_NY2,
 	
-	CSS_PZ1,
-	CSS_PZ2,
+	VI_CSS_PZ1,
+	VI_CSS_PZ2,
 	
-	CSS_NZ1,
-	CSS_NZ2,
+	VI_CSS_NZ1,
+	VI_CSS_NZ2,
 //End CSS
 //Start MAG
-	MAG1_X,
-	MAG2_X,
+	VI_MAG1_X,
+	VI_MAG2_X,
 	
-	MAG1_Y,
-	MAG2_Y,
+	VI_MAG1_Y,
+	VI_MAG2_Y,
 	
-	MAG1_Z,
-	MAG2_Z,
+	VI_MAG1_Z,
+	VI_MAG2_Z,
 //End MAG
 //Start IMU
-	IMU1_X,
-	IMU2_X,
+	VI_IMU1_X,
+	VI_IMU2_X,
 	
-	IMU1_Y,
-	IMU2_Y,
+	VI_IMU1_Y,
+	VI_IMU2_Y,
 	
-	IMU1_Z,
-	IMU2_Z,
+	VI_IMU1_Z,
+	VI_IMU2_Z,
 //End IMU
 } vi_sensor;
 

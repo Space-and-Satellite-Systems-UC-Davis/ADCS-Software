@@ -16,7 +16,7 @@
 #include <math.h>
 
 //TODO: IMU, HDD alternation?
-#define MAG_CHOICE MAG1
+#define MAG_CHOICE VI_MAG1
 
 const double control_constant = 67200.0; //TODO: tune :p
 

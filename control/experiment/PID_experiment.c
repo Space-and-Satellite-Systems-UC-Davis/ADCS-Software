@@ -4,8 +4,8 @@
 #include <math.h>
 
 //TODO: IMU, HDD alternation?
-#define IMU_CHOICE IMU1
-#define HDD_CHOICE HDD1
+#define IMU_CHOICE VI_IMU1
+#define HDD_CHOICE VI_HDD1
 
 
 PID_status PID_experiment()

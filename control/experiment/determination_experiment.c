@@ -4,8 +4,8 @@
 #include "adcs_math/sensors.h"
 
 //TODO: MAG, HDD alternation?
-#define MAG_CHOICE MAG1
-#define HDD_CHOICE HDD1
+#define MAG_CHOICE VI_MAG1
+#define HDD_CHOICE VI_HDD1
 
 
 determination_exp_status determination_experiment()
