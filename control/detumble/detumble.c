@@ -15,7 +15,11 @@
 
 #include <math.h>
 
+//TODO: IMU, HDD alternation?
+#define MAG_CHOICE MAG1
+
 const double control_constant = 67200.0; //TODO: tune :p
+
 
 /**@brief find the angular velocity through change in magnetic vector
  * 
@@ -96,7 +100,7 @@ detumble_status detumble(vec3 needle, bool isTesting)
 	startTime = curr_millis;
 
 	//Get current magnetic field reading
-	if(vi_get_mag(&(mag.x), &(mag.y), &(mag.z)) == VI_GET_MAG_FAILURE)
+	if(vi_get_mag(MAG_CHOICE, &(mag.x), &(mag.y), &(mag.z)) == VI_GET_MAG_FAILURE)
 	{
 	    if (isTesting) return COILS_TESTING_FAILURE;
 	    else return DETUMBLING_FAILURE;
@@ -113,7 +117,7 @@ detumble_status detumble(vec3 needle, bool isTesting)
 	{
 		mag_prev = mag;
 		//Get new magnectic field reading
-		if(vi_get_mag(&(mag.x), &(mag.y), &(mag.z)) == VI_GET_MAG_FAILURE)
+		if(vi_get_mag(MAG_CHOICE, &(mag.x), &(mag.y), &(mag.z)) == VI_GET_MAG_FAILURE)
     	{
 			if (isTesting) return COILS_TESTING_FAILURE;
 			else return DETUMBLING_FAILURE;
@@ -127,7 +131,7 @@ detumble_status detumble(vec3 needle, bool isTesting)
 			else return DETUMBLING_FAILURE;
     	}
 		
-		if(vi_get_mag(&(mag.x), &(mag.y), &(mag.z)) == VI_GET_MAG_FAILURE)
+		if(vi_get_mag(MAG_CHOICE, &(mag.x), &(mag.y), &(mag.z)) == VI_GET_MAG_FAILURE)
     	{
 			if (isTesting) return COILS_TESTING_FAILURE;
 			else return DETUMBLING_FAILURE;
@@ -160,9 +164,7 @@ detumble_status detumble(vec3 needle, bool isTesting)
     	int timeElapsed = curr_millis - startTime;
 		bool timeout = timeElapsed > LIMIT;
     	keepDetumbling = aboveThreshold(angVel, 0.5) && !timeout;
-      
 	}
-
 
 	return DETUMBLING_SUCCESS;
 }
