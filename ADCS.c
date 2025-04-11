@@ -10,6 +10,7 @@
 #include "virtual_intellisat.h"
 #include "determination/determination.h"
 #include "control/detumble/detumble.h"
+#include "control/experiment/PID_experiment.h"
 #include "adcs_math/vector.h"
 
 
@@ -41,6 +42,8 @@ ADCS_MAIN(adcs_mode mode) {
             }
             break;
         case ADCS_HDD_EXP_ANGVEL:
+        	vi_print("Running PID experiment! \r\n");
+        	PID_experiment();
             break;
         case ADCS_HDD_EXP_TRIAD:
             break;

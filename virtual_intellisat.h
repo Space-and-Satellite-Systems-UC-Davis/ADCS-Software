@@ -36,6 +36,11 @@ typedef enum {
 } vi_HDD;
 
 typedef enum {
+    VI_HDD_ARM,
+    VI_HDD_CALIBRATE
+} vi_HDD_arm;
+
+typedef enum {
 //Start CSS
 	VI_CSS_PX1,
 	VI_CSS_PX2,
@@ -142,11 +147,45 @@ vi_get_angvel(
     double *angvel_z
 );
 
+typedef enum {
+    HDD_INITIATE_SUCCESS,
+    HDD_INITIATE_FAILURE
+} vi_hdd_initiate_status;
+
+typedef enum {
+    HDD_ARM_SUCCESS,
+    HDD_ARM_FAILURE
+} vi_hdd_arm_status;
 
 typedef enum {
     HDD_COMMAND_SUCCESS,
     HDD_COMMAND_FAILURE
 } vi_hdd_command_status;
+
+
+/**@brief Initiate the HDD
+ *
+ * @param hdd Which HDD to initiate.
+ *
+ * @return vi_hdd_initiate_status A return code.
+ */
+vi_hdd_initiate_status
+vi_hdd_initiate(
+    vi_HDD hdd
+);
+
+/**@brief Either arms or calibrates the HDD.
+ *
+ * @param hdd Which HDD to command.
+ * @param arm_mode Decide whether arm (0) or calibrate (1).
+ *
+ * @return vi_hdd_arm_status A return code.
+ */
+vi_hdd_arm_status
+vi_hdd_arm(
+    vi_HDD hdd,
+    vi_HDD_arm arm_mode
+);
 
 /**@brief Send a throttle command to the HDD.
  *

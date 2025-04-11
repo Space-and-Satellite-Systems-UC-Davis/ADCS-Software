@@ -10,6 +10,10 @@
 
 PID_status PID_experiment()
 {
+	//Verify experiment is running
+	vi_print("Called PID_experiment \r\n");
+	vi_hdd_initiate(HDD_CHOICE);
+	vi_hdd_arm(HDD_CHOICE);
     //Get current angular velocity for z axis
     double angvel_x = 0, angvel_y = 0, angvel_z = 0;
     if(vi_get_angvel(IMU_CHOICE, &angvel_x, &angvel_y, &angvel_z) == GET_ANGVEL_FAILURE)
