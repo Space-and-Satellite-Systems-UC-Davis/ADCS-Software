@@ -44,6 +44,7 @@ typedef enum {
 adcs_main_status
 ADCS_MAIN(adcs_mode mode);
 
+
 /**@brief Ask ADCS to recommend a mode to run.
  *
  * @return The recommended mode.
