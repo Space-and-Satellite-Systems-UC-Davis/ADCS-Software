@@ -19,6 +19,8 @@
 #ifndef VIRTUAL_INTELLISAT_H
 #define VIRTUAL_INTELLISAT_H
 
+#include "ADCS.h"
+
 
 /*################ SENSORS AND ACTUATORS ################*/
 
@@ -318,11 +320,26 @@ vi_delay_ms(
 
 /**@brief Print a string.
  *
- * @param The string to print.
+ * @param string The string to print.
  *
  * @return Void.
  */
-void vi_print (const char*);
+void
+vi_print(
+    const char* string
+);
+
+
+/**@brief Configure the data logger for a particular mode.
+ *
+ * @param mode The logger mode setting.
+ *
+ * @return Void.
+ */
+void
+vi_configure_logging_mode(
+    adcs_mode mode
+);
 
 
 #endif//VIRTUAL_INTELLISAT_H
