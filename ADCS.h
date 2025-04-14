@@ -10,8 +10,6 @@
 #ifndef ADCS_H
 #define ADCS_H
 
-#include "virtual_intellisat.h"
-
 
 typedef enum {
 	ADCS_DETUMBLE,
