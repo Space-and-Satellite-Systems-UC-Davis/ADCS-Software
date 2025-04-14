@@ -217,7 +217,6 @@ void get_earth_direction(
     vec3 down;
     vec_set(0, 0, 1, &down);
     mat_vec_mult(attitude, down, earth_attitude);
-
 }
 
 
