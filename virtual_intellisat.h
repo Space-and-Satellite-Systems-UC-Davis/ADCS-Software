@@ -307,7 +307,7 @@ vi_delay_ms(
  *
  * @return Void.
  */
-void vi_print (const char*);
+void vi_print (const char *message, ...);
 
 
 typedef enum {
