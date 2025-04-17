@@ -34,7 +34,7 @@ PID_status PID_experiment()
     PID_init(target, angvel_z, curr_millis, 1, 1, 1, &controller);
     
     //Run a while loop 
-    while (fabs(target - angvel_z) > 1)
+    while (fabs(target - angvel_z) > 0.1)
     {
     	if(vi_get_angvel(IMU_CHOICE, &angvel_x, &angvel_y, &angvel_z) == GET_ANGVEL_FAILURE)
     	    	return PID_EXPERIMENT_FAILURE;

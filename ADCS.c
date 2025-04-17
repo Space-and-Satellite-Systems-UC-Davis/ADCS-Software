@@ -44,10 +44,11 @@ ADCS_MAIN(adcs_mode mode) {
         case ADCS_HDD_EXP_ANGVEL:
         	vi_print("Running PID experiment! \r\n");
         	vi_print("Called PID_experiment \r\n");
-        		vi_hdd_initiate(0);
-        		vi_hdd_arm(0, VI_HDD_ARM);
+        	vi_hdd_initiate(0);
+        	vi_hdd_arm(0, VI_HDD_ARM);
         	while (1){
-        	PID_experiment();
+        		PID_experiment();
+        		vi_delay_ms(3000);
         	}
             break;
         case ADCS_HDD_EXP_TRIAD:
