@@ -25,7 +25,9 @@ ADCS_MAIN(adcs_mode mode) {
                     break;
 
                 case COILS_TESTING_SUCCESS: //noop
+                    break;
                 case COILS_TESTING_FAILURE: //noop
+                    break;
             }
             break;
         case ADCS_COILS_TESTING:
