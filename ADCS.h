@@ -31,6 +31,10 @@ typedef enum {
 } adcs_main_status; //TODO: full list
 
 
+#ifdef __cplusplus
+extern "C" {
+#endif//__cplusplus
+
 /**@brief Command ADCS to run a mode.
  *
  * Blocks during mode execution.
@@ -50,10 +54,9 @@ ADCS_MAIN(adcs_mode mode);
 adcs_mode
 ADCS_recommend_mode();
 
+#ifdef __cplusplus
+}
+#endif//__cplusplus
+
 
 #endif//ADCS_H
-
-
-
-
-
