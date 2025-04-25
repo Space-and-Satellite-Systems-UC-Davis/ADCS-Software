@@ -18,7 +18,7 @@
 const double control_constant = 67200.0; //TODO: tune :p
 const double coilInductance = 1;		 //TODO: Messure (Henrys)
 const double coilResistance = 1;		 //TODO: Measure (Ohms)
-const double B_Earth = 1;				 //TODO: 
+const double B_Earth = 1;				 //TODO: I need 
 const double decayPercent = 0.2;		 //TODO: Decide on percentage
 
 vec3 findAngVel(vec3 b0, vec3 b1, int delta_t){
@@ -105,6 +105,12 @@ detumble_status detumble(vec3 needle, bool isTesting){
 			if (isTesting) return COILS_TESTING_FAILURE;
 			else return DETUMBLING_FAILURE;
     	}
+
+		//Set the coil to zero
+		if (vi_control_coil(0, 0, 0) == VI_CONTROL_COIL_FAILURE){
+			if (isTesting) return COILS_TESTING_FAILURE;
+			else return DETUMBLING_FAILURE;
+        }
 
 		//Compute and perform the delay so that the coil's magnetic field decays
 		double coilsMagnetic = computeB_coils(vec_mag(mdm));
