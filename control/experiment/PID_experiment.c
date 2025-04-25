@@ -7,7 +7,6 @@
 #define IMU_CHOICE VI_IMU1
 #define HDD_CHOICE VI_HDD1
 
-
 PID_status PID_experiment()
 {
     //Get current angular velocity for z axis

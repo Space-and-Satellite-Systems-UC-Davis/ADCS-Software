@@ -16,21 +16,16 @@
 #include <math.h>
 
 //TODO: IMU, HDD alternation?
-#define MAG_CHOICE VI_MAG1
+#define MAG VI_MAG1
 
 const double control_constant = 67200.0; //TODO: tune :p
+const double coilInductance = 1;		 //TODO: Messure (Henrys)
+const double coilResistance = 1;		 //TODO: Measure (Ohms)
+const double B_Earth = 1;				 //TODO: I need 
+const double decayPercent = 0.2;		 //TODO: Decide on percentage
 
+vec3 findAngVel(vec3 b0, vec3 b1, int delta_t){
 
-/**@brief find the angular velocity through change in magnetic vector
- * 
- * @param b0 Earth's magnectic field vector (relative to satatlite)
- * @param b1 b0 after delta_t
- * @param delta_t the change in time between mag and mag_prev
- *
- * @return angVel anggular velocity
- */
-vec3 findAngVel(vec3 b0, vec3 b1, int delta_t)
-{
 	vec3 bdot; 		//The velocity vector pointing from b0 to b1
 	vec3 angVel; 	//The angular velocity 
 
@@ -46,29 +41,26 @@ vec3 findAngVel(vec3 b0, vec3 b1, int delta_t)
 	return angVel;
 }
 
-/**@brief checks if angular velocity exceeds threshold
- * 
- * @param input angular velocity vector to be examined
- * @param threshold should be self explanatory
- *
- * @return true if threshold has been exceeded
- */
-bool aboveThreshold(vec3 input, double threshold)
-{
+double computeB_coils(double current){
+	return current;
+}
+
+double computeDecay(double B_initial){
+
+	double tau = coilInductance / coilResistance;
+	double ratio = B_Earth / B_initial; 
+	
+	return -1 * tau * log(decayPercent * ratio);
+}
+
+bool aboveThreshold(vec3 input, double threshold){
 	if(input.x > threshold || input.y > threshold|| input.z > threshold)
 		return true;
 
 	return false;
 }
 
-/**@brief checks if current exceeds threshold
- * 
- * @param mdm magnetic dipole moment
- * 
- * @return mdm but capped at 0.158f
- */
-void capCurrent(vec3 *mdm)
-{
+void capCurrent(vec3 *mdm){
 	vec3 coils_output = *mdm;
 
 	//cap output at maximum 0.158 Amps across all coils. 
@@ -81,8 +73,7 @@ void capCurrent(vec3 *mdm)
 	(*mdm) = coils_output;
 }
 
-detumble_status detumble(vec3 needle, bool isTesting)
-{
+detumble_status detumble(vec3 needle, bool isTesting){
 	vec3 mag, mag_prev;
 	int delta_t = 0;
 	vec3 coils_curr;
@@ -91,8 +82,7 @@ detumble_status detumble(vec3 needle, bool isTesting)
 	vec3 mdm; //Magnetic Dipole Moment 
 
 	//Get the current time
-	if(vi_get_curr_millis(&curr_millis) == GET_CURR_MILLIS_FAILURE)
-    {
+	if(vi_get_curr_millis(&curr_millis) == GET_CURR_MILLIS_FAILURE){
 	    if (isTesting) return COILS_TESTING_FAILURE;
 	    else return DETUMBLING_FAILURE;
     }
@@ -100,8 +90,7 @@ detumble_status detumble(vec3 needle, bool isTesting)
 	startTime = curr_millis;
 
 	//Get current magnetic field reading
-	if(vi_get_mag(MAG_CHOICE, &(mag.x), &(mag.y), &(mag.z)) == VI_GET_MAG_FAILURE)
-	{
+	if(vi_get_mag(MAG, &(mag.x), &(mag.y), &(mag.z)) == VI_GET_MAG_FAILURE){
 	    if (isTesting) return COILS_TESTING_FAILURE;
 	    else return DETUMBLING_FAILURE;
 	}
@@ -113,46 +102,49 @@ detumble_status detumble(vec3 needle, bool isTesting)
 	bool keepDetumbling = true;
 
 	//Note: May be do something to account for integer overflow
-	while(isTesting || keepDetumbling)
-	{
-		mag_prev = mag;
-		//Get new magnectic field reading
-		if(vi_get_mag(MAG_CHOICE, &(mag.x), &(mag.y), &(mag.z)) == VI_GET_MAG_FAILURE)
-    	{
+	while(isTesting || keepDetumbling){
+		prev_millis = curr_millis;
+		//Get the current time
+		if(vi_get_curr_millis(&curr_millis) == GET_CURR_MILLIS_FAILURE){
 			if (isTesting) return COILS_TESTING_FAILURE;
 			else return DETUMBLING_FAILURE;
     	}
 
-		prev_millis = curr_millis;
-		//Get the current time
-		if(vi_get_curr_millis(&curr_millis) == GET_CURR_MILLIS_FAILURE)
-    	{
+		//Set the coil to zero
+		if (vi_control_coil(0, 0, 0) == VI_CONTROL_COIL_FAILURE){
 			if (isTesting) return COILS_TESTING_FAILURE;
 			else return DETUMBLING_FAILURE;
-    	}
-		
-		if(vi_get_mag(MAG_CHOICE, &(mag.x), &(mag.y), &(mag.z)) == VI_GET_MAG_FAILURE)
-    	{
+        }
+
+		//Compute and perform the delay so that the coil's magnetic field decays
+		double coilsMagnetic = computeB_coils(vec_mag(mdm));
+		double delayTime = computeDecay(coilsMagnetic);
+		if(vi_delay_ms(delayTime) == VI_DELAY_MS_FAILURE){
 			if (isTesting) return COILS_TESTING_FAILURE;
 			else return DETUMBLING_FAILURE;
-    	}
+		}
 
 		//Compute the delta_t
 		delta_t = get_delta_t(curr_millis, prev_millis);
 		delta_t = curr_millis - prev_millis;
+
+		mag_prev = mag;
+		//Get new magnectic field reading
+		if(vi_get_mag(MAG, &(mag.x), &(mag.y), &(mag.z)) == VI_GET_MAG_FAILURE){
+			if (isTesting) return COILS_TESTING_FAILURE;
+			else return DETUMBLING_FAILURE;
+    	}
 		
 		//M = -k(bDot - n)
 		bdot_control(mag, mag_prev, delta_t, &coils_curr);
 		vec_sub(coils_curr, needle, &coils_curr);
 		vec_scalar(-control_constant, coils_curr, &mdm);
 
-		//Prevent sending too much current to the coils
-		//UNLIMITED POWEREERERR
+		//Prevent sending too much current to the coils (no UNLIMITED POWER)
 		capCurrent(&mdm);
 
 		//Send control command to coils
-		if (vi_control_coil(mdm.x, mdm.y, mdm.z) == VI_CONTROL_COIL_FAILURE)
-        {
+		if (vi_control_coil(mdm.x, mdm.y, mdm.z) == VI_CONTROL_COIL_FAILURE){
 			if (isTesting) return COILS_TESTING_FAILURE;
 			else return DETUMBLING_FAILURE;
         }
