@@ -15,6 +15,9 @@
 
 #include <math.h>
 
+//TODO: IMU, HDD alternation?
+#define MAG_CHOICE VI_MAG1
+
 const double control_constant = 67200.0; //TODO: tune :p
 const double coilInductance = 1;		 //TODO: Messure (Henrys)
 const double coilResistance = 1;		 //TODO: Measure (Ohms)
@@ -22,6 +25,7 @@ const double B_Earth = 1;				 //TODO: I need
 const double decayPercent = 0.2;		 //TODO: Decide on percentage
 
 vec3 findAngVel(vec3 b0, vec3 b1, int delta_t){
+
 	vec3 bdot; 		//The velocity vector pointing from b0 to b1
 	vec3 angVel; 	//The angular velocity 
 
@@ -152,9 +156,7 @@ detumble_status detumble(vec3 needle, bool isTesting){
     	int timeElapsed = curr_millis - startTime;
 		bool timeout = timeElapsed > LIMIT;
     	keepDetumbling = aboveThreshold(angVel, 0.5) && !timeout;
-      
 	}
-
 
 	return DETUMBLING_SUCCESS;
 }

@@ -46,7 +46,7 @@ float lowpass_filter(float currValue, float prevValue, float filterConstant);
  * 
  * @return sensor calibration value after filtration 
 */
-float get_sensor_calibration(vi_sensors sensor, float currValue, float prevValue, float offset, float gain, float filterConstant);
+float get_sensor_calibration(vi_sensor sensor, float currValue, float prevValue, float offset, float gain, float filterConstant);
 
 /**
  * @brief safely calculate delta_t accounting for integer overflow
@@ -61,7 +61,13 @@ int get_delta_t(int currTime, int prevTime);
 /**
  * @brief Generate a permutation of active sensors.:qa
  */
-char get_alternation(vi_sensors sensor, unsigned int generation);
+char get_alternation(vi_sensor sensor, unsigned int generation);
+
+/**
+ * returns 1 if in eclipse, 0 if not
+ * threshold for eclipse is 0 - 0.25 sun sensors reading magnitude
+*/
+int is_in_eclipse();
 
 #endif
 

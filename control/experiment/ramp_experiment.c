@@ -1,5 +1,9 @@
+#include "control/experiment/ramp_experiment.h"
+#include "virtual_intellisat.h"
 
-#include "ramp_experiment.h"
+//TODO: HDD alternation?
+#define HDD_CHOICE VI_HDD1
+
 
 run_ramp_experiment_status ramp_experiment(){
 
@@ -25,13 +29,11 @@ run_ramp_experiment_status ramp_experiment(){
 
         double command = linear_ramp_command(ti , &controller);
         
-        command_status = vi_hdd_command(command);
+        command_status = vi_hdd_command(HDD_CHOICE, command);
         if (command_status == HDD_COMMAND_FAILURE){
             return RUN_RAMP_EXPERIMENT_FAILURE;
         }
-
     }
     
     return RUN_RAMP_EXPERIMENT_SUCCESS;
-    
 }

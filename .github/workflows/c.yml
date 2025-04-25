@@ -15,14 +15,7 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-    - name: get_gcc-arm
-      run: sudo apt-get install gcc-arm-none-eabi
-    - name: main
-      run: make CC=arm-none-eabi-gcc CFLAGS='-I. -lm -Wswitch -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32L4 -DSTM32 -DSTM32L476ZGTx -c -O0 -ffunction-sections -fdata-sections -Wall -Wextra -fstack-usage --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -c'
+    - name: make project
+      run: make
     - name: groundstation
       run: cd groundstation && make
-    - name: upload compiled file artifact
-      uses: actions/upload-artifact@v4
-      with:
-          name: libADCS
-          path: libADCS.a

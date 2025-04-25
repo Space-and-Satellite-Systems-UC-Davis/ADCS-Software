@@ -23,6 +23,11 @@ ADCS_MAIN(adcs_mode mode) {
                     break;
                 case DETUMBLING_SUCCESS:
                     break;
+
+                case COILS_TESTING_SUCCESS: //noop
+                    break;
+                case COILS_TESTING_FAILURE: //noop
+                    break;
             }
             break;
         case ADCS_COILS_TESTING:
@@ -31,6 +36,11 @@ ADCS_MAIN(adcs_mode mode) {
                     return ADCS_MAIN_COILS_TESTING_ERR;
                     break;
                 case COILS_TESTING_SUCCESS:
+                    break;
+
+                case DETUMBLING_SUCCESS: //noop
+                    break;
+                case DETUMBLING_FAILURE: //noop
                     break;
             }
             break;

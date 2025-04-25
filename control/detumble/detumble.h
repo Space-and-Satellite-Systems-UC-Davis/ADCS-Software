@@ -17,6 +17,10 @@
 
 #include <stdbool.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef enum detumble{
     DETUMBLING_SUCCESS,
     DETUMBLING_FAILURE,
@@ -77,5 +81,9 @@ void capCurrent(vec3 *mdm);
  * @return detumble_status A return code.
  */
 detumble_status detumble(vec3 needle, bool isTesting);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif//DETUMBLE_H
