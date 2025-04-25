@@ -130,7 +130,7 @@ detumble_status detumble(vec3 needle, bool isTesting){
 
 		mag_prev = mag;
 		//Get new magnectic field reading
-		if(vi_get_mag(&(mag.x), &(mag.y), &(mag.z)) == VI_GET_MAG_FAILURE){
+		if(vi_get_mag(MAG, &(mag.x), &(mag.y), &(mag.z)) == VI_GET_MAG_FAILURE){
 			if (isTesting) return COILS_TESTING_FAILURE;
 			else return DETUMBLING_FAILURE;
     	}
