@@ -16,7 +16,7 @@
 #include <math.h>
 
 //TODO: IMU, HDD alternation?
-#define MAG_CHOICE VI_MAG1
+#define MAG VI_MAG1
 
 const double control_constant = 67200.0; //TODO: tune :p
 const double coilInductance = 1;		 //TODO: Messure (Henrys)
@@ -90,7 +90,7 @@ detumble_status detumble(vec3 needle, bool isTesting){
 	startTime = curr_millis;
 
 	//Get current magnetic field reading
-	if(vi_get_mag(&(mag.x), &(mag.y), &(mag.z)) == VI_GET_MAG_FAILURE){
+	if(vi_get_mag(MAG, &(mag.x), &(mag.y), &(mag.z)) == VI_GET_MAG_FAILURE){
 	    if (isTesting) return COILS_TESTING_FAILURE;
 	    else return DETUMBLING_FAILURE;
 	}
