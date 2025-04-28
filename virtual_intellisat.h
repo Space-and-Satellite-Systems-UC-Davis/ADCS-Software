@@ -77,7 +77,7 @@ typedef enum {
 	VI_IMU2_Y,
 	
 	VI_IMU1_Z,
-	VI_IMU2_Z,
+	VI_IMU2_Z
 //End IMU
 } vi_sensor;
 
@@ -307,7 +307,7 @@ typedef enum {
 
 vi_get_solar_panel_current_status
 vi_get_solar_panel_current(
-	vi_solar_panel sp
+	vi_solar_panel sp,
 	double* current
 );
 
