@@ -81,6 +81,24 @@ typedef enum {
 //End IMU
 } vi_sensor;
 
+typedef enum {
+	VI_TEMP1_X,
+	VI_TEMP2_X,
+
+	VI_TEMP1_Y,
+	VI_TEMP2_Y,
+
+	VI_TEMP1_Z,
+	VI_TEMP2_Z
+} vi_temp_sensor;
+
+typedef enum {
+	VI_SP1_X,
+	VI_SP2_X,
+
+	VI_SP1_Y,
+	VI_SP2_Y
+} vi_solar_panel;
 
 /*################## ACTUATOR COMMANDS ##################*/
 
@@ -239,6 +257,59 @@ vi_get_css(
     double *magnitude
 );
 
+typedef enum {
+    VI_GET_TEMP_SUCCESS,
+    VI_GET_TEMP_FAILURE
+} vi_get_temp_status;
+
+/**@brief Get a temperature sensor reading.
+ *
+ * @param sensor Which temperature sensor to read from.
+ * @param temp Return-by-reference pointer.
+ *
+ * @return vi_get_temp_status A return code, success/failure.
+ */
+vi_get_temp_status 
+vi_get_temp(
+	vi_temp_sensor sensor, 
+	double* temp
+);
+
+/**@brief Get a coils current reading.
+ *
+ * @param currentX, currentY, currentZ Return-by-reference pointer for each of the coils' current
+ *
+ * @return vi_get_coils_current_status A return code, success/failure.
+ */
+typedef enum {
+    VI_GET_COILS_CURRENT_SUCCESS,
+    VI_GET_COILS_CURRENT_FAILURE
+} vi_get_coils_current_status;
+
+vi_get_coils_current_status
+vi_get_coils_current(
+	double* currentX,
+	double* currentY, 
+	double* currentZ
+);
+
+/**@brief Get a solar panel current reading.
+ *
+ * @param sp Which solar panel to read from.
+ * @param current Return-by-reference pointer.
+ *
+ * @return vi_get_solar_panel_current_status A return code, success/failure.
+ */
+typedef enum {
+    VI_GET_SOLAR_PANEL_CURRENT_SUCCESS,
+    VI_GET_SOLAR_PANEL_CURRENT_FAILURE
+} vi_get_solar_panel_current_status;
+
+vi_get_solar_panel_current_status
+vi_get_solar_panel_current(
+	vi_solar_panel sp
+	double* current
+);
 
 /*###################### CONSTANTS ######################*/
 
