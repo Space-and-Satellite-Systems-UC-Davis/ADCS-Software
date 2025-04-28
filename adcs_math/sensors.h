@@ -9,10 +9,8 @@
 #define SENSORS_H
 
 #include "determination/novasc3.1/novas.h"
-#include "virtual_intellisat.h"
-
 #include <limits.h>
-#include <stdint.h>
+#include "virtual_intellisat.h"
 
 
 typedef struct Sensor_Calibration {
@@ -58,7 +56,7 @@ float get_sensor_calibration(vi_sensor sensor, float currValue, float prevValue,
  * 
  * @return delta_t change in time
 */
-uint64_t get_delta_t(uint64_t currTime, uint64_t prevTime);
+int get_delta_t(int currTime, int prevTime);
 
 /**
  * @brief Generate a permutation of active sensors.:qa

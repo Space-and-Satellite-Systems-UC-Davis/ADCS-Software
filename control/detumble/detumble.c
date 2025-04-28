@@ -24,7 +24,7 @@ const double coilResistance = 1;		 //TODO: Measure (Ohms)
 const double B_Earth = 1;				 //TODO: I need 
 const double decayPercent = 0.2;		 //TODO: Decide on percentage
 
-vec3 findAngVel(vec3 b0, vec3 b1, uint64_t delta_t){
+vec3 findAngVel(vec3 b0, vec3 b1, int delta_t){
 
 	vec3 bdot; 		//The velocity vector pointing from b0 to b1
 	vec3 angVel; 	//The angular velocity 
@@ -75,7 +75,7 @@ void capCurrent(vec3 *mdm){
 
 detumble_status detumble(vec3 needle, bool isTesting){
 	vec3 mag, mag_prev;
-	uint64_t delta_t = 0;
+	int delta_t = 0;
 	vec3 coils_curr;
 	int curr_millis = 0, prev_millis = 0;
 	int startTime = 0;
@@ -126,6 +126,7 @@ detumble_status detumble(vec3 needle, bool isTesting){
 
 		//Compute the delta_t
 		delta_t = get_delta_t(curr_millis, prev_millis);
+		delta_t = curr_millis - prev_millis;
 
 		mag_prev = mag;
 		//Get new magnectic field reading

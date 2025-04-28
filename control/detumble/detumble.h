@@ -16,7 +16,6 @@
 #include "adcs_math/vector.h"
 
 #include <stdbool.h>
-#include <stdint.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -37,7 +36,7 @@ typedef enum detumble{
  *
  * @return angVel anggular velocity
  */
-vec3 findAngVel(vec3 b0, vec3 b1, uint64_t delta_t);
+vec3 findAngVel(vec3 b0, vec3 b1, int delta_t);
 
 /**@brief convert the coils current into magnetic field magitude
  * 

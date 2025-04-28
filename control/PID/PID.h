@@ -8,15 +8,13 @@
 #ifndef PID_H
 #define PID_H
 
-#include <stdint.h>
-
 typedef struct {
 	double P_gain;
 	double I_gain;
 	double D_gain;
 	double e_prev;
 	double e_cumulative;
-	uint64_t t_prev;
+	int t_prev;
 } PID_controller;
 
 /**@brief Generate an actuator command.
@@ -31,7 +29,7 @@ typedef struct {
 double PID_command(
 	double target,
 	double state,
-	uint64_t t_curr,
+	int t_curr,
 	PID_controller *controller
 );
 
@@ -50,7 +48,7 @@ double PID_command(
 void PID_init(
 	double target_init,
 	double state_init,
-	uint64_t t_init,
+	int t_init,
 	double P_gain,
 	double I_gain,
 	double D_gain,

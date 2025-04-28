@@ -17,8 +17,6 @@
 
 #include "adcs_math/vector.h"
 
-#include <stdint.h>
-
 
 /**@brief Calculate a dipole command for all three coils given our
  *  magnetic field and angular velocity data.
@@ -36,7 +34,7 @@
 void bdot_control(
     vec3    mag,
     vec3    last_mag,
-    uint64_t  delta_t,
+    double  delta_t,
     vec3   *coils_current
 );
 

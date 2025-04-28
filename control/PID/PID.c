@@ -4,7 +4,7 @@
 double PID_command(
 	double target,
 	double state,
-	uint64_t t_curr,
+	int t_curr,
 	PID_controller *controller
 ) {
 	double e_curr = target - state;
@@ -24,7 +24,7 @@ double PID_command(
 void PID_init(
 	double target_init,
 	double state_init,
-	uint64_t t_init,
+	int t_init,
 	double P_gain,
 	double I_gain,
 	double D_gain,
