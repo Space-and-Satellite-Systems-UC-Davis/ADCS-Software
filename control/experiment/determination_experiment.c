@@ -30,8 +30,8 @@ determination_exp_status determination_experiment()
     int angvel_z = 0;
 
     //Get the current time (Virtual Intellisat)
-    int prev_millis = 0;
-    int curr_millis = 0;
+    uint64_t prev_millis = 0;
+    uint64_t curr_millis = 0;
     if(vi_get_curr_millis(&prev_millis) == GET_CURR_MILLIS_FAILURE)
         return DETERMINATION_EXPERIMENT_FAILURE;
 
