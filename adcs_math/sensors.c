@@ -37,11 +37,11 @@ float get_sensor_calibration(vi_sensor sensor, float currValue, float prevValue,
     return (lowpass_filter(currValue, prevValue, filterConstant) + offset) * gain;
 }
 
-uint64_t get_delta_t(uint64_t currTime, uint64_t prevTime) {
+int get_delta_t(int currTime, int prevTime) {
     if (prevTime <= currTime) {
         return currTime - prevTime;
     } else {
-        return (UINT64_MAX - prevTime) + currTime;
+        return (INT_MAX - prevTime) + currTime;
     }
 }
 
