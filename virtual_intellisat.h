@@ -21,6 +21,8 @@
 
 #include "ADCS.h"
 
+#include <stdint.h>
+
 
 /*################ SENSORS AND ACTUATORS ################*/
 
@@ -185,7 +187,7 @@ typedef enum {
  */
 vi_get_curr_millis_status
 vi_get_curr_millis(
-    int *curr_millis
+    uint64_t *curr_millis
 );
 
 

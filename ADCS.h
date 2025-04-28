@@ -54,12 +54,6 @@ ADCS_MAIN(adcs_mode mode);
 adcs_mode
 ADCS_recommend_mode();
 
-/**
- * returns 1 if in eclipse, 0 if not
- * threshold for eclipse is 0 - 0.25 sun sensors reading magnitude
-*/
-int is_in_eclipse();
-
 #ifdef __cplusplus
 }
 #endif//__cplusplus

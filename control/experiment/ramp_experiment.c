@@ -1,4 +1,5 @@
 #include "control/experiment/ramp_experiment.h"
+#include "adcs_math/sensors.h"
 #include "virtual_intellisat.h"
 
 //TODO: HDD alternation?
@@ -8,7 +9,7 @@
 run_ramp_experiment_status ramp_experiment(){
 
     ramp_controller controller;
-    int t0;
+    uint64_t t0;
     vi_hdd_command_status command_status;
     vi_get_curr_millis_status millis_status = vi_get_curr_millis(&t0);
     if (millis_status == GET_CURR_MILLIS_FAILURE){
@@ -16,9 +17,9 @@ run_ramp_experiment_status ramp_experiment(){
     }
 
     init_ramp_controller(t0, 1000, 1000, 2000, 1.0, &controller);
-    int ti = t0;
+    uint64_t ti = t0;
 
-    while((ti-t0) < controller.left_leg_length_ms 
+    while(get_delta_t(ti, t0) < controller.left_leg_length_ms 
     + controller. right_leg_length_ms 
     + controller.plateau_length_ms){
 
