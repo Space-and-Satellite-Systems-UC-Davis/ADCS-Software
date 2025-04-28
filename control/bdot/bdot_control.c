@@ -17,10 +17,15 @@
 void bdot_control(
     vec3    mag,
     vec3    last_mag,
-    double  delta_t,
+    uint64_t  delta_t,
     vec3   *bdot
 ) {
     vec3 derivative;    // = (mag - last_mag)/delta_t
+    
+    if (delta_t == 0) {
+        *bdot = (vec3){0.0,0.0,0.0};
+        return;
+    }
 
     vec_scalar(-1.0, last_mag, &last_mag);
     vec_add(mag, last_mag, &derivative);
