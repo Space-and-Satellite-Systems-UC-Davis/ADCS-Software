@@ -46,9 +46,11 @@ ADCS_MAIN(adcs_mode mode) {
         	vi_print("Called PID_experiment \r\n");
         	vi_hdd_initiate(0);
         	vi_hdd_arm(0, VI_HDD_ARM);
+        	vi_delay_ms(3000);
         	while (1){
-        		PID_experiment();
-        		vi_delay_ms(3000);
+        		vi_hdd_command(0, 2.5);
+        		//PID_experiment();
+        		//vi_delay_ms(3000);
         	}
             break;
         case ADCS_HDD_EXP_TRIAD:
