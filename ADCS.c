@@ -48,8 +48,8 @@ ADCS_MAIN(adcs_mode mode) {
         	vi_hdd_arm(0, VI_HDD_ARM);
         	vi_delay_ms(3000);
         	while (1){
-        		vi_hdd_command(0, 2.5);
-        		//PID_experiment();
+        		//vi_hdd_command(0, 2.5);
+        		PID_experiment();
         		//vi_delay_ms(3000);
         	}
             break;
