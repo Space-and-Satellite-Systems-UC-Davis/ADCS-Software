@@ -24,11 +24,6 @@ PID_status PID_experiment()
     if(vi_get_angvel(IMU_CHOICE, &angvel_x, &angvel_y, &angvel_z) == GET_ANGVEL_FAILURE)
         	    	return PID_EXPERIMENT_FAILURE;
 
-
-    vi_print("%f \r \n", angvel_z);
-
-
-
     //Get the current time (Virtual Intellisat)
     int curr_millis = 0;
     if(vi_get_curr_millis(&curr_millis) == GET_CURR_MILLIS_FAILURE)
@@ -45,8 +40,6 @@ PID_status PID_experiment()
     	if(vi_get_angvel(IMU_CHOICE, &angvel_x, &angvel_y, &angvel_z) == GET_ANGVEL_FAILURE)
     	    	return PID_EXPERIMENT_FAILURE;
 
-    	vi_print("target: %f \r \n",target);
-    	vi_print("angvel: %f \r \n",angvel_z);
         //Get the current time (Virtual Intellisat)
         if(vi_get_curr_millis(&curr_millis) == GET_CURR_MILLIS_FAILURE)
             return PID_EXPERIMENT_FAILURE;
@@ -58,7 +51,6 @@ PID_status PID_experiment()
 		} else if (throttle < -2.5){
 			throttle = -2.5;
 		}
-        vi_print("throttle: %f \r \n",throttle);
 
         //Take output and plug it into HDD 
         if(vi_hdd_command(HDD_CHOICE, throttle) == HDD_COMMAND_FAILURE)
