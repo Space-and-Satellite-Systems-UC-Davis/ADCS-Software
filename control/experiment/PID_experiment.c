@@ -4,7 +4,8 @@
 #include <math.h>
 #include <stdint.h>
 
-//TODO: IMU, HDD alternation?
+//TODO: IMU alternation?
+//      Negative PID output should activate VI_HDD2
 #define IMU_CHOICE VI_IMU1
 #define HDD_CHOICE VI_HDD1
 
@@ -22,7 +23,7 @@ PID_status PID_experiment()
     double throttle = 0;
 
     if(vi_get_angvel(IMU_CHOICE, &angvel_x, &angvel_y, &angvel_z) == GET_ANGVEL_FAILURE)
-        	    	return PID_EXPERIMENT_FAILURE;
+        return PID_EXPERIMENT_FAILURE;
 
     //Get the current time (Virtual Intellisat)
     uint64_t curr_millis = 0;
@@ -46,6 +47,8 @@ PID_status PID_experiment()
 
         //PLug it into the control function
         throttle += PID_command(target, angvel_z, curr_millis, &controller);
+
+        //Clamp the output
         if (throttle > 2.5){
 			throttle = 2.5;
 		} else if (throttle < -2.5){
@@ -56,7 +59,6 @@ PID_status PID_experiment()
         if(vi_hdd_command(HDD_CHOICE, throttle) == HDD_COMMAND_FAILURE)
             return PID_EXPERIMENT_FAILURE;
 
-        //vi_delay_ms(1000);
     }
 
 
