@@ -42,11 +42,6 @@ typedef enum {
 } vi_HDD;
 
 typedef enum {
-    VI_HDD_ARM,
-    VI_HDD_CALIBRATE
-} vi_HDD_arm;
-
-typedef enum {
 //Start CSS
 	VI_CSS_PX1,
 	VI_CSS_PX2,
