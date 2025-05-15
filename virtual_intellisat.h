@@ -397,10 +397,11 @@ vi_delay_ms(
  *
  * @return Void.
  */
-void
-vi_print(
-    const char* string
+void 
+vi_print (
+  const char *message, ...
 );
+
 
 
 /**@brief Configure the data logger for a particular mode.
