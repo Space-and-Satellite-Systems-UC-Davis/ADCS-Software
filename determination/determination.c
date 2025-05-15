@@ -200,6 +200,25 @@ determination(
     return DET_SUCCESS;
 }
 
+void get_earth_direction(
+    int year,
+    int month,
+    int day,
+    int hour,
+    int minute,
+    double second,
+    vec3 measured_mag,
+    vec3 measured_sun, 
+    vec3* earth_attitude) {
+
+    mat3 attitude;
+    determination(year, month, day, hour, minute, second, measured_mag, measured_sun, &attitude);
+
+    vec3 down;
+    vec_set(0, 0, 1, &down);
+    mat_vec_mult(attitude, down, earth_attitude);
+}
+
 
 
 

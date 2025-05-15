@@ -13,6 +13,8 @@
 #include "control/experiment/PID_experiment.h"
 #include "adcs_math/vector.h"
 
+#include <stdbool.h>
+
 
 adcs_main_status
 ADCS_MAIN(adcs_mode mode) {
@@ -26,7 +28,9 @@ ADCS_MAIN(adcs_mode mode) {
                     break;
 
                 case COILS_TESTING_SUCCESS: //noop
+                    break;
                 case COILS_TESTING_FAILURE: //noop
+                    break;
             }
             break;
         case ADCS_COILS_TESTING:
@@ -38,7 +42,9 @@ ADCS_MAIN(adcs_mode mode) {
                     break;
 
                 case DETUMBLING_SUCCESS: //noop
+                    break;
                 case DETUMBLING_FAILURE: //noop
+                    break;
             }
             break;
         case ADCS_HDD_EXP_ANGVEL:
@@ -56,21 +62,25 @@ ADCS_MAIN(adcs_mode mode) {
             vi_print("Testing!");
             break;
     }
+
+    return ADCS_MAIN_SUCCESS;
 }
 
 adcs_mode ADCS_recommend_mode(){
     static int iteration = 0; //Starts as true on reboot
+    adcs_mode mode;
 
     if (iteration == 0) {
-        return ADCS_HDD_EXP_ANGVEL;
-        // loop through other experiments
+        mode = ADCS_HDD_EXP_ANGVEL;
+    // loop through other experiments
     } else if (iteration % 3 == 1) {
-        return ADCS_HDD_EXP_TRIAD;
+        mode = ADCS_HDD_EXP_TRIAD;
     } else if (iteration % 3 == 2) {
-        return ADCS_HDD_EXP_RAMP;
-    } else if (iteration % 3 == 0) {
-        return ADCS_HDD_EXP_ANGVEL;
+        mode = ADCS_HDD_EXP_RAMP;
+    } else /*if (iteration % 3 == 0)*/ {
+        mode = ADCS_HDD_EXP_ANGVEL;
     } 
 
     iteration++;
+    return mode;
 }

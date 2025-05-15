@@ -10,8 +10,6 @@
 #ifndef ADCS_H
 #define ADCS_H
 
-#include "virtual_intellisat.h"
-
 
 typedef enum {
 	ADCS_DETUMBLE,
@@ -33,6 +31,10 @@ typedef enum {
 } adcs_main_status; //TODO: full list
 
 
+#ifdef __cplusplus
+extern "C" {
+#endif//__cplusplus
+
 /**@brief Command ADCS to run a mode.
  *
  * Blocks during mode execution.
@@ -44,6 +46,7 @@ typedef enum {
 adcs_main_status
 ADCS_MAIN(adcs_mode mode);
 
+
 /**@brief Ask ADCS to recommend a mode to run.
  *
  * @return The recommended mode.
@@ -51,10 +54,9 @@ ADCS_MAIN(adcs_mode mode);
 adcs_mode
 ADCS_recommend_mode();
 
+#ifdef __cplusplus
+}
+#endif//__cplusplus
+
 
 #endif//ADCS_H
-
-
-
-
-

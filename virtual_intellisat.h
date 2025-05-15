@@ -19,6 +19,12 @@
 #ifndef VIRTUAL_INTELLISAT_H
 #define VIRTUAL_INTELLISAT_H
 
+#include "ADCS.h"
+
+#include <stdint.h>
+
+
+/*################ SENSORS AND ACTUATORS ################*/
 
 typedef enum {
     VI_MAG1,
@@ -78,10 +84,76 @@ typedef enum {
 	VI_IMU2_Y,
 	
 	VI_IMU1_Z,
-	VI_IMU2_Z,
+	VI_IMU2_Z
 //End IMU
 } vi_sensor;
 
+typedef enum {
+	VI_TEMP1_X,
+	VI_TEMP2_X,
+
+	VI_TEMP1_Y,
+	VI_TEMP2_Y,
+
+	VI_TEMP1_Z,
+	VI_TEMP2_Z
+} vi_temp_sensor;
+
+typedef enum {
+	VI_SP1_X,
+	VI_SP2_X,
+
+	VI_SP1_Y,
+	VI_SP2_Y
+} vi_solar_panel;
+
+/*################## ACTUATOR COMMANDS ##################*/
+
+typedef enum {
+    HDD_COMMAND_SUCCESS,
+    HDD_COMMAND_FAILURE
+} vi_hdd_command_status;
+
+/**@brief Send a throttle command to the HDD.
+ *
+ * @param hdd Which HDD to command.
+ * @param throttle The desired throttle in the range [-1.0, 1.0].
+ *
+ * Intellisat must check these bounds for the input.
+ *
+ * Positive throttle must correspond to positive angular
+ *  acceleration as defined by the satellite's positive Z axis
+ *  and the Right-Hand-Rule.
+ *
+ * @return vi_hdd_command_status A return code.
+ */
+vi_hdd_command_status
+vi_hdd_command(
+    vi_HDD hdd,
+    double throttle
+);
+
+
+typedef enum {
+	VI_CONTROL_COIL_SUCCESS,
+	VI_CONTROL_COIL_FAILURE
+} vi_control_coil_status;
+
+/**@brief Set the coils' dipole vector.
+ *
+ * @param command_x,command_y,command_z The dipole vector.
+ *
+ * @return vi_control_coil_status A return code, success/failure.
+ */
+vi_control_coil_status 
+vi_control_coil(
+	double command_x,
+	double command_y,
+	double command_z
+);
+
+
+/*################### SENSOR READINGS ###################*/
 
 typedef enum {
     GET_EPOCH_SUCCESS,
@@ -120,7 +192,7 @@ typedef enum {
  */
 vi_get_curr_millis_status
 vi_get_curr_millis(
-    int *curr_millis
+    uint64_t *curr_millis
 );
 
 
@@ -149,29 +221,104 @@ vi_get_angvel(
 
 
 typedef enum {
-    HDD_COMMAND_SUCCESS,
-    HDD_COMMAND_FAILURE
-} vi_hdd_command_status;
+	VI_GET_MAG_SUCCESS,
+	VI_GET_MAG_FAILURE
+} vi_get_mag_status;
 
-/**@brief Send a throttle command to the HDD.
+/**@brief Get the current magnetic field value.
  *
- * @param hdd Which HDD to command.
- * @param throttle The desired throttle in the range [-1.0, 1.0].
+ * @param mag Which magnetometer to read from.
+ * @param mag_x,mag_y,mag_z The magnetic field vector.
  *
- * Intellisat must check these bounds for the input.
- *
- * Positive throttle must correspond to positive angular
- *   acceleration as defined by the satellite's positive Z axis
- *   and the Right-Hand-Rule.
- *
- * @return vi_hdd_command_status A return code.
+ * @return vi_get_mag_status A return code, success/failure.
  */
-vi_hdd_command_status
-vi_hdd_command(
-    vi_HDD hdd,
-    double throttle
+vi_get_mag_status
+vi_get_mag(
+    vi_MAG mag,
+	double *mag_x,
+	double *mag_y,
+	double *mag_z
 );
 
+
+typedef enum {
+    VI_GET_CSS_SUCCESS,
+    VI_GET_CSS_FAILURE
+} vi_get_css_status;
+
+/**@brief Get a coarse sun sensor (CSS) reading.
+ *
+ * @param css Which CSS to read from.
+ * @param magnitude Return-by-reference pointer.
+ *
+ * The CSS' magnitude would ideally in the range [0, 1]
+ *  with 1 corresponding to the sun being directly overhead,
+ *  but users should expect the output of this function to
+ *  deviations both above and below this range.
+ *
+ * @return vi_get_css_status A return code, success/failure.
+ */
+vi_get_css_status
+vi_get_css(
+    vi_sensor css,
+    double *magnitude
+);
+
+typedef enum {
+    VI_GET_TEMP_SUCCESS,
+    VI_GET_TEMP_FAILURE
+} vi_get_temp_status;
+
+/**@brief Get a temperature sensor reading.
+ *
+ * @param sensor Which temperature sensor to read from.
+ * @param temp Return-by-reference pointer.
+ *
+ * @return vi_get_temp_status A return code, success/failure.
+ */
+vi_get_temp_status 
+vi_get_temp(
+	vi_temp_sensor sensor, 
+	double* temp
+);
+
+/**@brief Get a coils current reading.
+ *
+ * @param currentX, currentY, currentZ Return-by-reference pointer for each of the coils' current
+ *
+ * @return vi_get_coils_current_status A return code, success/failure.
+ */
+typedef enum {
+    VI_GET_COILS_CURRENT_SUCCESS,
+    VI_GET_COILS_CURRENT_FAILURE
+} vi_get_coils_current_status;
+
+vi_get_coils_current_status
+vi_get_coils_current(
+	double* currentX,
+	double* currentY, 
+	double* currentZ
+);
+
+/**@brief Get a solar panel current reading.
+ *
+ * @param sp Which solar panel to read from.
+ * @param current Return-by-reference pointer.
+ *
+ * @return vi_get_solar_panel_current_status A return code, success/failure.
+ */
+typedef enum {
+    VI_GET_SOLAR_PANEL_CURRENT_SUCCESS,
+    VI_GET_SOLAR_PANEL_CURRENT_FAILURE
+} vi_get_solar_panel_current_status;
+
+vi_get_solar_panel_current_status
+vi_get_solar_panel_current(
+	vi_solar_panel sp,
+	double* current
+);
+
+/*###################### CONSTANTS ######################*/
 
 typedef enum{
 	GET_CONSTANT_SUCCESS,
@@ -181,9 +328,10 @@ typedef enum{
 /**@brief Get the current calibration values for a sensor.
  *
  * @param sensor we want calibration for.
- * @param offset and scalar Return-by-reference ptrs.
- * @param filter_constant attenuation constant between 0.0 - 1.0 for lowpass filter calculation; 
- * 						  a greater value is a greater damp on unusually large jumps in sensor data
+ * @param offset,scalar Return-by-reference ptrs.
+ * @param filter_constant An attenuation constant between
+ *  0.0 - 1.0 for lowpass filter calculation. A greater
+ *  value causes more damping on large jumps in sensor data.
  *
  * @return vi_get_constant_status A return code, success/failure.
  */
@@ -193,6 +341,20 @@ vi_get_sensor_calibration(
 	float *offset,
 	float *scalar,
 	float *filter_constant
+);
+
+
+/**@brief Get the current status (on/off) of a given sensor.
+ *
+ * @param sensor we want calibration for.
+ * @param status (boolean) for Return-by-reference pointer.
+ *
+ * @return vi_get_constant_status A return code, success/failure.
+ */
+vi_get_constant_status
+vi_get_sensor_status(
+	vi_sensor sensor,
+	int *sensor_status
 );
 
 
@@ -215,40 +377,7 @@ vi_get_TLE(
 );
 
 
-/**@brief Get the current status(on/off) of a given sensor.
- *
- * @param sensor we want calibration for.
- * @param status (boolean) for Return-by-reference pointer.
- *
- * @return vi_get_constant_status A return code, success/failure.
- */
-vi_get_constant_status
-vi_get_sensor_status(
-	vi_sensor sensor,
-	int *sensor_status
-);
-
-
-typedef enum {
-	VI_GET_MAG_SUCCESS,
-	VI_GET_MAG_FAILURE
-} vi_get_mag_status;
-
-/**@brief Get the current magnetic field value.
- *
- * @param mag Which magnetometer to read from.
- * @param mag_x,mag_y,mag_z The magnetic field vector.
- *
- * @return vi_get_mag_status A return code, success/failure.
- */
-vi_get_mag_status
-vi_get_mag(
-    vi_MAG mag,
-	double *mag_x,
-	double *mag_y,
-	double *mag_z
-);
-
+/*###################### OPERATIONS ######################*/
 
 typedef enum {
     VI_DELAY_MS_SUCCESS,
@@ -269,29 +398,26 @@ vi_delay_ms(
 
 /**@brief Print a string.
  *
- * @param The string to print.
+ * @param string The string to print.
  *
  * @return Void.
  */
-void vi_print (const char *message, ...);
+void 
+vi_print (
+  const char *message, ...
+);
 
 
-typedef enum {
-	VI_CONTROL_COIL_SUCCESS,
-	VI_CONTROL_COIL_FAILURE
-} vi_control_coil_status;
 
-/**@brief Set the coils' dipole vector.
+/**@brief Configure the data logger for a particular mode.
  *
- * @param command_x,command_y,command_z The dipole vector.
+ * @param mode The logger mode setting.
  *
- * @return vi_control_coil_status A return code, success/failure.
+ * @return Void.
  */
-vi_control_coil_status 
-vi_control_coil(
-	double command_x,
-	double command_y,
-	double command_z
+void
+vi_configure_logging_mode(
+    adcs_mode mode
 );
 
 

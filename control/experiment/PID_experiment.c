@@ -2,6 +2,7 @@
 #include "virtual_intellisat.h"
 
 #include <math.h>
+#include <stdint.h>
 
 //TODO: IMU, HDD alternation?
 #define IMU_CHOICE VI_IMU1
@@ -10,7 +11,6 @@
 #define P_GAIN 0.4
 #define I_GAIN 0
 #define D_GAIN 0.1
-
 
 PID_status PID_experiment()
 {
@@ -25,7 +25,7 @@ PID_status PID_experiment()
         	    	return PID_EXPERIMENT_FAILURE;
 
     //Get the current time (Virtual Intellisat)
-    int curr_millis = 0;
+    uint64_t curr_millis = 0;
     if(vi_get_curr_millis(&curr_millis) == GET_CURR_MILLIS_FAILURE)
         return PID_EXPERIMENT_FAILURE;
 
