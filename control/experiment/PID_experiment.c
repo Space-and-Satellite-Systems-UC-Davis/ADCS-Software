@@ -7,7 +7,6 @@
 //TODO: IMU alternation?
 //      Negative PID output should activate VI_HDD2
 #define IMU_CHOICE VI_IMU1
-#define HDD_CHOICE VI_HDD1
 
 #define P_GAIN 0.4
 #define I_GAIN 0
@@ -21,6 +20,8 @@ PID_status PID_experiment()
     double angvel_x = 0, angvel_y = 0, angvel_z = 0;
 
     double throttle = 0;
+
+    vi_HDD hdd_choice = VI_HDD1;
 
     if(vi_get_angvel(IMU_CHOICE, &angvel_x, &angvel_y, &angvel_z) == GET_ANGVEL_FAILURE)
         return PID_EXPERIMENT_FAILURE;
@@ -49,14 +50,22 @@ PID_status PID_experiment()
         throttle += PID_command(target, angvel_z, curr_millis, &controller);
 
         //Clamp the output
-        if (throttle > 2.5){
-			throttle = 2.5;
-		} else if (throttle < -2.5){
-			throttle = -2.5;
-		}
+        if (throttle >= 0) {
+            hdd_choice = VI_HDD1;
+            if (throttle > 2.5){
+			    throttle = 2.5;
+            }
+		} else {
+            hdd_choice = VI_HDD2;
+            if (throttle < -2.5){
+                throttle = -2.5;
+            }
+        }
+
+        
 
         //Take output and plug it into HDD 
-        if(vi_hdd_command(HDD_CHOICE, throttle) == HDD_COMMAND_FAILURE)
+        if(vi_hdd_command(HDD_CHOICE, fabs(throttle)) == HDD_COMMAND_FAILURE)
             return PID_EXPERIMENT_FAILURE;
 
     }
