@@ -8,7 +8,7 @@
 #define IMU_CHOICE VI_IMU1
 #define HDD_CHOICE VI_HDD1
 
-PID_status PID_experiment()
+PID_status PID_experiment(double target, int infinite)
 {
     //Get current angular velocity for z axis
     double angvel_x = 0, angvel_y = 0, angvel_z = 0;
@@ -22,11 +22,10 @@ PID_status PID_experiment()
 
     //Declare and initlialize PID controller
     PID_controller controller;
-    double target = 0;
     PID_init(target, angvel_z, curr_millis, 1, 1, 1, &controller);
     
     //Run a while loop 
-    while (fabs(target - angvel_z) > 0.1)
+    while (infinite || (fabs(target - angvel_z) > 0.1))
     {
         //Get the current time (Virtual Intellisat)
         if(vi_get_curr_millis(&curr_millis) == GET_CURR_MILLIS_FAILURE)

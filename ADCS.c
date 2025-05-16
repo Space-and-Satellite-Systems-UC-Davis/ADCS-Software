@@ -11,6 +11,7 @@
 #include "determination/determination.h"
 #include "control/detumble/detumble.h"
 #include "adcs_math/vector.h"
+#include "control/experiment/PID_experiment.h"
 
 #include <stdbool.h>
 
@@ -55,6 +56,15 @@ ADCS_MAIN(adcs_mode mode) {
         case ADCS_TESTING:
             vi_print("Testing!");
             break;
+        case ADCS_ROTISSERIE:
+            switch (PID_experiment(.0872665, 1)){
+                case PID_EXPERIMENT_FAILURE:
+                    return ADCS_ROTISSERIE_ERR;
+                case PID_EXPERIMENT_SUCCESS:
+                    break;
+            }
+
+
     }
 
     return ADCS_MAIN_SUCCESS;
