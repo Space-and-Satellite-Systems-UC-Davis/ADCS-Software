@@ -17,7 +17,8 @@ typedef enum {
 	ADCS_HDD_EXP_TRIAD,
     ADCS_HDD_EXP_RAMP,
     ADCS_TESTING,
-    ADCS_COILS_TESTING
+    ADCS_COILS_TESTING,
+    ADCS_ROTISSERIE
 } adcs_mode; //TODO: full list
 
 typedef enum {
@@ -27,7 +28,8 @@ typedef enum {
    ADCS_MAIN_HDD_ERR,
    ADCS_MAIN_IMU_ERR,
    ADCS_MAIN_DETUMBLE_ERR,
-   ADCS_MAIN_COILS_TESTING_ERR
+   ADCS_MAIN_COILS_TESTING_ERR,
+   ADCS_ROTISSERIE_ERR
 } adcs_main_status; //TODO: full list
 
 

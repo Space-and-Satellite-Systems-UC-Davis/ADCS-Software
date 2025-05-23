@@ -14,7 +14,7 @@ typedef enum PID_experiment{
  *
  * @return PID_status A return code.
  */
-PID_status PID_experiment();
+PID_status PID_experiment(double target, int infinite);
 
 
 #endif//PID_EXPERIMENT_H

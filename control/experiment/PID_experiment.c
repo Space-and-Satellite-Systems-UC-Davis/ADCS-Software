@@ -13,7 +13,7 @@
 #define I_GAIN 0
 #define D_GAIN 0.1
 
-PID_status PID_experiment()
+PID_status PID_experiment(double target, int infinite)
 {
 	//Verify experiment is running
 
@@ -32,11 +32,10 @@ PID_status PID_experiment()
 
     //Declare and initlialize PID controller
     PID_controller controller;
-    double target = 0;
     PID_init(target, angvel_z, curr_millis, P_GAIN, I_GAIN, D_GAIN, &controller);
     
     //Run a while loop 
-    while (fabs(target - angvel_z) > 0.1)
+    while (infinite || (fabs(target - angvel_z) > 0.1))
     {
     	if(vi_get_angvel(IMU_CHOICE, &angvel_x, &angvel_y, &angvel_z) == GET_ANGVEL_FAILURE)
     	    	return PID_EXPERIMENT_FAILURE;
