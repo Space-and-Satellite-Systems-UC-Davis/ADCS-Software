@@ -41,7 +41,7 @@ determination_exp_status determination_experiment()
     PID_init(target, angvel_z, prev_millis, 1, 1, 1, &controller);
     
     //Run a while loop 
-    while (abs(target - angvel_z) > 0.1)
+    while (fabs(target - angvel_z) > 0.1)
     {
         vi_delay_ms(100);
         vi_get_epoch(&year, &month, &day, &hour, &minute, &second);
