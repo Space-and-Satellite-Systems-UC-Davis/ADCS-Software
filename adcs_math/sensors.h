@@ -51,7 +51,7 @@ float lowpass_filter(float currValue, float prevValue, float filterConstant);
 float get_sensor_calibration(vi_sensor sensor, float currValue, float prevValue, float offset, float gain, float filterConstant);
 
 /**
- * @brief safely calculate delta_t accounting for integer overflow
+ * @brief Safely calculate delta_t accounting for integer overflow
  * 
  * @param currTime current timestamp in milliseconds
  * @param prevTime previous timestamp in milliseconds
@@ -61,7 +61,7 @@ float get_sensor_calibration(vi_sensor sensor, float currValue, float prevValue,
 uint64_t get_delta_t(uint64_t currTime, uint64_t prevTime);
 
 /**
- * @brief Generate a permutation of active sensors.:qa
+ * @brief Generate a permutation of active sensors.
  */
 char get_alternation(vi_sensor sensor, unsigned int generation);
 
@@ -70,6 +70,18 @@ char get_alternation(vi_sensor sensor, unsigned int generation);
  * threshold for eclipse is 0 - 0.25 sun sensors reading magnitude
 */
 int is_in_eclipse();
+
+/**@brief Return a choice of sensors in a pair for the current alternation.
+ *
+ * @param sensor the sensor pair to choose between.
+ *  Either sensor in the pair (e.g. VI_CSS_PX1 and VI_CSS_PX2) can be
+ *  specified here to choose the whole pair.
+ * @param generation The generation number of the alternation [0-255].
+ *
+ * @return 1 or 2 The sensor choice.
+ */
+int sensor_pair_choice(vi_sensor sensor, int generation);
+
 
 #endif
 
