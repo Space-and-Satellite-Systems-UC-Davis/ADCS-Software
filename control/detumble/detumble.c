@@ -77,7 +77,7 @@ detumble_status detumble(vec3 needle, bool isTesting) {
   uint64_t startTime = 0;
   vec3 mdm;                      // Magnetic Dipole Moment
   vi_MAG magnetometer = VI_MAG1; // Initialize it to VI_MAG1
-  static int generation = 0;
+  int generation = vi_get_detumbling_generation();
 
   // Ger sensor pair choice
   if (sensor_pair_choice(VI_MAG1_X, generation) == 1) {
@@ -178,8 +178,8 @@ detumble_status detumble(vec3 needle, bool isTesting) {
     keepDetumbling = aboveThreshold(angVel, 0.5) && !timeout;
   }
 
-  // Increment the generation
-  generation++;
+  // Increment the generation if we succeeded
+  vi_increment_detumbling_generation();
 
   return DETUMBLING_SUCCESS;
 }

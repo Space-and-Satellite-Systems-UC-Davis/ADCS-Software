@@ -372,6 +372,34 @@ vi_get_TLE(
 );
 
 
+/**@brief Get the experiment generation.
+ *
+ * @return The generation as an int.
+ */
+int vi_get_experiment_generation();
+
+
+/**@brief Increment the experiment generation.
+ *
+ * @return Void.
+ */
+void vi_increment_experiment_generation();
+
+
+/**@brief Get the detumbling generation.
+ *
+ * @return The generation as an int.
+ */
+int vi_get_detumbling_generation();
+
+
+/**@brief Increment the detumbling generation.
+ *
+ * @return Void.
+ */
+void vi_increment_detumbling_generation();
+
+
 /*###################### OPERATIONS ######################*/
 
 typedef enum {
