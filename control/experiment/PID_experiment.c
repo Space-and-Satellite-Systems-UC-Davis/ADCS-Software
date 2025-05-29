@@ -62,10 +62,9 @@ PID_status PID_experiment()
             }
         }
 
-        
 
         //Take output and plug it into HDD 
-        if(vi_hdd_command(HDD_CHOICE, fabs(throttle)) == HDD_COMMAND_FAILURE)
+        if(vi_hdd_command(hdd_choice, fabs(throttle)) == HDD_COMMAND_FAILURE)
             return PID_EXPERIMENT_FAILURE;
 
     }
