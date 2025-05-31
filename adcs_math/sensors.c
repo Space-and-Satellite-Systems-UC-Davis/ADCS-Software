@@ -107,6 +107,7 @@ int sensor_pair_choice(vi_sensor sensor, int generation) {
             int mask = 8;
     }
 
+    
     if ((alternations[generation%256] | (1 << mask)) != 0) {
         return 2;
     } else {
