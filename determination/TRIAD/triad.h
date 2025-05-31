@@ -3,7 +3,7 @@
  * @brief Interface to the TRIAD algorithm.
  *
  * TRIAD calculates REALOP's relative attitude as a rotation matrix
- *  that represents the rotation from Earth-fixed coordinates to 
+ *  that represents the rotation from Earth-fixed coordinates to
  *  satellite-fixed coordinates.
  * It does so by comparing a "triad" of vectors from each frame
  *  and working backwards to figure out their relationship.
@@ -28,14 +28,10 @@
 #ifndef TRIAD_H
 #define TRIAD_H
 
-#include "adcs_math/vector.h"
 #include "adcs_math/matrix.h"
+#include "adcs_math/vector.h"
 
-
-typedef enum {
-    TRIAD_SUCCESS,
-    TRIAD_NORM_FAILURE
-} triad_run_status;
+typedef enum { TRIAD_SUCCESS, TRIAD_NORM_FAILURE } triad_run_status;
 
 /**@brief Calculate the satellite's attitude given the reference
  *  and sensor sun and mag vectors.
@@ -51,19 +47,7 @@ typedef enum {
  *
  * @return triad_run_status Error code.
  */
-triad_run_status
-triad(
-	vec3 bod_sun,
-    vec3 bod_mag,
-	vec3 ref_sun,
-    vec3 ref_mag,
-	mat3 *output
-);
+triad_run_status triad(vec3 bod_sun, vec3 bod_mag, vec3 ref_sun, vec3 ref_mag,
+                       mat3 *output);
 
-
-#endif//TRIAD_H
-
-
-
-
-
+#endif // TRIAD_H
