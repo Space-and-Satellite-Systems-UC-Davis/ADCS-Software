@@ -9,7 +9,6 @@
 #ifndef POS_LOOKUP_H
 #define POS_LOOKUP_H
 
-
 typedef enum {
     POS_LOOKUP_SUCCESS,
     SGP4_ERROR,
@@ -32,23 +31,9 @@ typedef enum {
  *
  * @return pos_lookup_status Error code.
  */
-pos_lookup_status
-pos_lookup (
-	char *tle_line1,
-	char *tle_line2,
-	double UTC1,
-	double UTC2,
-	double *longitude,
-	double *latitude,
-	double *altitude,
-    double *geocentric_radius,
-    double *geocentric_latitude
-);
+pos_lookup_status pos_lookup(char *tle_line1, char *tle_line2, double UTC1,
+                             double UTC2, double *longitude, double *latitude,
+                             double *altitude, double *geocentric_radius,
+                             double *geocentric_latitude);
 
-
-#endif//POS_LOOKUP_H
-
-
-
-
-
+#endif // POS_LOOKUP_H
