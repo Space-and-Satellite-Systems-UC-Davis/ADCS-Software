@@ -81,5 +81,8 @@ determination_exp_status determination_experiment() {
     prev_millis = curr_millis;
   }
 
+  // Increment generation on successful execution
+  vi_increment_experiment_generation();
+
   return DETERMINATION_EXPERIMENT_SUCCESS;
 }

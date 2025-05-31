@@ -72,5 +72,8 @@ PID_status PID_experiment(double target, int infinite) {
       return PID_EXPERIMENT_FAILURE;
   }
 
+  // Increment generation on successful execution
+  vi_increment_experiment_generation();
+
   return PID_EXPERIMENT_SUCCESS;
 }
