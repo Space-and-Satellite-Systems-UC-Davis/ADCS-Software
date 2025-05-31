@@ -1,77 +1,88 @@
 #include "control/experiment/determination_experiment.h"
-#include "determination/determination.h"
-#include "adcs_math/vector.h"
 #include "adcs_math/sensors.h"
+#include "adcs_math/vector.h"
+#include "determination/determination.h"
 
-//TODO: MAG, HDD alternation?
-#define MAG_CHOICE VI_MAG1
+// TODO: HDD alternation? (Update: rn it's defaulted to VI_HDD1)
 #define HDD_CHOICE VI_HDD1
 
+determination_exp_status determination_experiment() {
+  mat3 prevAttitude;
+  mat3 currAttitude;
+  int year, month, day, hour, minute, second;
+  vec3 mag;
+  vec3 sun;
+  vi_MAG mag_choice;
+  vi_HDD hdd_choice;
 
-determination_exp_status determination_experiment()
-{
-    mat3 prevAttitude;
-    mat3 currAttitude;
-    int year, month, day, hour, minute, second;
-    vec3 mag;
-    vec3 sun;
+  // Get current generation for sensor alternation
+  int generation = vi_get_experiment_generation();
 
+  // Get magnetometer choice
+  if (sensor_pair_choice(VI_MAG1_X, generation) == 1) { mag_choice = VI_MAG1; } else { mag_choice = VI_MAG2; }
+
+  // Choice which HDD to run
+  hdd_choice = VI_HDD1;
+
+  vi_get_epoch(&year, &month, &day, &hour, &minute, &second);
+  vi_get_mag(mag_choice, &mag.x, &mag.y, &mag.z);
+
+  // TODO: default values for now, waiting for sun sensors to implement get_sun
+  sun.x = 0;
+  sun.y = 0;
+  sun.z = 0;
+
+  determination(year, month, day, hour, minute, second, mag, sun,
+                &prevAttitude);
+
+  // TODO: generalizing initial angular velocity as 0; might have to fix
+  int angvel_z = 0;
+
+  // Get the current time (Virtual Intellisat)
+  uint64_t prev_millis = 0;
+  uint64_t curr_millis = 0;
+  if (vi_get_curr_millis(&prev_millis) == GET_CURR_MILLIS_FAILURE)
+    return DETERMINATION_EXPERIMENT_FAILURE;
+
+  // Declare and initlialize PID controller
+  PID_controller controller;
+  double target = 0;
+  PID_init(target, angvel_z, prev_millis, 1, 1, 1, &controller);
+
+  // Run a while loop
+  while (fabs(target - angvel_z) > 0.1) {
+    vi_delay_ms(100);
     vi_get_epoch(&year, &month, &day, &hour, &minute, &second);
-    vi_get_mag(MAG_CHOICE, &mag.x, &mag.y, &mag.z);
-    
-    //TODO: default values for now, waiting for sun sensors to implement get_sun
+    vi_get_mag(mag_choice, &mag.x, &mag.y, &mag.z);
+    // default values for now, waiting for sun sensors to implement get_sun
     sun.x = 0;
     sun.y = 0;
     sun.z = 0;
 
-    determination(year, month, day, hour, minute, second, mag, sun, &prevAttitude);
+    determination(year, month, day, hour, minute, second, mag, sun,
+                  &currAttitude);
+    // Get the current time (Virtual Intellisat)
+    if (vi_get_curr_millis(&curr_millis) == GET_CURR_MILLIS_FAILURE)
+      return DETERMINATION_EXPERIMENT_FAILURE;
 
-    //TODO: generalizing initial angular velocity as 0; might have to fix
-    int angvel_z = 0;
+    int delta_t = get_delta_t(curr_millis, prev_millis);
 
-    //Get the current time (Virtual Intellisat)
-    uint64_t prev_millis = 0;
-    uint64_t curr_millis = 0;
-    if(vi_get_curr_millis(&prev_millis) == GET_CURR_MILLIS_FAILURE)
-        return DETERMINATION_EXPERIMENT_FAILURE;
+    mat3 derivative;
+    mat_sub(currAttitude, prevAttitude, &derivative);
+    mat_scalar(1.0 / delta_t, derivative, &derivative);
+    double zrotation = derivative.y1;
 
-    //Declare and initlialize PID controller
-    PID_controller controller;
-    double target = 0;
-    PID_init(target, angvel_z, prev_millis, 1, 1, 1, &controller);
-    
-    //Run a while loop 
-    while (fabs(target - angvel_z) > 0.1)
-    {
-        vi_delay_ms(100);
-        vi_get_epoch(&year, &month, &day, &hour, &minute, &second);
-        vi_get_mag(MAG_CHOICE, &mag.x, &mag.y, &mag.z);
-        // default values for now, waiting for sun sensors to implement get_sun
-        sun.x = 0;
-        sun.y = 0;
-        sun.z = 0;
+    // PLug it into the control function
+    double throttle = PID_command(target, zrotation, curr_millis, &controller);
+    // Take output and plug it into HDD
+    if (vi_hdd_command(HDD_CHOICE, throttle) == HDD_COMMAND_FAILURE)
+      return DETERMINATION_EXPERIMENT_FAILURE;
+    prevAttitude = currAttitude;
+    prev_millis = curr_millis;
+  }
 
-        determination(year, month, day, hour, minute, second, mag, sun, &currAttitude);
-        //Get the current time (Virtual Intellisat)
-        if(vi_get_curr_millis(&curr_millis) == GET_CURR_MILLIS_FAILURE)
-            return DETERMINATION_EXPERIMENT_FAILURE;
-        
-        int delta_t = get_delta_t(curr_millis, prev_millis);
-        
-        mat3 derivative;
-        mat_sub(currAttitude, prevAttitude, &derivative);
-        mat_scalar(1.0/delta_t, derivative, &derivative);
-        double zrotation = derivative.y1;
+  // Increment generation on successful execution
+  vi_increment_experiment_generation();
 
-        //PLug it into the control function
-        double throttle = PID_command(target, zrotation, curr_millis, &controller);
-        //Take output and plug it into HDD 
-        if(vi_hdd_command(HDD_CHOICE, throttle) == HDD_COMMAND_FAILURE)
-            return DETERMINATION_EXPERIMENT_FAILURE;
-        prevAttitude = currAttitude;
-        prev_millis = curr_millis;
-    }
-
-    return DETERMINATION_EXPERIMENT_SUCCESS;
+  return DETERMINATION_EXPERIMENT_SUCCESS;
 }
-
