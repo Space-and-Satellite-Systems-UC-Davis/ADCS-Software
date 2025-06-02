@@ -24,10 +24,8 @@ const double B_Earth = 1;                // TODO: I need
 const double decayPercent = 0.2;         // TODO: Decide on percentage
 
 detumble_status detumbleError(bool isTesting) {
-    if (isTesting)
-        return COILS_TESTING_FAILURE;
-    else
-        return DETUMBLING_FAILURE;
+    if (isTesting) return COILS_TESTING_FAILURE;
+    else return DETUMBLING_FAILURE;
 }
 
 vec3 findAngVel(vec3 b0, vec3 b1, uint64_t delta_t) {
@@ -35,8 +33,7 @@ vec3 findAngVel(vec3 b0, vec3 b1, uint64_t delta_t) {
     vec3 bdot;   // The velocity vector pointing from b0 to b1
     vec3 angVel; // The angular velocity
 
-    if (delta_t == 0)
-        return (vec3){0.0, 0.0, 0.0};
+    if (delta_t == 0) return (vec3){0.0, 0.0, 0.0};
 
     bdot_control(b1, b0, delta_t, &bdot);
     vec_scalar((1.0 / vec_mag(b0)), bdot, &angVel);
@@ -97,11 +94,9 @@ detumble_status detumble(vec3 needle, bool isTesting) {
     generation = vi_get_detumbling_generation();
 
     // Ger sensor pair choice
-    if (sensor_pair_choice(VI_MAG1_X, generation) == 1) {
-        mag_choice = VI_MAG1;
-    } else {
-        mag_choice = VI_MAG2;
-    }
+    mag_choice = sensor_pair_choice(VI_MAG1_X, generation) == 1
+                 ? VI_MAG1
+                 : VI_MAG2 ;
 
     // Get the current time
     if (vi_get_curr_millis(&curr_millis) == GET_CURR_MILLIS_FAILURE) {

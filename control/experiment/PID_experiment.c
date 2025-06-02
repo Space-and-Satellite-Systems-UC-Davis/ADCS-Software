@@ -21,11 +21,9 @@ PID_status PID_experiment(double target, int infinite) {
   int generation = vi_get_experiment_generation();
 
   // Get IMU sensor choice
-  if (sensor_pair_choice(VI_IMU1_X, generation) == 1) {
-    imu_choice = VI_IMU1;
-  } else {
-    imu_choice = VI_IMU2;
-  }
+  imu_choice = sensor_pair_choice(VI_IMU1_X, generation) == 1
+               ? VI_IMU1
+               : VI_IMU2 ;
   
   // Verify experiment is running
 
