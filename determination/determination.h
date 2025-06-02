@@ -37,26 +37,10 @@ typedef enum {
  */
 determination_status
 determination(
-    int year,
-    int month,
-    int day,
-    int hour,
-    int minute,
-    double second,
-    vec3 measured_mag,
-    vec3 measured_sun,
     mat3 *attitude
 );
 
 void get_earth_direction(
-    int year,
-    int month,
-    int day,
-    int hour,
-    int minute,
-    double second,
-    vec3 measured_mag,
-    vec3 measured_sun, 
     vec3* earth_attitude);
 
 #endif//DETERMINATION_H

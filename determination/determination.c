@@ -7,6 +7,7 @@
 #include "determination/sun_lookup/sun_lookup.h"
 
 #include "adcs_math/matrix.h"
+#include "adcs_math/sensors.h"
 #include "adcs_math/vector.h"
 
 #include "ADCS.h"
@@ -30,9 +31,93 @@ typedef struct Determination_Cache {
 
 static determination_cache cache;
 
-determination_status determination(int year, int month, int day, int hour,
-                                   int minute, double second, vec3 measured_mag,
-                                   vec3 measured_sun, mat3 *attitude) {
+// TODO: Call getXXX from virtual_intellisat.h for time and mag
+// TODO: Write function to get all 12 sun sensor readings
+// TODO: Implement logic to turn CSS readings into a vec3
+
+vi_get_css_status get_measured_sun(int generation, vec3 *measured_sun) {
+
+    vi_sensor px_choice, nx_choice, py_choice, ny_choice, pz_choice, nz_choice;
+    double px, nx, py, ny, pz, nz;
+
+    px_choice = sensor_pair_choice(VI_CSS_PX1, generation) == 1 
+                ? VI_CSS_PX1 
+                : VI_CSS_PX2;
+
+    nx_choice = sensor_pair_choice(VI_CSS_NX1, generation) == 1 
+                ? VI_CSS_NX1 
+                : VI_CSS_NX2;
+
+    py_choice = sensor_pair_choice(VI_CSS_PY1, generation) == 1 
+                ? VI_CSS_PY1
+                : VI_CSS_PY2;
+
+    ny_choice = sensor_pair_choice(VI_CSS_NY1, generation) == 1 
+                ? VI_CSS_NY1
+                : VI_CSS_NY2;
+
+    pz_choice = sensor_pair_choice(VI_CSS_PZ1, generation) == 1 
+                ? VI_CSS_PZ1
+                : VI_CSS_PZ2;
+
+    nz_choice = sensor_pair_choice(VI_CSS_NZ1, generation) == 1 
+                ? VI_CSS_NZ1
+                : VI_CSS_NZ2;
+
+    if (vi_get_css(px_choice, &px) == VI_GET_CSS_FAILURE)
+        return VI_GET_CSS_FAILURE;
+
+    if (vi_get_css(nx_choice, &nx) == VI_GET_CSS_FAILURE)
+        return VI_GET_CSS_FAILURE;
+
+    if (vi_get_css(py_choice, &py) == VI_GET_CSS_FAILURE)
+        return VI_GET_CSS_FAILURE;
+
+    if (vi_get_css(ny_choice, &ny) == VI_GET_CSS_FAILURE)
+        return VI_GET_CSS_FAILURE;
+
+    if (vi_get_css(pz_choice, &pz) == VI_GET_CSS_FAILURE)
+        return VI_GET_CSS_FAILURE;
+
+    if (vi_get_css(nz_choice, &nz) == VI_GET_CSS_FAILURE)
+        return VI_GET_CSS_FAILURE;
+
+    // Implement logic to combine readings into vector
+    *measured_sun = (vec3){0.0, 0.0, 0.0};
+
+    return VI_GET_CSS_SUCCESS;
+}
+
+determination_status determination(mat3 *attitude) {
+
+    int year, month, day, hour, minute, second;
+
+    vec3 measured_mag;
+    vec3 measured_sun;
+
+    // Get current generation
+    int generation = vi_get_determination_generation();
+
+    // Ger magotometer choice
+    vi_MAG mag_choice = sensor_pair_choice(VI_MAG1_X, generation) == 1 
+                        ? VI_MAG1
+                        : VI_MAG2;
+
+    // Get current Time
+    if (vi_get_epoch(&year, &month, &day, &hour, &minute, &second) ==
+        GET_EPOCH_FAILURE)
+        return DET_UNHANDLED_ERROR;
+
+    // Get current magnetic field reading
+    if (vi_get_mag(mag_choice, &(measured_mag.x), &(measured_mag.y),
+                   &(measured_mag.z)) == VI_GET_MAG_FAILURE) {
+        return DET_UNHANDLED_ERROR;
+    }
+
+    // Get current Sun sensor readings
+    if (get_measured_sun(generation, &measured_sun) == VI_GET_CSS_FAILURE) {
+        return DET_UNHANDLED_ERROR;
+    }
 
     double UTC =
         julian_date(year, month, day, hour + minute / 60.0 + second / 3600.0);
@@ -160,16 +245,16 @@ determination_status determination(int year, int month, int day, int hour,
         break;
     }
 
+    // Increment generation on successful execution
+    vi_increment_determination_generation();
+
     return DET_SUCCESS;
 }
 
-void get_earth_direction(int year, int month, int day, int hour, int minute,
-                         double second, vec3 measured_mag, vec3 measured_sun,
-                         vec3 *earth_attitude) {
+void get_earth_direction(vec3 *earth_attitude) {
 
     mat3 attitude;
-    determination(year, month, day, hour, minute, second, measured_mag,
-                  measured_sun, &attitude);
+    determination(&attitude);
 
     vec3 down;
     vec_set(0, 0, 1, &down);

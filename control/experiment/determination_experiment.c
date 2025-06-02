@@ -9,31 +9,17 @@
 determination_exp_status determination_experiment() {
   mat3 prevAttitude;
   mat3 currAttitude;
-  int year, month, day, hour, minute, second;
-  vec3 mag;
   vec3 sun;
-  vi_MAG mag_choice;
-  vi_HDD hdd_choice;
 
   // Get current generation for sensor alternation
   int generation = vi_get_experiment_generation();
-
-  // Get magnetometer choice
-  if (sensor_pair_choice(VI_MAG1_X, generation) == 1) { mag_choice = VI_MAG1; } else { mag_choice = VI_MAG2; }
-
-  // Choice which HDD to run
-  hdd_choice = VI_HDD1;
-
-  vi_get_epoch(&year, &month, &day, &hour, &minute, &second);
-  vi_get_mag(mag_choice, &mag.x, &mag.y, &mag.z);
 
   // TODO: default values for now, waiting for sun sensors to implement get_sun
   sun.x = 0;
   sun.y = 0;
   sun.z = 0;
 
-  determination(year, month, day, hour, minute, second, mag, sun,
-                &prevAttitude);
+  determination(&prevAttitude);
 
   // TODO: generalizing initial angular velocity as 0; might have to fix
   int angvel_z = 0;
@@ -52,15 +38,13 @@ determination_exp_status determination_experiment() {
   // Run a while loop
   while (fabs(target - angvel_z) > 0.1) {
     vi_delay_ms(100);
-    vi_get_epoch(&year, &month, &day, &hour, &minute, &second);
-    vi_get_mag(mag_choice, &mag.x, &mag.y, &mag.z);
+
     // default values for now, waiting for sun sensors to implement get_sun
     sun.x = 0;
     sun.y = 0;
     sun.z = 0;
 
-    determination(year, month, day, hour, minute, second, mag, sun,
-                  &currAttitude);
+    determination(&currAttitude);
     // Get the current time (Virtual Intellisat)
     if (vi_get_curr_millis(&curr_millis) == GET_CURR_MILLIS_FAILURE)
       return DETERMINATION_EXPERIMENT_FAILURE;

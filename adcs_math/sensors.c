@@ -8,31 +8,8 @@ float lowpass_filter(float currValue, float prevValue, float filterConstant) {
 
 float get_sensor_calibration(vi_sensor sensor, float currValue, float prevValue,
                              float offset, float gain, float filterConstant) {
-    int year, month, day, hour, minute, second;
-    vi_get_epoch(&year, &month, &day, &hour, &minute, &second);
 
-    double UTC =
-        julian_date(year, month, day, hour + minute / 60.0 + second / 3600.0);
-
-    int recent_lookup = 0; // false
-
-    if ((UTC - cache[sensor].last_update_time) <=
-        julian_date(0, 0, 0, 5 / 60.0)) {
-        recent_lookup = 1; // true
-    } else {
-        cache[sensor].last_update_time = UTC;
-    }
-
-    if (recent_lookup) {
-        offset = cache[sensor].offset;
-        gain = cache[sensor].gain;
-        filterConstant = cache[sensor].filterConstant;
-    } else {
-        vi_get_sensor_calibration(sensor, &offset, &gain, &filterConstant);
-        cache[sensor].offset = offset;
-        cache[sensor].gain = gain;
-        cache[sensor].filterConstant = filterConstant;
-    }
+    vi_get_sensor_calibration(sensor, &offset, &gain, &filterConstant);
 
     return (lowpass_filter(currValue, prevValue, filterConstant) + offset) *
            gain;
@@ -121,36 +98,44 @@ int sensor_pair_choice(vi_sensor sensor, int generation) {
     switch (sensor) {
     case VI_CSS_PX1:
     case VI_CSS_PX2:
-        int mask = 1;
+        int mask = 0;
+        break;
     case VI_CSS_NX1:
     case VI_CSS_NX2:
-        int mask = 2;
+        int mask = 1;
+        break;
     case VI_CSS_PY1:
     case VI_CSS_PY2:
-        int mask = 3;
+        int mask = 2;
+        break;
     case VI_CSS_NY1:
     case VI_CSS_NY2:
-        int mask = 4;
+        int mask = 3;
+        break;
     case VI_CSS_PZ1:
     case VI_CSS_PZ2:
-        int mask = 5;
+        int mask = 4;
+        break;
     case VI_CSS_NZ1:
     case VI_CSS_NZ2:
-        int mask = 6;
+        int mask = 5;
+        break;
     case VI_MAG1_X:
     case VI_MAG2_X:
     case VI_MAG1_Y:
     case VI_MAG2_Y:
     case VI_MAG1_Z:
     case VI_MAG2_Z:
-        int mask = 7;
+        int mask = 6;
+        break;
     case VI_IMU1_X:
     case VI_IMU2_X:
     case VI_IMU1_Y:
     case VI_IMU2_Y:
     case VI_IMU1_Z:
     case VI_IMU2_Z:
-        int mask = 8;
+        int mask = 7;
+        break;
     }
 
 
