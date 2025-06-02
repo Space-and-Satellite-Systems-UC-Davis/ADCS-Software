@@ -42,6 +42,12 @@ typedef enum {
 } vi_HDD;
 
 typedef enum {
+	VI_CSS1,
+	VI_CSS2
+} vi_CSS_PX;
+
+
+typedef enum {
 //Start CSS
 	VI_CSS_PX1,
 	VI_CSS_PX2,
@@ -398,6 +404,19 @@ int vi_get_detumbling_generation();
  * @return Void.
  */
 void vi_increment_detumbling_generation();
+
+/**@brief Get the detumbling generation.
+ *
+ * @return The generation as an int.
+ */
+int vi_get_determination_generation();
+
+
+/**@brief Increment the detumbling generation.
+ *
+ * @return Void.
+ */
+void vi_increment_determination_generation();
 
 
 /*###################### OPERATIONS ######################*/
