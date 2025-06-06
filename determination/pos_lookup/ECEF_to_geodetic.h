@@ -16,7 +16,6 @@
 #ifndef ECEF_TO_GEODETIC_H
 #define ECEF_TO_GEODETIC_H
 
-
 /**@brief Converts cartesian ECEF coords into lon, lat, and alt.
  *
  * This conversion uses the WGS84 model of the Earth's ellipsoid.
@@ -29,19 +28,7 @@
  *
  * @return Error code: zero means success, anything else failure.
  */
-int wgs84EcefToGeo(
-    double x,
-    double y,
-    double z,
-    double *longitude,
-    double *latitude,
-    double *altitude
-);
+int wgs84EcefToGeo(double x, double y, double z, double *longitude,
+                   double *latitude, double *altitude);
 
-
-#endif//ECEF_TO_GEODETIC_H
-
-
-
-
-
+#endif // ECEF_TO_GEODETIC_H

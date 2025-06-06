@@ -12,6 +12,7 @@
 #include "control/detumble/detumble.h"
 #include "control/experiment/PID_experiment.h"
 #include "adcs_math/vector.h"
+#include "control/experiment/PID_experiment.h"
 
 #include <stdbool.h>
 
@@ -50,7 +51,7 @@ ADCS_MAIN(adcs_mode mode) {
         case ADCS_HDD_EXP_ANGVEL:
         	while (1){
         		//vi_hdd_command(0, 2.5);
-        		PID_experiment();
+        		PID_experiment(0, 0);
         		//vi_delay_ms(3000);
         	}
             break;
@@ -61,6 +62,15 @@ ADCS_MAIN(adcs_mode mode) {
         case ADCS_TESTING:
             vi_print("Testing!");
             break;
+        case ADCS_ROTISSERIE:
+            switch (PID_experiment(.0872665, 1)){
+                case PID_EXPERIMENT_FAILURE:
+                    return ADCS_ROTISSERIE_ERR;
+                case PID_EXPERIMENT_SUCCESS:
+                    break;
+            }
+
+
     }
 
     return ADCS_MAIN_SUCCESS;

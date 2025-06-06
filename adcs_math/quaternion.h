@@ -6,16 +6,14 @@
  */
 
 #ifndef QUATERNION_H
-#define QUATERNION_H 
+#define QUATERNION_H
 
 #include "vector.h"
 
-
 typedef struct Quaternion {
-	double scalar;
-	vec3  vector;
-} quat; //Use "quat" as the type.
-
+    double scalar;
+    vec3 vector;
+} quat; // Use "quat" as the type.
 
 /**@brief Load the output quaternion with the given scalar and vector.
  *
@@ -26,7 +24,6 @@ typedef struct Quaternion {
  * @return Void.
  */
 void quat_set(double scalar, vec3 vector, quat *output);
-
 
 /**@brief Multiply a quaternion by a scalar value.
  *
@@ -39,7 +36,6 @@ void quat_set(double scalar, vec3 vector, quat *output);
  * @return Void.
  */
 void quat_scalar(double scalar, quat quaternion, quat *output);
-
 
 /**@brief Multiply two quaternions.
  *
@@ -59,7 +55,6 @@ void quat_scalar(double scalar, quat quaternion, quat *output);
  */
 void quat_mult(quat left, quat right, quat *output);
 
-
 /**@brief Normalize a quaternion (stretch length to 1).
  *
  * @param quaternion The quaternion to normalize.
@@ -69,7 +64,6 @@ void quat_mult(quat left, quat right, quat *output);
  *                 0 if success
  */
 int quat_norm(quat quaternion, quat *output);
-
 
 /**@brief Find the conjugate of a quaternion.
  *
@@ -82,7 +76,6 @@ int quat_norm(quat quaternion, quat *output);
  */
 void quat_conj(quat quaternion, quat *output);
 
-
 /**@brief Find the inverse of a quaternion.
  *
  * The inverse is the normalized conjugate of a quaternion.
@@ -94,17 +87,15 @@ void quat_conj(quat quaternion, quat *output);
  */
 void quat_inverse(quat quaternion, quat *output);
 
-
 /**@brief Create a quaternion from an axis and rotation angle.
  *
  * @param angle The angle of rotation in radians around the axis.
- * @param vector The vector whose direction is the axis of rotation. 
+ * @param vector The vector whose direction is the axis of rotation.
  * @param output The quat* that will hold the resulting quaternion.
  *
  * @return Void.
  */
 void quat_from(double angle, vec3 vector, quat *output);
-
 
 /**@brief Apply the rotation represented by a quaternion to a vector.
  *
@@ -116,7 +107,6 @@ void quat_from(double angle, vec3 vector, quat *output);
  */
 void quat_rotate_vec(vec3 vector, quat quaternion, vec3 *output);
 
-
 /**@breif Calculate the magnitude (length) of a quaternion.
  *
  * @param quaternion The quaternion in question!
@@ -125,5 +115,4 @@ void quat_rotate_vec(vec3 vector, quat quaternion, vec3 *output);
  */
 double quat_mag(quat quaternion);
 
-
-#endif//QUATERNION_H
+#endif // QUATERNION_H

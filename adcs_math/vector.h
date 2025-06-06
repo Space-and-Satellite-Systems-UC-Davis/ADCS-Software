@@ -8,13 +8,11 @@
 #ifndef VECTOR_H
 #define VECTOR_H
 
-
 typedef struct Vector3 {
-		double x;
-		double y;
-		double z;
-} vec3; //Use "vec3" as the type.
-
+    double x;
+    double y;
+    double z;
+} vec3; // Use "vec3" as the type.
 
 /**@brief Load the output vector with the given values.
  *
@@ -24,7 +22,6 @@ typedef struct Vector3 {
  * @return Void.
  */
 void vec_set(double x, double y, double z, vec3 *output);
-
 
 /**@brief Multiply a vector by a scalar value.
  *
@@ -38,7 +35,6 @@ void vec_set(double x, double y, double z, vec3 *output);
  */
 void vec_scalar(double scalar, vec3 vector, vec3 *output);
 
-
 /**@brief Perform a cross product on two vectors.
  *
  * The cross product is NONCOMMUTATIVE!
@@ -50,8 +46,7 @@ void vec_scalar(double scalar, vec3 vector, vec3 *output);
  *
  * @return Void.
  */
-void vec_cross(vec3 left, vec3 right, vec3 *output); 
-
+void vec_cross(vec3 left, vec3 right, vec3 *output);
 
 /**@brief Add two vectors element-by-element.
  *
@@ -62,7 +57,6 @@ void vec_cross(vec3 left, vec3 right, vec3 *output);
  */
 void vec_add(vec3 first, vec3 second, vec3 *output);
 
-
 /**@brief Subtract two vectors element-by-element
  *
  * @param first, second The vectors to subtract.
@@ -70,8 +64,7 @@ void vec_add(vec3 first, vec3 second, vec3 *output);
  *
  * @return Void.
  */
-void vec_sub(vec3 first, vec3 second, vec3 *output); 
-
+void vec_sub(vec3 first, vec3 second, vec3 *output);
 
 /**@brief Find the bisector of two vectors.
  *
@@ -86,7 +79,6 @@ void vec_sub(vec3 first, vec3 second, vec3 *output);
  */
 void vec_bisect(vec3 first, vec3 second, vec3 *output);
 
-
 /**@brief Normalize a vector (stretch length to 1).
  *
  * It is likely that the length of a vector normalized with this
@@ -100,7 +92,6 @@ void vec_bisect(vec3 first, vec3 second, vec3 *output);
  */
 int vec_norm(vec3 vector, vec3 *output);
 
-
 /**@brief Calculate the dot product of two vectors.
  *
  * @param first,second The vectors to dot.
@@ -108,7 +99,6 @@ int vec_norm(vec3 vector, vec3 *output);
  * @return The result of the dot product.
  */
 double vec_dot(vec3 first, vec3 second);
-
 
 /**@brief Calculate the magnitude (length) of a vector.
  *
@@ -120,5 +110,4 @@ double vec_dot(vec3 first, vec3 second);
  */
 double vec_mag(vec3 vector);
 
-
-#endif//VECTOR_H
+#endif // VECTOR_H
