@@ -78,6 +78,7 @@ void capCurrent(vec3 *mdm) {
     (*mdm) = coils_output;
 }
 
+
 detumble_status detumble(vec3 needle, bool isTesting) {
     vec3 mag, mag_prev; // MAG readings
     uint64_t delta_t = 0;
@@ -93,6 +94,7 @@ detumble_status detumble(vec3 needle, bool isTesting) {
     int generation;
     int timeElapsed;
     bool timeout;
+    float sensor_offset, sensor_scalar, sensor_filter_constant;
 
     generation = vi_get_detumbling_generation();
 
@@ -154,18 +156,55 @@ detumble_status detumble(vec3 needle, bool isTesting) {
             return detumbleError(isTesting);
         }
 
+      
+        //Compute and perform the delay so that the coil's magnetic field decays
+        double coilsMagnetic = computeB_coils(vec_mag(mdm));
+        double delayTime = computeDecay(coilsMagnetic);
+        if(vi_delay_ms(delayTime) == VI_DELAY_MS_FAILURE){
+          return detumbleError(isTesting);
+        }
+
+        //Compute the delta_t
+        delta_t = get_delta_t(curr_millis, prev_millis);
+
+        mag_prev = mag;
+        //Get new magnectic field reading
+        if(vi_get_mag(mag_choice, &(mag.x), &(mag.y), &(mag.z)) == VI_GET_MAG_FAILURE){
+          return detumbleError(isTesting);
+          }
+
+        if(vi_get_sensor_calibration(VI_MAG1_X, &sensor_offset, &sensor_scalar, &sensor_filter_constant)){
+          return detumbleError(isTesting);
+          }
+
+        mag.x = get_sensor_calibration(mag.x, mag_prev.x, sensor_offset, sensor_scalar, sensor_filter_constant);
+
+        if(vi_get_sensor_calibration(VI_MAG1_Y, &sensor_offset, &sensor_scalar, &sensor_filter_constant)){
+          return detumbleError(isTesting);
+          }
+
+        mag.y = get_sensor_calibration(mag.y, mag_prev.y, sensor_offset, sensor_scalar, sensor_filter_constant);
+
+        if(vi_get_sensor_calibration(VI_MAG1_Z, &sensor_offset, &sensor_scalar, &sensor_filter_constant)){
+          return detumbleError(isTesting);
+          }
+
+        mag.z = get_sensor_calibration(mag.z, mag_prev.z, sensor_offset, sensor_scalar, sensor_filter_constant);
+
+
         // Compute the magetic dipole moment
-        //  M = -k(bDot - n)
+        // M = -k(bDot - n)
         bdot_control(mag, mag_prev, delta_t, &coils_curr);
         vec_sub(coils_curr, needle, &coils_curr);
         vec_scalar(-control_constant, coils_curr, &mdm);
 
-        // Prevent sending too much current to the coils (no UNLIMITED POWER)
+        //Prevent sending too much current to the coils (no UNLIMITED POWER)
         capCurrent(&mdm);
 
-        // Send control command to coils
-        if (vi_control_coil(mdm.x, mdm.y, mdm.z) == VI_CONTROL_COIL_FAILURE) {
-            return detumbleError(isTesting);
+        //Send control command to coils
+        if (vi_control_coil(mdm.x, mdm.y, mdm.z) == VI_CONTROL_COIL_FAILURE){
+        	return detumbleError(isTesting);
+
         }
 
         // Compute new angular velocity

@@ -15,6 +15,7 @@
 #include <stdint.h>
 
 
+
 /**
  * @brief Implement lowpass filter on sensor raw values to mitigate the effect
  * of noise from abnormally high values
@@ -32,19 +33,19 @@ float lowpass_filter(float currValue, float prevValue, float filterConstant);
  * @brief Calculates sensor calibration value after filtering data through
  * simple lowpass filter with default constant 0.5
  *
- * @param sensor type of sensor defined by VI enum
  * @param currValue current sensor raw value
  * @param prevValue previous sensor raw value
  * @param offset constant the sensor reads when it is not supposed to read
  * anything
- * @param gain constant multiplier for sensor raw values
+ * @param scalar constant multiplier for sensor raw values
  * @param filterConstant attenuation constant between 0-1 for lowpass filter; a
  * greater value is a greater damp on unusually large jumps in sensor data
  *
  * @return sensor calibration value after filtration
  */
-float get_sensor_calibration(vi_sensor sensor, float currValue, float prevValue,
-                             float offset, float gain, float filterConstant);
+float get_sensor_calibration(float currValue, float prevValue,
+                             float offset, float scalar, float filterConstant);
+
 
 /**
  * @brief Safely calculate delta_t accounting for integer overflow

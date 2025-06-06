@@ -44,6 +44,7 @@ determination_exp_status determination_experiment() {
     sun.y = 0;
     sun.z = 0;
 
+
     determination(&currAttitude);
     // Get the current time (Virtual Intellisat)
     if (vi_get_curr_millis(&curr_millis) == GET_CURR_MILLIS_FAILURE)
