@@ -42,6 +42,12 @@ typedef enum {
 } vi_HDD;
 
 typedef enum {
+	VI_CSS1,
+	VI_CSS2
+} vi_CSS_PX;
+
+
+typedef enum {
 //Start CSS
 	VI_CSS_PX1,
 	VI_CSS_PX2,
@@ -372,6 +378,47 @@ vi_get_TLE(
 );
 
 
+/**@brief Get the experiment generation.
+ *
+ * @return The generation as an int.
+ */
+int vi_get_experiment_generation();
+
+
+/**@brief Increment the experiment generation.
+ *
+ * @return Void.
+ */
+void vi_increment_experiment_generation();
+
+
+/**@brief Get the detumbling generation.
+ *
+ * @return The generation as an int.
+ */
+int vi_get_detumbling_generation();
+
+
+/**@brief Increment the detumbling generation.
+ *
+ * @return Void.
+ */
+void vi_increment_detumbling_generation();
+
+/**@brief Get the detumbling generation.
+ *
+ * @return The generation as an int.
+ */
+int vi_get_determination_generation();
+
+
+/**@brief Increment the detumbling generation.
+ *
+ * @return Void.
+ */
+void vi_increment_determination_generation();
+
+
 /*###################### OPERATIONS ######################*/
 
 typedef enum {
@@ -397,10 +444,11 @@ vi_delay_ms(
  *
  * @return Void.
  */
-void
-vi_print(
-    const char* string
+void 
+vi_print (
+  const char *message, ...
 );
+
 
 
 /**@brief Configure the data logger for a particular mode.
