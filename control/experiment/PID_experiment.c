@@ -6,9 +6,6 @@
 #include <stdint.h>
 
 
-// TODO: IMU alternation?
-//       Negative PID output should activate VI_HDD2
-
 #define P_GAIN 0.4
 #define I_GAIN 0
 #define D_GAIN 0.1
@@ -61,11 +58,17 @@ PID_status PID_experiment(double target, int infinite) {
     // PLug it into the control function
     throttle += PID_command(target, angvel_z, curr_millis, &controller);
 
-    // Clamp the output
-    if (throttle > 2.5) {
-      throttle = 2.5;
-    } else if (throttle < -2.5) {
-      throttle = -2.5;
+     //Clamp the output
+    if (throttle >= 0) {
+      hdd_choice = VI_HDD1;
+      if (throttle > 2.5){
+        throttle = 2.5;
+      }
+		} else {
+        hdd_choice = VI_HDD2;
+        if (throttle < -2.5){
+            throttle = -2.5;
+        }
     }
 
     // Take output and plug it into HDD
