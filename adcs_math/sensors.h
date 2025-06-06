@@ -33,7 +33,6 @@ float lowpass_filter(float currValue, float prevValue, float filterConstant);
  * @brief Calculates sensor calibration value after filtering data through
  * simple lowpass filter with default constant 0.5
  *
- * @param sensor type of sensor defined by VI enum
  * @param currValue current sensor raw value
  * @param prevValue previous sensor raw value
  * @param offset constant the sensor reads when it is not supposed to read
@@ -44,7 +43,7 @@ float lowpass_filter(float currValue, float prevValue, float filterConstant);
  *
  * @return sensor calibration value after filtration
  */
-float get_sensor_calibration(vi_sensor sensor, float currValue, float prevValue,
+float get_sensor_calibration(float currValue, float prevValue,
                              float offset, float scalar, float filterConstant);
 
 

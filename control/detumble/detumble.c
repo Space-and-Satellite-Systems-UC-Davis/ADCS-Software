@@ -161,8 +161,7 @@ detumble_status detumble(vec3 needle, bool isTesting) {
         double coilsMagnetic = computeB_coils(vec_mag(mdm));
         double delayTime = computeDecay(coilsMagnetic);
         if(vi_delay_ms(delayTime) == VI_DELAY_MS_FAILURE){
-          if (isTesting) return COILS_TESTING_FAILURE;
-          else return DETUMBLING_FAILURE;
+          return detumbleError(isTesting);
         }
 
         //Compute the delta_t
@@ -170,28 +169,24 @@ detumble_status detumble(vec3 needle, bool isTesting) {
 
         mag_prev = mag;
         //Get new magnectic field reading
-        if(vi_get_mag(MAG, &(mag.x), &(mag.y), &(mag.z)) == VI_GET_MAG_FAILURE){
-          if (isTesting) return COILS_TESTING_FAILURE;
-          else return DETUMBLING_FAILURE;
+        if(vi_get_mag(mag_choice, &(mag.x), &(mag.y), &(mag.z)) == VI_GET_MAG_FAILURE){
+          return detumbleError(isTesting);
           }
 
         if(vi_get_sensor_calibration(VI_MAG1_X, &sensor_offset, &sensor_scalar, &sensor_filter_constant)){
-          if (isTesting) return COILS_TESTING_FAILURE;
-          else return DETUMBLING_FAILURE;
+          return detumbleError(isTesting);
           }
 
         mag.x = get_sensor_calibration(mag.x, mag_prev.x, sensor_offset, sensor_scalar, sensor_filter_constant);
 
         if(vi_get_sensor_calibration(VI_MAG1_Y, &sensor_offset, &sensor_scalar, &sensor_filter_constant)){
-          if (isTesting) return COILS_TESTING_FAILURE;
-          else return DETUMBLING_FAILURE;
+          return detumbleError(isTesting);
           }
 
         mag.y = get_sensor_calibration(mag.y, mag_prev.y, sensor_offset, sensor_scalar, sensor_filter_constant);
 
         if(vi_get_sensor_calibration(VI_MAG1_Z, &sensor_offset, &sensor_scalar, &sensor_filter_constant)){
-          if (isTesting) return COILS_TESTING_FAILURE;
-          else return DETUMBLING_FAILURE;
+          return detumbleError(isTesting);
           }
 
         mag.z = get_sensor_calibration(mag.z, mag_prev.z, sensor_offset, sensor_scalar, sensor_filter_constant);
@@ -208,8 +203,7 @@ detumble_status detumble(vec3 needle, bool isTesting) {
 
         //Send control command to coils
         if (vi_control_coil(mdm.x, mdm.y, mdm.z) == VI_CONTROL_COIL_FAILURE){
-        if (isTesting) return COILS_TESTING_FAILURE;
-        else return DETUMBLING_FAILURE;
+        	return detumbleError(isTesting);
 
         }
 
