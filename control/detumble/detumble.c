@@ -33,7 +33,8 @@ vec3 findAngVel(vec3 b0, vec3 b1, uint64_t delta_t) {
     vec3 bdot;   // The velocity vector pointing from b0 to b1
     vec3 angVel; // The angular velocity
 
-    if (delta_t == 0) return (vec3){0.0, 0.0, 0.0};
+    if (delta_t == 0)
+        return (vec3){0.0, 0.0, 0.0};
 
     bdot_control(b1, b0, delta_t, &bdot);
     vec_scalar((1.0 / vec_mag(b0)), bdot, &angVel);
@@ -75,6 +76,7 @@ void capCurrent(vec3 *mdm) {
     (*mdm) = coils_output;
 }
 
+
 detumble_status detumble(vec3 needle, bool isTesting) {
     vec3 mag, mag_prev; // MAG readings
     uint64_t delta_t = 0;
@@ -90,6 +92,7 @@ detumble_status detumble(vec3 needle, bool isTesting) {
     int generation;
     int timeElapsed;
     bool timeout;
+    float sensor_offset, sensor_scalar, sensor_filter_constant;
 
     generation = vi_get_detumbling_generation();
 
@@ -149,8 +152,27 @@ detumble_status detumble(vec3 needle, bool isTesting) {
             return detumbleError(isTesting);
         }
 
+        if(vi_get_sensor_calibration(VI_MAG1_X, &sensor_offset, &sensor_scalar, &sensor_filter_constant)){
+          return detumbleError(isTesting);
+          }
+
+        mag.x = get_sensor_calibration(mag.x, mag_prev.x, sensor_offset, sensor_scalar, sensor_filter_constant);
+
+        if(vi_get_sensor_calibration(VI_MAG1_Y, &sensor_offset, &sensor_scalar, &sensor_filter_constant)){
+          return detumbleError(isTesting);
+          }
+
+        mag.y = get_sensor_calibration(mag.y, mag_prev.y, sensor_offset, sensor_scalar, sensor_filter_constant);
+
+        if(vi_get_sensor_calibration(VI_MAG1_Z, &sensor_offset, &sensor_scalar, &sensor_filter_constant)){
+          return detumbleError(isTesting);
+          }
+
+        mag.z = get_sensor_calibration(mag.z, mag_prev.z, sensor_offset, sensor_scalar, sensor_filter_constant);
+
+
         // Compute the magetic dipole moment
-        //  M = -k(bDot - n)
+        // M = -k(bDot - n)
         bdot_control(mag, mag_prev, delta_t, &coils_curr);
         vec_sub(coils_curr, needle, &coils_curr);
         vec_scalar(-control_constant, coils_curr, &mdm);
