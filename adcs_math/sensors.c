@@ -93,49 +93,46 @@ static const char alternations[256] = {
     0b00001011, 0b00001111, 0b01100010, 0b00000000};
 
 int sensor_pair_choice(vi_sensor sensor, int generation) {
-    switch (sensor) {
-    case VI_CSS_PX1:
-    case VI_CSS_PX2:
-        int mask = 0;
-        break;
-    case VI_CSS_NX1:
-    case VI_CSS_NX2:
-        int mask = 1;
-        break;
-    case VI_CSS_PY1:
-    case VI_CSS_PY2:
-        int mask = 2;
-        break;
-    case VI_CSS_NY1:
-    case VI_CSS_NY2:
-        int mask = 3;
-        break;
-    case VI_CSS_PZ1:
-    case VI_CSS_PZ2:
-        int mask = 4;
-        break;
-    case VI_CSS_NZ1:
-    case VI_CSS_NZ2:
-        int mask = 5;
-        break;
-    case VI_MAG1_X:
-    case VI_MAG2_X:
-    case VI_MAG1_Y:
-    case VI_MAG2_Y:
-    case VI_MAG1_Z:
-    case VI_MAG2_Z:
-        int mask = 6;
-        break;
-    case VI_IMU1_X:
-    case VI_IMU2_X:
-    case VI_IMU1_Y:
-    case VI_IMU2_Y:
-    case VI_IMU1_Z:
-    case VI_IMU2_Z:
-        int mask = 7;
-        break;
-    }
+    switch (sensor.component) {
+        case VI_COMP_CSS_CHOICE:
+            switch (sensor.field) {
+	            case VI_CSS_PX:
+                    int mask = 1;
+                    break;
+	            case VI_CSS_NX:
+                    int mask = 2;
+                    break;
+	            case VI_CSS_PY:
+                    int mask = 3;
+                    break;
+	            case VI_CSS_NY:
+                    int mask = 4;
+                    break;
+	            case VI_CSS_PZ:
+                    int mask = 5;
+                    break;
+                case VI_CSS_NZ:
+                    int mask = 6;
+                    break;
+            }
+            break;
 
+        case VI_COMP_MAG_CHOICE:
+            int mask = 7;
+            break;
+
+        case VI_COMP_IMU_CHOICE:
+            int mask = 8;
+            break;
+
+        case VI_COMP_HDD_CHOICE:
+        case VI_COMP_TMP_CHOICE:
+        case VI_COMP_SOL_CHOICE:
+        case VI_COMP_CSS_VALUE:
+        case VI_COMP_IMU_VALUE:
+        case VI_COMP_MAG_VALUE:
+            return 0;
+    }
 
     if ((alternations[generation % 256] | (1 << mask)) != 0) {
         return 2;
