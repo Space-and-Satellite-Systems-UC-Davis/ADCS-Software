@@ -81,6 +81,8 @@ detumble_status detumble(vec3 needle, bool isTesting){
 	uint64_t startTime = 0;
 	vec3 mdm; //Magnetic Dipole Moment 
 
+	float sensor_offset, sensor_scalar, sensor_filter_constant;
+
 	//Get the current time
 	if(vi_get_curr_millis(&curr_millis) == GET_CURR_MILLIS_FAILURE){
 	    if (isTesting) return COILS_TESTING_FAILURE;
@@ -133,6 +135,29 @@ detumble_status detumble(vec3 needle, bool isTesting){
 			if (isTesting) return COILS_TESTING_FAILURE;
 			else return DETUMBLING_FAILURE;
     	}
+		
+		if(vi_get_sensor_calibration(VI_MAG1_X, &sensor_offset, &sensor_scalar, &sensor_filter_constant)){
+			if (isTesting) return COILS_TESTING_FAILURE;
+			else return DETUMBLING_FAILURE;
+    	}
+		
+		mag.x = get_sensor_calibration(mag.x, mag_prev.x, sensor_offset, sensor_scalar, sensor_filter_constant);
+
+		if(vi_get_sensor_calibration(VI_MAG1_Y, &sensor_offset, &sensor_scalar, &sensor_filter_constant)){
+			if (isTesting) return COILS_TESTING_FAILURE;
+			else return DETUMBLING_FAILURE;
+    	}
+
+		mag.y = get_sensor_calibration(mag.y, mag_prev.y, sensor_offset, sensor_scalar, sensor_filter_constant);
+
+		if(vi_get_sensor_calibration(VI_MAG1_Z, &sensor_offset, &sensor_scalar, &sensor_filter_constant)){
+			if (isTesting) return COILS_TESTING_FAILURE;
+			else return DETUMBLING_FAILURE;
+    	}
+
+		mag.z = get_sensor_calibration(mag.z, mag_prev.z, sensor_offset, sensor_scalar, sensor_filter_constant);
+
+
 		
 		//M = -k(bDot - n)
 		bdot_control(mag, mag_prev, delta_t, &coils_curr);
