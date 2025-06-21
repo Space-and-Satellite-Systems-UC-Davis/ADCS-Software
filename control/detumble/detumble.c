@@ -46,6 +46,43 @@ vec3 findAngVel(vec3 b0, vec3 b1, uint64_t delta_t) {
     return angVel;
 }
 
+detumble_status getMagReading(  bool isTesting, 
+                                vi_MAG mag_choice, 
+                                vec3 mag_prev, 
+                                vec3 *mag_curr)
+{
+    mag_prev = *mag_curr;
+    vec3 mag;
+    float sensor_offset, sensor_scalar, sensor_filter_constant;
+
+    if (vi_get_mag(mag_choice, &mag.x, &mag.y, &mag.z) ==
+    VI_GET_MAG_FAILURE) {
+        return detumbleError(isTesting);
+    }
+
+    if(vi_get_sensor_calibration(VI_MAG1_X, &sensor_offset, &sensor_scalar, &sensor_filter_constant)){
+          return detumbleError(isTesting);
+        }
+
+    mag.x = get_sensor_calibration(mag.x, mag_prev.x, sensor_offset, sensor_scalar, sensor_filter_constant);
+
+    if(vi_get_sensor_calibration(VI_MAG1_Y, &sensor_offset, &sensor_scalar, &sensor_filter_constant)){
+          return detumbleError(isTesting);
+          }
+
+    mag.y = get_sensor_calibration(mag.y, mag_prev.y, sensor_offset, sensor_scalar, sensor_filter_constant);
+
+    if(vi_get_sensor_calibration(VI_MAG1_Z, &sensor_offset, &sensor_scalar, &sensor_filter_constant)){
+          return detumbleError(isTesting);
+          }
+
+    mag.z = get_sensor_calibration(mag.z, mag_prev.z, sensor_offset, sensor_scalar, sensor_filter_constant);
+
+    *mag_curr = mag;
+
+    return DETUMBLING_SUCCESS;
+}
+
 double computeB_coils(double current) { return current; }
 
 double computeDecay(double B_initial) {
@@ -92,7 +129,7 @@ detumble_status detumble(vec3 needle, bool isTesting) {
     int generation;
     int timeElapsed;
     bool timeout;
-    float sensor_offset, sensor_scalar, sensor_filter_constant;
+    
 
     generation = vi_get_detumbling_generation();
 
@@ -147,28 +184,9 @@ detumble_status detumble(vec3 needle, bool isTesting) {
 
         mag_prev = mag;
         // Get new magnectic field reading
-        if (vi_get_mag(mag_choice, &(mag.x), &(mag.y), &(mag.z)) ==
-            VI_GET_MAG_FAILURE) {
+        if (getMagReading(isTesting, mag_choice, mag_prev, &mag) == DETUMBLING_FAILURE) {
             return detumbleError(isTesting);
         }
-
-        if(vi_get_sensor_calibration(VI_MAG1_X, &sensor_offset, &sensor_scalar, &sensor_filter_constant)){
-          return detumbleError(isTesting);
-          }
-
-        mag.x = get_sensor_calibration(mag.x, mag_prev.x, sensor_offset, sensor_scalar, sensor_filter_constant);
-
-        if(vi_get_sensor_calibration(VI_MAG1_Y, &sensor_offset, &sensor_scalar, &sensor_filter_constant)){
-          return detumbleError(isTesting);
-          }
-
-        mag.y = get_sensor_calibration(mag.y, mag_prev.y, sensor_offset, sensor_scalar, sensor_filter_constant);
-
-        if(vi_get_sensor_calibration(VI_MAG1_Z, &sensor_offset, &sensor_scalar, &sensor_filter_constant)){
-          return detumbleError(isTesting);
-          }
-
-        mag.z = get_sensor_calibration(mag.z, mag_prev.z, sensor_offset, sensor_scalar, sensor_filter_constant);
 
 
         // Compute the magetic dipole moment
