@@ -10,6 +10,7 @@
 #include "control/detumble/detumble.h"
 #include "adcs_math/sensors.h"
 #include "adcs_math/vector.h"
+#include "adcs_math/calibration.h"
 #include "control/bdot/bdot_control.h"
 #include "virtual_intellisat.h"
 
@@ -78,142 +79,68 @@ void capCurrent(vec3 *mdm) {
     (*mdm) = coils_output;
 }
 
-
 detumble_status detumble(vec3 needle, bool isTesting) {
-    vec3 mag, mag_prev; // MAG readings
+    vec3 mag_curr, mag_prev; // Magnotometer readings
     uint64_t delta_t = 0;
     vec3 coils_curr;
     uint64_t curr_millis = 0, prev_millis = 0;
     uint64_t startTime = 0;
-    vec3 mdm;                    // Magnetic Dipole Moment
-    vi_MAG mag_choice = VI_MAG1; // Initialize it to VI_MAG1
+    vec3 mdm; // Magnetic Dipole Momen
     vec3 angVel;
     bool keepDetumbling; // Keep loop running?
     double coilsMagnetic;
     double delayTime;
-    int generation;
+    int generation = vi_get_detumbling_generation();
     int timeElapsed;
-    bool timeout;
-    float sensor_offset, sensor_scalar, sensor_filter_constant;
+    bool isTimeOut;
 
-    generation = vi_get_detumbling_generation();
+    // Declare varibles for sensor alternation
+    vi_sensor magnotometer; // Initialize it to VI_MAG1
+    magnotometer.component = VI_COMP_MAG_CHOICE;
 
-    // Ger sensor pair choice
-    if (sensor_pair_choice(VI_MAG1_X, generation) == 1) {
-        mag_choice = VI_MAG1;
-    } else {
-        mag_choice = VI_MAG2;
-    }
+    magnotometer.field.mag_choice =
+        sensor_pair_choice(magnotometer, generation) == 1 ? VI_MAG1 : VI_MAG2;
 
-    // Get the current time
-    if (vi_get_curr_millis(&curr_millis) == GET_CURR_MILLIS_FAILURE) {
-        return detumbleError(isTesting);
-    }
-
+    if (vi_get_curr_millis(&curr_millis)) return detumbleError(isTesting);
     startTime = curr_millis;
 
-    // Get current magnetic field reading
-    if (vi_get_mag(mag_choice, &(mag.x), &(mag.y), &(mag.z)) ==
-        VI_GET_MAG_FAILURE) {
+    if (getMag(magnotometer, mag_prev, &mag_curr)) 
         return detumbleError(isTesting);
-    }
-
-    // Compute the delta angle
-    angVel = findAngVel(mag_prev, mag, delta_t);
-
-    // Boolean variable to decide if detumbling is needed to continue
-    keepDetumbling = true;
+    angVel = findAngVel(mag_prev, mag_curr, delta_t);
 
     // Note: May be do something to account for integer overflow
     do {
-
         prev_millis = curr_millis;
-        // Get the current time
-        if (vi_get_curr_millis(&curr_millis) == GET_CURR_MILLIS_FAILURE) {
-            return detumbleError(isTesting);
-        }
+        if (vi_get_curr_millis(&curr_millis)) return detumbleError(isTesting);
 
-        // Set the coil to zero
-        if (vi_control_coil(0, 0, 0) == VI_CONTROL_COIL_FAILURE) {
-            return detumbleError(isTesting);
-        }
-
-        // Compute and perform the delay so that the coil's magnetic field
-        // decays
+        // Perform delay for the coil magnetic field decay
+        if (vi_control_coil(0, 0, 0)) return detumbleError(isTesting);
         coilsMagnetic = computeB_coils(vec_mag(mdm));
         delayTime = computeDecay(coilsMagnetic);
-        if (vi_delay_ms(delayTime) == VI_DELAY_MS_FAILURE) {
-            return detumbleError(isTesting);
-        }
+        if (vi_delay_ms(delayTime)) return detumbleError(isTesting);
 
-        // Compute the delta_t
         delta_t = get_delta_t(curr_millis, prev_millis);
 
-        mag_prev = mag;
-        // Get new magnectic field reading
-        if (vi_get_mag(mag_choice, &(mag.x), &(mag.y), &(mag.z)) ==
-            VI_GET_MAG_FAILURE) {
-            return detumbleError(isTesting);
-        }
+        mag_prev = mag_curr;
+        if (getMag(magnotometer, mag_prev, &mag_curr)) return detumbleError(isTesting);
 
-      
-        //Compute and perform the delay so that the coil's magnetic field decays
-        double coilsMagnetic = computeB_coils(vec_mag(mdm));
-        double delayTime = computeDecay(coilsMagnetic);
-        if(vi_delay_ms(delayTime) == VI_DELAY_MS_FAILURE){
-          return detumbleError(isTesting);
-        }
-
-        //Compute the delta_t
-        delta_t = get_delta_t(curr_millis, prev_millis);
-
-        mag_prev = mag;
-        //Get new magnectic field reading
-        if(vi_get_mag(mag_choice, &(mag.x), &(mag.y), &(mag.z)) == VI_GET_MAG_FAILURE){
-          return detumbleError(isTesting);
-          }
-
-        if(vi_get_sensor_calibration(VI_MAG1_X, &sensor_offset, &sensor_scalar, &sensor_filter_constant)){
-          return detumbleError(isTesting);
-          }
-
-        mag.x = get_sensor_calibration(mag.x, mag_prev.x, sensor_offset, sensor_scalar, sensor_filter_constant);
-
-        if(vi_get_sensor_calibration(VI_MAG1_Y, &sensor_offset, &sensor_scalar, &sensor_filter_constant)){
-          return detumbleError(isTesting);
-          }
-
-        mag.y = get_sensor_calibration(mag.y, mag_prev.y, sensor_offset, sensor_scalar, sensor_filter_constant);
-
-        if(vi_get_sensor_calibration(VI_MAG1_Z, &sensor_offset, &sensor_scalar, &sensor_filter_constant)){
-          return detumbleError(isTesting);
-          }
-
-        mag.z = get_sensor_calibration(mag.z, mag_prev.z, sensor_offset, sensor_scalar, sensor_filter_constant);
-
-
-        // Compute the magetic dipole moment
-        // M = -k(bDot - n)
-        bdot_control(mag, mag_prev, delta_t, &coils_curr);
+        // Compute the magetic dipole moment: M = -k(bDot - n)
+        bdot_control(mag_curr, mag_prev, delta_t, &coils_curr);
         vec_sub(coils_curr, needle, &coils_curr);
         vec_scalar(-control_constant, coils_curr, &mdm);
 
-        //Prevent sending too much current to the coils (no UNLIMITED POWER)
         capCurrent(&mdm);
 
-        //Send control command to coils
-        if (vi_control_coil(mdm.x, mdm.y, mdm.z) == VI_CONTROL_COIL_FAILURE){
-        	return detumbleError(isTesting);
-
-        }
-
-        // Compute new angular velocity
-        angVel = findAngVel(mag_prev, mag, delta_t);
+        // Send control command to coils
+        if (vi_control_coil(mdm.x, mdm.y, mdm.z)) 
+            return detumbleError(isTesting);
+        
+        angVel = findAngVel(mag_prev, mag_curr, delta_t);
 
         // Decide whether detumbling needs to continue
         timeElapsed = curr_millis - startTime;
-        timeout = timeElapsed > LIMIT;
-        keepDetumbling = aboveThreshold(angVel, 0.5) && !timeout;
+        isTimeOut = timeElapsed > LIMIT;
+        keepDetumbling = aboveThreshold(angVel, 0.5) && isTimeOut;
 
     } while (isTesting || keepDetumbling);
 

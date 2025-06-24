@@ -9,6 +9,7 @@
 #include "adcs_math/matrix.h"
 #include "adcs_math/sensors.h"
 #include "adcs_math/vector.h"
+#include "adcs_math/calibration.h"
 
 #include "ADCS.h"
 #include "virtual_intellisat.h"
@@ -37,50 +38,26 @@ static determination_cache cache;
 
 vi_get_css_status get_measured_sun(int generation, vec3 *measured_sun) {
 
-    vi_sensor px_choice, nx_choice, py_choice, ny_choice, pz_choice, nz_choice;
-    double px, nx, py, ny, pz, nz;
+    //px_choice, nx_choice, py_choice, ny_choice, pz_choice, nz_choice;
+    vi_sensor sensors[6]; //  mccPX, NX, PY, NY, PZ, NZ
+    double currVals[6];   
+    double prevVals[6];  // Not sure how that could be implemented
 
-    px_choice = sensor_pair_choice(VI_CSS_PX1, generation) == 1 
-                ? VI_CSS_PX1 
-                : VI_CSS_PX2;
+    for (int i = 0; i < 6; i++){
+        sensors[i].component = VI_COMP_CSS_CHOICE;
+    }
 
-    nx_choice = sensor_pair_choice(VI_CSS_NX1, generation) == 1 
-                ? VI_CSS_NX1 
-                : VI_CSS_NX2;
+    for (int i = 0; i < 6; i++) {
+        sensors[i].field.css_choice = 
+            sensor_pair_choice(sensors[i], generation) == 1
+            ? i * 2         //VI_CSS_**1           
+            : i * 2 + 1;    //VI_CSS_**2
+    }
 
-    py_choice = sensor_pair_choice(VI_CSS_PY1, generation) == 1 
-                ? VI_CSS_PY1
-                : VI_CSS_PY2;
-
-    ny_choice = sensor_pair_choice(VI_CSS_NY1, generation) == 1 
-                ? VI_CSS_NY1
-                : VI_CSS_NY2;
-
-    pz_choice = sensor_pair_choice(VI_CSS_PZ1, generation) == 1 
-                ? VI_CSS_PZ1
-                : VI_CSS_PZ2;
-
-    nz_choice = sensor_pair_choice(VI_CSS_NZ1, generation) == 1 
-                ? VI_CSS_NZ1
-                : VI_CSS_NZ2;
-
-    if (vi_get_css(px_choice, &px) == VI_GET_CSS_FAILURE)
-        return VI_GET_CSS_FAILURE;
-
-    if (vi_get_css(nx_choice, &nx) == VI_GET_CSS_FAILURE)
-        return VI_GET_CSS_FAILURE;
-
-    if (vi_get_css(py_choice, &py) == VI_GET_CSS_FAILURE)
-        return VI_GET_CSS_FAILURE;
-
-    if (vi_get_css(ny_choice, &ny) == VI_GET_CSS_FAILURE)
-        return VI_GET_CSS_FAILURE;
-
-    if (vi_get_css(pz_choice, &pz) == VI_GET_CSS_FAILURE)
-        return VI_GET_CSS_FAILURE;
-
-    if (vi_get_css(nz_choice, &nz) == VI_GET_CSS_FAILURE)
-        return VI_GET_CSS_FAILURE;
+    for (int i = 0; i < 6; i++){
+        if (getCSS(sensors[i], prevVals[i], &(currVals[i])))
+            return VI_GET_CSS_FAILURE;
+    }
 
     // Implement logic to combine readings into vector
     *measured_sun = (vec3){0.0, 0.0, 0.0};
@@ -94,14 +71,17 @@ determination_status determination(mat3 *attitude) {
 
     vec3 measured_mag;
     vec3 measured_sun;
+    vec3 mag_prev;
+
+    vi_sensor magnotometer;
+    magnotometer.component = VI_COMP_MAG_CHOICE;
 
     // Get current generation
     int generation = vi_get_determination_generation();
 
     // Ger magotometer choice
-    vi_MAG mag_choice = sensor_pair_choice(VI_MAG1_X, generation) == 1 
-                        ? VI_MAG1
-                        : VI_MAG2;
+    magnotometer.field.mag_choice =
+        sensor_pair_choice(magnotometer, generation) == 1 ? VI_MAG1 : VI_MAG2;
 
     // Get current Time
     if (vi_get_epoch(&year, &month, &day, &hour, &minute, &second) ==
@@ -109,8 +89,7 @@ determination_status determination(mat3 *attitude) {
         return DET_UNHANDLED_ERROR;
 
     // Get current magnetic field reading
-    if (vi_get_mag(mag_choice, &(measured_mag.x), &(measured_mag.y),
-                   &(measured_mag.z)) == VI_GET_MAG_FAILURE) {
+    if (getMag(magnotometer, mag_prev, &measured_mag)) {
         return DET_UNHANDLED_ERROR;
     }
 

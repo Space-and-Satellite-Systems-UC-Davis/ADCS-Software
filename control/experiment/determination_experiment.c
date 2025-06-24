@@ -4,12 +4,12 @@
 #include "determination/determination.h"
 
 // TODO: HDD alternation? (Update: rn it's defaulted to VI_HDD1)
-#define HDD_CHOICE VI_HDD1
 
 determination_exp_status determination_experiment() {
   mat3 prevAttitude;
   mat3 currAttitude;
   vec3 sun;
+  vi_HDD_choice hdd_choice = VI_HDD1;
 
   // Get current generation for sensor alternation
   int generation = vi_get_experiment_generation();
@@ -60,7 +60,7 @@ determination_exp_status determination_experiment() {
     // PLug it into the control function
     double throttle = PID_command(target, zrotation, curr_millis, &controller);
     // Take output and plug it into HDD
-    if (vi_hdd_command(HDD_CHOICE, throttle) == HDD_COMMAND_FAILURE)
+    if (vi_hdd_command(hdd_choice, throttle) == HDD_COMMAND_FAILURE)
       return DETERMINATION_EXPERIMENT_FAILURE;
     prevAttitude = currAttitude;
     prev_millis = curr_millis;
