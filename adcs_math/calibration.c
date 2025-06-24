@@ -1,3 +1,5 @@
+#include "adcs_math/vector.h"
+#include "virtual_intellisat.h"
 #include "calibration.h"
 
 getMag_status getMag(vi_sensor sensor, vec3 prevVal, vec3 *currVal) {
@@ -75,21 +77,21 @@ getIMU_status getIMU(vi_sensor sensor, vec3 prevVal, vec3 *currVal) {
         return GET_IMU_FAILURE;
     }
 
-    sensor.field.imu_value = VI_IMU_X1;
+    sensor.field.imu_value = VI_IMU1_X;
     if (vi_get_sensor_calibration(sensor, &sensor_offset, &sensor_scalar,
                                   &sensor_filter_constant))
         return IMU_CALIBRATION_FAILURE;
     reading.x = get_sensor_calibration(reading.x, prevVal.x, sensor_offset,
                                        sensor_scalar, sensor_filter_constant);
 
-    sensor.field.imu_value = VI_IMU_Y1;
+    sensor.field.imu_value = VI_IMU1_Y;
     if (vi_get_sensor_calibration(sensor, &sensor_offset, &sensor_scalar,
                                   &sensor_filter_constant))
         return IMU_CALIBRATION_FAILURE;
     reading.y = get_sensor_calibration(reading.y, prevVal.y, sensor_offset,
                                        sensor_scalar, sensor_filter_constant);
 
-    sensor.field.imu_value = VI_IMU_Z1;
+    sensor.field.imu_value = VI_IMU1_Z;
     if (vi_get_sensor_calibration(sensor, &sensor_offset, &sensor_scalar,
                                   &sensor_filter_constant))
         return IMU_CALIBRATION_FAILURE;
