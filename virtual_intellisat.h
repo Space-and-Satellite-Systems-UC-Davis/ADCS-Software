@@ -88,11 +88,11 @@ typedef enum {
 } vi_IMU_value;
 
 typedef enum {
-	VI_CSS_PX1,
-	VI_CSS_PX2,
+	VI_CSS_PX1, //0 
+	VI_CSS_PX2, //1
 
-	VI_CSS_NX1,
-	VI_CSS_NX2,
+	VI_CSS_NX1, //2
+	VI_CSS_NX2, //
 
 	VI_CSS_PY1,
 	VI_CSS_PY2,
@@ -120,20 +120,20 @@ typedef enum {
 } vi_component;
 
 typedef union {
-    vi_MAG_choice mag_choice,
-    vi_MAG_value  mag_value,
-    vi_IMU_choice imu_choice,
-    vi_IMU_value  imu_value,
-    vi_HDD_choice hdd_choice,
-    vi_CSS_choice css_choice,
-    vi_CSS_value  css_value,
-    vi_tmp_choice temp_sensor,
-    vi_sol_choice solar_panel
+    vi_MAG_choice mag_choice;
+    vi_MAG_value  mag_value;
+    vi_IMU_choice imu_choice;
+    vi_IMU_value  imu_value;
+    vi_HDD_choice hdd_choice;
+    vi_CSS_choice css_choice;
+    vi_CSS_value  css_value;
+    vi_tmp_choice temp_sensor;
+    vi_sol_choice solar_panel;
 } vi_field;
 
 typedef struct {
-    vi_component component,
-    vi_field field
+    vi_component component;
+    vi_field field;
 } vi_sensor;
 
 
@@ -308,7 +308,7 @@ typedef enum {
  */
 vi_get_temp_status 
 vi_get_temp(
-	vi_temp_choice sensor, 
+	vi_tmp_choice sensor, 
 	double* temp
 );
 
