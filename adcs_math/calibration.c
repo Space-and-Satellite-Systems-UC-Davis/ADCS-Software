@@ -11,15 +11,15 @@ getMag_status getMag(vi_sensor sensor, vec3 prevVal, vec3 *currVal) {
     if (vi_get_mag(choice, &(mag.x), &(mag.y), &(mag.z))) {
         return GET_MAG_FAILURE;
     }
-
     
     /*################ PROTOTYPE CODE ################*/
     // I think it works but I have noooo idea if it works
     // If it breaks then fall back to BACKUP CODE
 
-    /*
+    sensor.component = VI_COMP_MAG_VALUE;
+    sensor.field.mag_value = choice == VI_MAG1 ? VI_MAG_X1 : VI_MAG_X2 ;
 
-    sensor.field.mag_value = VI_MAG_X1;
+    // Starting from the X - axis
     double *magCurrPtr = (double *)&mag;
     double *magPrevPtr = (double *)&prevVal;
 
@@ -36,35 +36,39 @@ getMag_status getMag(vi_sensor sensor, vec3 prevVal, vec3 *currVal) {
                                          sensor_scalar, sensor_filter_constant);
         *(magCurrPtr + i) = currVal;
 
-        sensor.field.mag_value += 2;
+        sensor.field.mag_value += 1; 
     }
 
-    */
+    return GET_MAG_SUCCESS;
 
     /*################ BACKUP CODE ################*/
-    
-    sensor.field.mag_value = VI_MAG_X1;
-    if (vi_get_sensor_calibration(sensor, &sensor_offset,
-                                      &sensor_scalar, &sensor_filter_constant))
-            return MAG_CALIBRATION_FAILURE;
-    mag.x = get_sensor_calibration(mag.x, prevVal.x, sensor_offset,
-                                    sensor_scalar, sensor_filter_constant);
 
-    sensor.field.mag_value = VI_MAG_Y1;
-    if (vi_get_sensor_calibration(sensor, &sensor_offset,
-                                      &sensor_scalar, &sensor_filter_constant))
-            return MAG_CALIBRATION_FAILURE;
-    mag.y = get_sensor_calibration(mag.y, prevVal.y, sensor_offset,
-                                         sensor_scalar, sensor_filter_constant);
+        /*
+        
+        sensor.field.mag_value = VI_MAG_X1;
+        if (vi_get_sensor_calibration(sensor, &sensor_offset,
+                                        &sensor_scalar, &sensor_filter_constant))
+                return MAG_CALIBRATION_FAILURE;
+        mag.x = get_sensor_calibration(mag.x, prevVal.x, sensor_offset,
+                                        sensor_scalar, sensor_filter_constant);
 
-    sensor.field.mag_value = VI_MAG_Z1;
-    if (vi_get_sensor_calibration(sensor, &sensor_offset,
-                                      &sensor_scalar, &sensor_filter_constant))
-            return MAG_CALIBRATION_FAILURE;
-    mag.z = get_sensor_calibration(mag.z, prevVal.z, sensor_offset,
-                                         sensor_scalar, sensor_filter_constant);
+        sensor.field.mag_value = VI_MAG_Y1;
+        if (vi_get_sensor_calibration(sensor, &sensor_offset,
+                                        &sensor_scalar, &sensor_filter_constant))
+                return MAG_CALIBRATION_FAILURE;
+        mag.y = get_sensor_calibration(mag.y, prevVal.y, sensor_offset,
+                                            sensor_scalar, sensor_filter_constant);
 
-    return GET_MAG_SUCCESS;
+        sensor.field.mag_value = VI_MAG_Z1;
+        if (vi_get_sensor_calibration(sensor, &sensor_offset,
+                                        &sensor_scalar, &sensor_filter_constant))
+                return MAG_CALIBRATION_FAILURE;
+        mag.z = get_sensor_calibration(mag.z, prevVal.z, sensor_offset,
+                                            sensor_scalar, sensor_filter_constant);
+
+        return GET_MAG_SUCCESS;
+
+        */
 }
 
 getIMU_status getIMU(vi_sensor sensor, vec3 prevVal, vec3 *currVal) {
