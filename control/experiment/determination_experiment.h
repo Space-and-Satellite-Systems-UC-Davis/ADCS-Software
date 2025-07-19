@@ -8,7 +8,7 @@
 
 typedef enum determination_experiment{
     DETERMINATION_EXPERIMENT_SUCCESS,
-    DETERMINATION_EXPERIMENT_FAILURE
+    DETERMINATION_EXPERIMENT_MILLIS_FAILURE
 }determination_exp_status;
 
 /**@brief Performs an experiement for the PID function.

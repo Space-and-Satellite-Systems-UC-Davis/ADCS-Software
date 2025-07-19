@@ -23,13 +23,6 @@ const double coilResistance = 1;         // TODO: Measure (Ohms)
 const double B_Earth = 1;                // TODO: I need
 const double decayPercent = 0.2;         // TODO: Decide on percentage
 
-detumble_status detumbleError(bool isTesting) {
-    if (isTesting)
-        return COILS_TESTING_FAILURE;
-    else
-        return DETUMBLING_FAILURE;
-}
-
 vec3 findAngVel(vec3 b0, vec3 b1, uint64_t delta_t) {
 
     vec3 bdot;   // The velocity vector pointing from b0 to b1
@@ -115,7 +108,7 @@ detumble_status detumble(vec3 needle, bool isTesting) {
     // Get current magnetic field reading
     if (vi_get_mag(mag_choice, &(mag.x), &(mag.y), &(mag.z)) ==
         VI_GET_MAG_FAILURE) {
-        return detumbleError(isTesting);
+            return DET_MAG_FAILURE;
     }
 
     // Compute the delta angle
@@ -130,38 +123,38 @@ detumble_status detumble(vec3 needle, bool isTesting) {
         prev_millis = curr_millis;
         // Get the current time
         if (vi_get_curr_millis(&curr_millis) == GET_CURR_MILLIS_FAILURE) {
-            return detumbleError(isTesting);
+            return DET_MILLIS_FAILURE;
         }
 
         // Set the coil to zero
         if (vi_control_coil(0, 0, 0) == VI_CONTROL_COIL_FAILURE) {
-            return detumbleError(isTesting);
+            return DET_CONTROL_COIL_FAILURE;
         }
 
-        // Compute and perform the delay so that the coil's magnetic field
-        // decays
+        // Compute and perform the delay so that the coil's magnetic field decays
         coilsMagnetic = computeB_coils(vec_mag(mdm));
         delayTime = computeDecay(coilsMagnetic);
         if (vi_delay_ms(delayTime) == VI_DELAY_MS_FAILURE) {
-            return detumbleError(isTesting);
+            return DET_DELAY_MS_FAILURE;
         }
+
+        /* DUPLICATED CODE - START */
 
         // Compute the delta_t
         delta_t = get_delta_t(curr_millis, prev_millis);
 
         mag_prev = mag;
         // Get new magnectic field reading
-        if (vi_get_mag(mag_choice, &(mag.x), &(mag.y), &(mag.z)) ==
-            VI_GET_MAG_FAILURE) {
-            return detumbleError(isTesting);
+        if (vi_get_mag(mag_choice, &(mag.x), &(mag.y), &(mag.z)) == VI_GET_MAG_FAILURE) {
+            return DET_MAG_FAILURE;
         }
 
       
         //Compute and perform the delay so that the coil's magnetic field decays
         double coilsMagnetic = computeB_coils(vec_mag(mdm));
         double delayTime = computeDecay(coilsMagnetic);
-        if(vi_delay_ms(delayTime) == VI_DELAY_MS_FAILURE){
-          return detumbleError(isTesting);
+        if(vi_delay_ms(delayTime) == VI_DELAY_MS_FAILURE) {
+            return DET_DELAY_MS_FAILURE;
         }
 
         //Compute the delta_t
@@ -169,25 +162,27 @@ detumble_status detumble(vec3 needle, bool isTesting) {
 
         mag_prev = mag;
         //Get new magnectic field reading
-        if(vi_get_mag(mag_choice, &(mag.x), &(mag.y), &(mag.z)) == VI_GET_MAG_FAILURE){
-          return detumbleError(isTesting);
-          }
+        if(vi_get_mag(mag_choice, &(mag.x), &(mag.y), &(mag.z)) == VI_GET_MAG_FAILURE) {
+            return DET_MAG_FAILURE;
+        }
 
-        if(vi_get_sensor_calibration(VI_MAG1_X, &sensor_offset, &sensor_scalar, &sensor_filter_constant)){
-          return detumbleError(isTesting);
-          }
+        /* DUPLICATED CODE - END */
+
+        if(vi_get_sensor_calibration(VI_MAG1_X, &sensor_offset, &sensor_scalar, &sensor_filter_constant)) {
+            return DET_SENSOR_CALIBRATION_FAILURE_X
+        }
 
         mag.x = get_sensor_calibration(mag.x, mag_prev.x, sensor_offset, sensor_scalar, sensor_filter_constant);
 
-        if(vi_get_sensor_calibration(VI_MAG1_Y, &sensor_offset, &sensor_scalar, &sensor_filter_constant)){
-          return detumbleError(isTesting);
-          }
+        if(vi_get_sensor_calibration(VI_MAG1_Y, &sensor_offset, &sensor_scalar, &sensor_filter_constant)) {
+            return DET_SENSOR_CALIBRATION_FAILURE_Y
+        }
 
         mag.y = get_sensor_calibration(mag.y, mag_prev.y, sensor_offset, sensor_scalar, sensor_filter_constant);
 
-        if(vi_get_sensor_calibration(VI_MAG1_Z, &sensor_offset, &sensor_scalar, &sensor_filter_constant)){
-          return detumbleError(isTesting);
-          }
+        if(vi_get_sensor_calibration(VI_MAG1_Z, &sensor_offset, &sensor_scalar, &sensor_filter_constant)) {
+            return DET_SENSOR_CALIBRATION_FAILURE_Z
+        }
 
         mag.z = get_sensor_calibration(mag.z, mag_prev.z, sensor_offset, sensor_scalar, sensor_filter_constant);
 
@@ -202,9 +197,8 @@ detumble_status detumble(vec3 needle, bool isTesting) {
         capCurrent(&mdm);
 
         //Send control command to coils
-        if (vi_control_coil(mdm.x, mdm.y, mdm.z) == VI_CONTROL_COIL_FAILURE){
-        	return detumbleError(isTesting);
-
+        if (vi_control_coil(mdm.x, mdm.y, mdm.z) == VI_CONTROL_COIL_FAILURE) {
+            return DET_CONTROL_COIL_FAILURE;
         }
 
         // Compute new angular velocity

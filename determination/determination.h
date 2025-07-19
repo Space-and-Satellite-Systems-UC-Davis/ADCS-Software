@@ -20,7 +20,9 @@ typedef enum {
     DET_POS_LOOKUP_ERROR,
     DET_IGRF_TIME_ERROR,
     DET_TRIAD_ERROR,
-    DET_UNHANDLED_ERROR
+    DET_EPOCH_FAILURE,
+    DET_MAG_FAILURE,
+    DET_CSS_FAILURE
 } determination_status;
 
 

@@ -24,9 +24,15 @@ extern "C" {
 
 typedef enum detumble{
     DETUMBLING_SUCCESS,
-    DETUMBLING_FAILURE,
     COILS_TESTING_SUCCESS,
-    COILS_TESTING_FAILURE
+    COILS_TESTING_FAILURE,
+    DET_MAG_FAILURE,
+    DET_MILLIS_FAILURE,
+    DET_CONTROL_COIL_FAILURE,
+    DET_DELAY_MS_FAILURE,
+    DET_SENSOR_CALIBRATION_FAILURE_X,
+    DET_SENSOR_CALIBRATION_FAILURE_Y,
+    DET_SENSOR_CALIBRATION_FAILURE_Z
 } detumble_status;
 
 /**@brief find the angular velocity through change in magnetic vector

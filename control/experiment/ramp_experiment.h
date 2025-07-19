@@ -8,7 +8,8 @@
 
 typedef enum {
     RUN_RAMP_EXPERIMENT_SUCCESS,
-    RUN_RAMP_EXPERIMENT_FAILURE
+    RUN_RAMP_EXPERIMENT_MILLIS_FAILURE,
+    RUN_RAMP_EXPERIMENT_COMMAND_FAILURE
 } run_ramp_experiment_status;
 
 run_ramp_experiment_status ramp_experiment();

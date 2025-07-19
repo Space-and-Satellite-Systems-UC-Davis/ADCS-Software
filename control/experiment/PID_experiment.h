@@ -7,7 +7,9 @@
 
 typedef enum PID_experiment{
     PID_EXPERIMENT_SUCCESS,
-    PID_EXPERIMENT_FAILURE
+    PID_EXPERIMENT_ANGVEL_FAILURE,
+    PID_EXPERIMENT_MILLIS_FAILURE,
+    PID_EXPERIMENT_COMMAND_FAILURE
 } PID_status;
 
 /**@brief Performs an experiement for the PID function.
