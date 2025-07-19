@@ -14,6 +14,8 @@
 #include "ADCS.h"
 #include "virtual_intellisat.h"
 
+#include <string.h>
+
 typedef struct Determination_Cache {
     double last_update_time;
 
@@ -39,9 +41,9 @@ static determination_cache cache;
 vi_get_css_status get_measured_sun(int generation, vec3 *measured_sun) {
 
     //px_choice, nx_choice, py_choice, ny_choice, pz_choice, nz_choice;
-    vi_sensor sensors[6]; //  mccPX, NX, PY, NY, PZ, NZ
+    vi_sensor sensors[6]; // PX, NX, PY, NY, PZ, NZ
     double currVals[6];   
-    double prevVals[6];  // Not sure how that could be implemented
+    static double prevVals[6];  // Not sure how that could be implemented
 
     for (int i = 0; i < 6; i++){
         sensors[i].component = VI_COMP_CSS_CHOICE;
@@ -61,6 +63,9 @@ vi_get_css_status get_measured_sun(int generation, vec3 *measured_sun) {
 
     // Implement logic to combine readings into vector
     *measured_sun = (vec3){0.0, 0.0, 0.0};
+
+    //Clone currVals into prevVals;
+    memcpy(prevVals, currVals, sizeof(currVals));
 
     return VI_GET_CSS_SUCCESS;
 }

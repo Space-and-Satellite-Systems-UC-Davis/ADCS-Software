@@ -27,84 +27,78 @@
 /*################ SENSORS AND ACTUATORS ################*/
 
 typedef enum {
-    VI_MAG1,
-    VI_MAG2
+    VI_MAG1 = 1,
+    VI_MAG2 = 2
 } vi_MAG_choice;
 
 typedef enum {
-    VI_IMU1,
-    VI_IMU2
+    VI_IMU1 = 1,
+    VI_IMU2 = 2
 } vi_IMU_choice;
 
 typedef enum {
-    VI_HDD1,
-    VI_HDD2
+    VI_HDD1 = 1,
+    VI_HDD2 = 2
 } vi_HDD_choice;
 
 typedef enum {
-	VI_CSS_PX,
-	VI_CSS_NX,
-	VI_CSS_PY,
-	VI_CSS_NY,
-	VI_CSS_PZ,
-	VI_CSS_NZ
+	VI_CSS_PX = 1,
+	VI_CSS_NX = 2,
+	VI_CSS_PY = 3,
+	VI_CSS_NY = 4,
+	VI_CSS_PZ = 5,
+	VI_CSS_NZ = 6
 } vi_CSS_choice;
 
 typedef enum {
-	VI_TEMP_PX,
-	VI_TEMP_NX,
-	VI_TEMP_PY,
-	VI_TEMP_NY,
-    VI_TEMP_NZ //?
+	VI_TEMP_PX = 1,
+	VI_TEMP_NX = 2,
+	VI_TEMP_PY = 3,
+	VI_TEMP_NY = 4,
+    VI_TEMP_NZ = 5
 } vi_tmp_choice;
 
 typedef enum {
-	VI_SP_PX,
-	VI_SP_NX,
-	VI_SP_PY,
-	VI_SP_NY
+	VI_SP_PX = 1,
+	VI_SP_NX = 2,
+	VI_SP_PY = 3,
+	VI_SP_NY = 4
 } vi_sol_choice;
 
 typedef enum {
-	VI_MAG_X1,
-	VI_MAG_X2,
-	
-	VI_MAG_Y1,
-	VI_MAG_Y2,
-	
-	VI_MAG_Z1,
-	VI_MAG_Z2
+	VI_MAG_X1 = 1,
+	VI_MAG_Y1 = 2,
+	VI_MAG_Z1 = 3,
+
+	VI_MAG_X2 = 4,
+	VI_MAG_Y2 = 5,
+	VI_MAG_Z2 = 6
 } vi_MAG_value;
 
 typedef enum {
-	VI_IMU1_X,
-	VI_IMU2_X,
+	VI_IMU1_X = 1,
+	VI_IMU1_Y = 2,
+	VI_IMU1_Z = 3,
 	
-	VI_IMU1_Y,
-	VI_IMU2_Y,
-	
-	VI_IMU1_Z,
-	VI_IMU2_Z
+	VI_IMU2_X = 4,
+	VI_IMU2_Y = 5,
+	VI_IMU2_Z = 6
 } vi_IMU_value;
 
 typedef enum {
-	VI_CSS_PX1, //0 
-	VI_CSS_PX2, //1
+	VI_CSS_PX1 = 0,
+	VI_CSS_NX1 = 1,
+	VI_CSS_PY1 = 2,
+	VI_CSS_NY1 = 3,
+	VI_CSS_PZ1 = 4,
+	VI_CSS_NZ1 = 5,
 
-	VI_CSS_NX1, //2
-	VI_CSS_NX2, //
-
-	VI_CSS_PY1,
-	VI_CSS_PY2,
-
-	VI_CSS_NY1,
-	VI_CSS_NY2,
-
-	VI_CSS_PZ1,
-	VI_CSS_PZ2,
-
-	VI_CSS_NZ1,
-	VI_CSS_NZ2
+	VI_CSS_PX2 = 6,
+	VI_CSS_NX2 = 7, 
+	VI_CSS_PY2 = 8,
+	VI_CSS_NY2 = 9,
+	VI_CSS_PZ2 = 10,
+	VI_CSS_NZ2 = 11
 } vi_CSS_value;
 
 typedef enum {
