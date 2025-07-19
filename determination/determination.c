@@ -260,3 +260,42 @@ void get_earth_direction(vec3 *earth_attitude) {
     vec_set(0, 0, 1, &down);
     mat_vec_mult(attitude, down, earth_attitude);
 }
+
+void get_moon_direction(vec3 *moon_attitude) {
+    // gcrs coordinate system
+    // delta_t = 0 (standard is 30s but for the moon it does not matter -> check?)
+
+    int year, month, day, hour, minute, second;
+    
+    // Get current Time
+    if (vi_get_epoch(&year, &month, &day, &hour, &minute, &second) ==
+        GET_EPOCH_FAILURE)
+        return DET_UNHANDLED_ERROR;
+
+    // adding 69 seconds to UTC to convert to TT
+    double TT = julian_date(year, month, day, hour + minute / 60.0 + (second + 69) / 3600.0); 
+
+    static object moon;
+    cat_entry null_star;
+    static short int first_time = 1;
+
+    if (first_time)
+   {
+      make_cat_entry ("NULL_STAR","   ",0L,0.0,0.0,0.0,0.0,0.0,0.0,
+         &null_star);
+
+      make_object (0,11,"Moon",&null_star, &moon);
+
+      first_time = 0;
+   }
+   observer location;
+   double pos[3]; // TODO: get current satellite position x, y, z
+   double vel[3]; // TODO: get current satellite velocity vx, vy, vz
+    make_observer_in_space(pos, vel, &location); // check if we can assume that satellite is in space or it could also be on the surface
+
+    sky_pos output;
+    place(TT, &moon, &location, 69, 0, 0, &output); // arg6: check if need full accuracy (0) or reduced accuracy (1) is fine
+
+    //TODO: convert output (of type sky_pos) to vec3 type
+    //moon_attitude = output
+}
