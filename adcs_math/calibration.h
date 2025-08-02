@@ -10,6 +10,7 @@
 #define CALIBRATION_H
 
 #include "sensors.h"
+#include "adcs_math/vector.h"
 #include "virtual_intellisat.h"
 
 #include <stdint.h>

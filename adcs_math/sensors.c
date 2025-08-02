@@ -1,5 +1,5 @@
 #include "sensors.h"
-
+#include "adcs_math/calibration.h"
 #include "math.h"
 
 float lowpass_filter(float currValue, float prevValue, float filterConstant) {
@@ -22,28 +22,46 @@ uint64_t get_delta_t(uint64_t currTime, uint64_t prevTime) {
 }
 
 int is_in_eclipse() {
-    double px1, px2, nx1, nx2, py1, py2, ny1, ny2, pz1, pz2, nz1, nz2;
-    vi_get_css(VI_CSS_PX1, &px1);
-    vi_get_css(VI_CSS_PX2, &px2);
-    vi_get_css(VI_CSS_NX1, &nx1);
-    vi_get_css(VI_CSS_NX2, &nx2);
-    vi_get_css(VI_CSS_PY1, &py1);
-    vi_get_css(VI_CSS_PY2, &py2);
-    vi_get_css(VI_CSS_NY1, &ny1);
-    vi_get_css(VI_CSS_NY2, &ny2);
-    vi_get_css(VI_CSS_PZ1, &pz1);
-    vi_get_css(VI_CSS_PZ2, &pz2);
-    vi_get_css(VI_CSS_NZ1, &nz1);
-    vi_get_css(VI_CSS_NZ2, &nz2);
 
-    double magnitude =
-        sqrt(pow(px1, 2) + pow(px2, 2) + pow(nx1, 2) + pow(nx2, 2) +
-             pow(py1, 2) + pow(py2, 2) + pow(ny1, 2) + pow(ny2, 2) +
-             pow(pz1, 2) + pow(pz2, 2) + pow(nz1, 2) + pow(nz2, 2));
+    static int iteration = 0;
+    //     px1, px2, nx1, nx2, py1, py2, ny1, ny2, pz1, pz2, nz1, nz2;
+    double readingsOne[6]; 
+    double readingsTwo[6];
+    double prevValOne, prevValTwo = 0; //TODO: MUST CHANGE
+
+    vi_sensor sensorOne, sensorTwo;
+    sensorOne.component = VI_COMP_CSS_CHOICE;
+    sensorTwo.component = VI_COMP_CSS_CHOICE;
+
+    sensorOne.field.css_choice = VI_CSS_PX;
+    sensorTwo.field.css_choice = VI_CSS_PX;
+
+    for (int i = VI_CSS_PX; i <= VI_CSS_NZ; i++)
+    {
+        //Get Readings from sensor
+        getCSS(sensorOne, prevValOne, &readingsOne[i - 1]);
+        getCSS(sensorTwo, prevValTwo, &readingsTwo[i - 1]);
+
+        //Increment to next set of sensors
+        sensorOne.field.css_choice ++;
+        sensorTwo.field.css_choice ++;
+    }
+
+    double sum = 0;
+    for (int i = 0; i < 6; i++)
+    {
+        sum += pow(readingsOne[i], 2) + pow(readingsTwo[i], 2);
+    }
+
+    double magnitude = sqrt(sum);
+
+
+    iteration++;
 
     if (magnitude <= 0.25) {
         return 1;
     }
+
     return 0;
 }
 
@@ -93,36 +111,37 @@ static const char alternations[256] = {
     0b00001011, 0b00001111, 0b01100010, 0b00000000};
 
 int sensor_pair_choice(vi_sensor sensor, int generation) {
+    int mask = 0;
     switch (sensor.component) {
         case VI_COMP_CSS_CHOICE:
-            switch (sensor.field) {
+            switch (sensor.field.css_choice) {
 	            case VI_CSS_PX:
-                    int mask = 1;
+                    mask = 1;
                     break;
 	            case VI_CSS_NX:
-                    int mask = 2;
+                    mask = 2;
                     break;
 	            case VI_CSS_PY:
-                    int mask = 3;
+                    mask = 3;
                     break;
 	            case VI_CSS_NY:
-                    int mask = 4;
+                    mask = 4;
                     break;
 	            case VI_CSS_PZ:
-                    int mask = 5;
+                    mask = 5;
                     break;
                 case VI_CSS_NZ:
-                    int mask = 6;
+                    mask = 6;
                     break;
             }
             break;
 
         case VI_COMP_MAG_CHOICE:
-            int mask = 7;
+            mask = 7;
             break;
 
         case VI_COMP_IMU_CHOICE:
-            int mask = 8;
+            mask = 8;
             break;
 
         case VI_COMP_HDD_CHOICE:
