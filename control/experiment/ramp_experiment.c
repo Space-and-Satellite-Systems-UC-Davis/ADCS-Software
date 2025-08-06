@@ -30,7 +30,7 @@ run_ramp_experiment_status ramp_experiment(){
 
         double command = linear_ramp_command(ti , &controller);
         
-        command_status = vi_hdd_command(HDD_CHOICE, command);
+        command_status = vi_hdd_command(HDD_CHOICE, command, NULL);
         if (command_status == HDD_COMMAND_FAILURE){
             return RUN_RAMP_EXPERIMENT_FAILURE;
         }

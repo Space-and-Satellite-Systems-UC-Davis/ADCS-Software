@@ -125,7 +125,8 @@ typedef enum {
 vi_hdd_command_status
 vi_hdd_command(
     vi_HDD hdd,
-    double throttle
+    double throttle,
+	double *targetedDuty
 );
 
 

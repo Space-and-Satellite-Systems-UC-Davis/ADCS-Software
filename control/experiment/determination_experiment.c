@@ -66,7 +66,7 @@ determination_exp_status determination_experiment()
         //PLug it into the control function
         double throttle = PID_command(target, zrotation, curr_millis, &controller);
         //Take output and plug it into HDD 
-        if(vi_hdd_command(HDD_CHOICE, throttle) == HDD_COMMAND_FAILURE)
+        if(vi_hdd_command(HDD_CHOICE, throttle, NULL) == HDD_COMMAND_FAILURE)
             return DETERMINATION_EXPERIMENT_FAILURE;
         prevAttitude = currAttitude;
         prev_millis = curr_millis;
