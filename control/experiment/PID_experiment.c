@@ -5,6 +5,7 @@
 #include <stdint.h>
 #include "print_scan.h"
 #include "../hdd/hdd_init.h"
+#include "../system_config/Timers/timers.h"
 
 //TODO: IMU alternation?
 //      Negative PID output should activate VI_HDD2
@@ -27,10 +28,12 @@ PID_status PID_experiment()
     vi_HDD hdd_choice = VI_HDD1;
 
     printMsg("Trying to throttle HDD\r\n");
-    pwm_setDutyCycle(1, 100);
+    pwm_setDutyCycle(0, 100);
     delay_ms(5000);
-    pwm_setDutyCycle(1, 0);
-    delay_ms(1000);
+
+    // set back to middle
+    pwm_setDutyCycle(0, MID_DUTY);
+    pwm_setDutyCycle(1, MID_DUTY);
 
     if(vi_get_angvel(IMU_CHOICE, &angvel_x, &angvel_y, &angvel_z) == GET_ANGVEL_FAILURE)
         return PID_EXPERIMENT_FAILURE;
@@ -48,8 +51,6 @@ PID_status PID_experiment()
     //Run a while loop 
     led_d2(1);
     led_d3(1);
-    double duty1 = 0;
-    double duty2 = 0;
     printMsg("Got through PID experiment initialization; beginning loop. \r\n");
     uint64_t timeLastOn = curr_millis;
     uint64_t timeLastPrint = curr_millis;
@@ -60,7 +61,7 @@ PID_status PID_experiment()
     	return PID_EXPERIMENT_FAILURE;
 
     	// if it hasn't been a second, don't print
-    	char doPrint = 0;
+    	int8_t doPrint = 0;
     	if (curr_millis - timeLastPrint >= 3000) {
     		doPrint = 1;
     		timeLastPrint = curr_millis;
@@ -95,6 +96,8 @@ PID_status PID_experiment()
 
         //Plug it into the control function
         throttle += PID_command(target, angvel_z, curr_millis, &controller);
+
+        // bound the resulting throttle and scale down
         if (throttle > 0 && throttle > throttleBound) { throttle = throttleBound; }
         else if (throttle < 0 && throttle < -throttleBound) { throttle = -throttleBound; }
         throttle /= 1000;  // scale down
@@ -104,24 +107,21 @@ PID_status PID_experiment()
         // we define HDD1 to be in the same orientation
         // (face up in the same z direction)
         // as the board, with HDD2 in reverse
-        if (throttle < 0 && duty1 <= MID_DUTY) {
-            hdd_choice = VI_HDD2;
-		} else {
+        uint8_t duty1 = pwm_getDutyCycle(PWM0);
+        uint8_t duty2 = pwm_getDutyCycle(PWM1);
+        if (throttle > 0 || (throttle < 0 && duty1 > MID_DUTY)) {
             hdd_choice = VI_HDD1;
+		} else {
+            hdd_choice = VI_HDD2;
         }
 
-        hdd_choice = VI_HDD1;
-        throttle = 50;
-
-        if (doPrint) { printMsg("HDD1 duty: %f, HDD2 duty: %f\r\n", duty1, duty2); }
-
-        float resultDuty = vi_hdd_command(hdd_choice, throttle, hdd_choice == VI_HDD1 ? &duty1 : &duty2);
-        if (doPrint) { printMsg("Got result duty of: %f for HDD %d\r\n", resultDuty, hdd_choice + 1); }
-        continue;
+        if (doPrint) { printMsg("HDD1 duty: %u, HDD2 duty: %u\r\n", duty1, duty2); }
 
         //Take output and plug it into HDD 
-        if(vi_hdd_command(hdd_choice, throttle, hdd_choice == VI_HDD1 ? &duty1 : &duty2) == HDD_COMMAND_FAILURE)
+        if(vi_hdd_command(hdd_choice, throttle, doPrint) == HDD_COMMAND_FAILURE)
             return PID_EXPERIMENT_FAILURE;
+
+        if (doPrint) { printMsg("Got result duty of: %d for HDD %d\r\n", pwm_getDutyCycle(hdd_choice == VI_HDD1 ? PWM0 : PWM1), hdd_choice + 1); }
     }
 
 
