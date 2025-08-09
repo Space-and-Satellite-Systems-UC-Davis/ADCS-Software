@@ -86,19 +86,19 @@ typedef enum {
 } vi_IMU_value;
 
 typedef enum {
-	VI_CSS_PX1 = 0,
-	VI_CSS_NX1 = 1,
-	VI_CSS_PY1 = 2,
-	VI_CSS_NY1 = 3,
-	VI_CSS_PZ1 = 4,
-	VI_CSS_NZ1 = 5,
+	VI_CSS_PX1 = 1,
+	VI_CSS_NX1 = 2,
+	VI_CSS_PY1 = 3,
+	VI_CSS_NY1 = 4,
+	VI_CSS_PZ1 = 5,
+	VI_CSS_NZ1 = 6,
 
-	VI_CSS_PX2 = 6,
-	VI_CSS_NX2 = 7, 
-	VI_CSS_PY2 = 8,
-	VI_CSS_NY2 = 9,
-	VI_CSS_PZ2 = 10,
-	VI_CSS_NZ2 = 11
+	VI_CSS_PX2 = 7,
+	VI_CSS_NX2 = 8, 
+	VI_CSS_PY2 = 9,
+	VI_CSS_NY2 = 10,
+	VI_CSS_PZ2 = 11,
+	VI_CSS_NZ2 = 12
 } vi_CSS_value;
 
 typedef enum {
@@ -345,8 +345,8 @@ vi_get_solar_panel_current(
 /*###################### CONSTANTS ######################*/
 
 typedef enum{
-	GET_CONSTANT_SUCCESS,
-	GET_CONSTANT_FAILURE
+	GET_CONSTANT_SUCCESS = 0,
+	GET_CONSTANT_FAILURE = 1
 } vi_get_constant_status;
 
 /**@brief Get the current calibration values for a sensor.
