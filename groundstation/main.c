@@ -41,6 +41,18 @@ void test_pointdish() {
 }
 
 int main() {
-    printf("Hello world\n");
+    printf("Starting server\n");
+    
+    while (true) {
+        server();
+    }
+
     return 0;
+}
+
+// Code is written with linux in mind. Compile accordingly
+// Our Pi isn't going to be running windows.
+void server()
+{
+    
 }
