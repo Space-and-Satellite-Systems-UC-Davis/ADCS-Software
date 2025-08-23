@@ -2,7 +2,7 @@ CC := gcc
 CFLAGS := -I. -I.. -lm -Wswitch
 
 # Source files
-SOURCES := pointdish.c ../adcs_math/vector.c ../adcs_math/matrix.c \
+SOURCES :=  main.c pointdish.c ../adcs_math/vector.c ../adcs_math/matrix.c \
            ../determination/pos_lookup/pos_lookup.c \
            ../determination/pos_lookup/sgp4/src/c/SGP4.c ../determination/pos_lookup/sgp4/src/c/TLE.c \
            ../determination/novasc3.1/novas.c ../determination/novasc3.1/novascon.c \
