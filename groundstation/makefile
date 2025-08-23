@@ -12,7 +12,7 @@ SOURCES :=  main.c pointdish.c ../adcs_math/vector.c ../adcs_math/matrix.c \
 
 
 # Target executable name
-TARGET := pointdish
+TARGET := server
 
 all: $(TARGET)
 
