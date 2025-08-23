@@ -115,7 +115,7 @@ int main() {
     FILE *most_recent_tle = fopen( "most_recent_tle.txt","r");
     if(most_recent_tle == NULL){
         perror("Error opening most_recent_tle.txt");
-        perror("Has download_tle.sh run yet?");
+        perror("Has get_tle.sh run yet?");
         return -2;
     }
 
