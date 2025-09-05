@@ -215,6 +215,23 @@ vi_get_angvel(
     double *angvel_z
 );
 
+/**@brief Retrieve angular velocity data from the IMU for only the z-axis.
+ *
+ * @param imu Which inertial measurement unit to read from.
+ * @param angvel_z Return-by-reference ptrs.
+ *
+ * The sign of the angular velocity values must adhere to the
+ *   Right-Hand-Rule as defined by the satellite's positive axes.
+ *   Retrieval of only one axis is used for optimizing HDD PID.
+ *
+ * @return vi_get_angvel_status A return code.
+ */
+vi_get_angvel_status
+vi_get_angvel_z(
+    vi_IMU imu,
+    double *angvel_z
+);
+
 
 typedef enum {
 	VI_GET_MAG_SUCCESS,

@@ -11,11 +11,11 @@
 #include <stdint.h>
 
 typedef struct {
-	double P_gain;
-	double I_gain;
-	double D_gain;
-	double e_prev;
-	double e_cumulative;
+	float P_gain;
+	float I_gain;
+	float D_gain;
+	float e_prev;
+	float e_cumulative;
 	uint64_t t_prev;
 } PID_controller;
 

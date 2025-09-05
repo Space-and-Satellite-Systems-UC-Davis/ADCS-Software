@@ -1,5 +1,6 @@
 #include "PID.h"
 #include "adcs_math/sensors.h"
+#include "print_scan.h"
 
 double PID_command(
 	double target,
@@ -7,16 +8,29 @@ double PID_command(
 	uint64_t t_curr,
 	PID_controller *controller
 ) {
-	double e_curr = target - state;
-	double dt = get_delta_t(t_curr, (controller->t_prev));
-	double e_derivative = (e_curr - controller->e_prev)/dt;
+	if (target) { printMsg("Prev Controller parameters => ePrev: %f, eCum: %f, dt: %u\r\n", controller->e_prev, controller->e_cumulative, t_curr - controller->t_prev); }
+	float e_curr = 0 - state;
+	float dt = get_delta_t(t_curr, (controller->t_prev));
+	if (dt <= 0) {
+		printMsg("Small dt found of %f with tcurr: %u, tprev: %u\r\n", dt, (uint32_t) t_curr, (uint32_t) controller->t_prev);
+	}
 
-	double command = (controller->P_gain)*e_curr
+	float e_derivative = (e_curr - controller->e_prev)/dt;
+
+	if (target) { printMsg("Curr Controller Parameters => eCurr: %f, eDeriv: %f, dt: %f\r\n", e_curr, e_derivative, dt); }
+
+	float command = (controller->P_gain)*e_curr
 				   + (controller->I_gain)*(controller->e_cumulative)
 				   + (controller->D_gain)*e_derivative;
 
-	controller->e_cumulative = controller->e_cumulative + dt*e_curr;
+	// update the accumulated error, but make sure it doesn't become too large
+	controller->e_cumulative = controller->e_cumulative + dt*e_curr;  // scale down since dt is in ms
+	if (controller->e_cumulative > 1000) { controller->e_cumulative = 1000; }
+	else if (controller->e_cumulative < -1000) { controller->e_cumulative = -1000; }
+
+	// update the prev values
 	controller->e_prev = e_curr;
+	controller->t_prev = t_curr;
 	
 	return command;
 }
