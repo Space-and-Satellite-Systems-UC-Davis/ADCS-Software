@@ -11,7 +11,7 @@
 //TODO: IMU alternation?
 //      Negative PID output should activate VI_HDD2
 #define IMU_CHOICE VI_IMU1
-#define PRINT 1000  // if print is defined characteristics will be printed that many ms
+#define PRINT 0  // if print is defined characteristics will be printed that many ms
 //#define PROFILE false  // if profile is defined loop time will be printed
 
 double P_GAIN = 12.0; // 0.9
@@ -107,7 +107,7 @@ PID_status PID_experiment()
 
     	// if the velocity is too low to respond to
     	if (fabs(target - angvel_z) <= 0.5) {
-    	    if (doPrint) { printMsg("Did not detect significant angular velocity.\r\n"); }
+    	    if (doPrint) { printMsg("\r\nDid not detect significant angular velocity.\r\n"); }
 
     	    // after a minute, stop the PID experiment
     	    if (curr_millis - timeLastOn > 60000) {
@@ -154,8 +154,8 @@ PID_status PID_experiment()
 
 #ifdef PRINT
     	if (doPrint) {
-    		printMsg("Commanding HDD #%u w/ throttle: %u\r\n", hdd_choice, throttle);
-    		printMsg("B4 DRIVE DUTIES @ <%ums> => duty1: %u, duty2: %u", curr_millis, duty1, duty2);
+    		printMsg("B4 DRIVE DUTIES @ <%ums> => duty1: %u, duty2: %u\r\n", (uint32_t) curr_millis, duty1, duty2);
+    		printMsg("Commanding HDD #%u w/ throttle: %f\r\n", hdd_choice + 1, throttle);
     	}
 #endif
 
