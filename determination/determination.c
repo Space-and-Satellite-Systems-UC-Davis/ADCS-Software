@@ -261,17 +261,17 @@ void get_earth_direction(vec3 *earth_attitude) {
     mat_vec_mult(attitude, down, earth_attitude);
 }
 
-void get_moon_direction(vec3 *moon_attitude) {
+determination_status get_moon_direction(vec3 *moon_attitude) {
     
     int delta_t = 69;
 
     int year, month, day, hour, minute, second;
     
     // Get current Time
-    vi_get_epoch_status epoch_status = vi_get_epoch(&year, &month, &day, &hour, &minute, &second);
-    // if (vi_get_epoch(&year, &month, &day, &hour, &minute, &second) ==
-    //     GET_EPOCH_FAILURE)
-    //     return DET_UNHANDLED_ERROR; //TODO: fix error handling w/ return type
+    //vi_get_epoch_status epoch_status = vi_get_epoch(&year, &month, &day, &hour, &minute, &second);
+    if (vi_get_epoch(&year, &month, &day, &hour, &minute, &second) ==
+        GET_EPOCH_FAILURE)
+        return DET_UNHANDLED_ERROR; //TODO: fix error handling w/ return type
 
     // adding delta_t = 69 seconds to UTC to convert to TT
     double TT = julian_date(year, month, day, hour + minute / 60.0 + (second + delta_t) / 3600.0); 
@@ -297,9 +297,31 @@ void get_moon_direction(vec3 *moon_attitude) {
     char *tle_line2;
 
     vi_get_TLE_status tle_status = vi_get_TLE(tle_line1, tle_line2);
+    
+    switch (tle_status) {
+    case GET_TLE_FAILURE:
+        return DET_NO_TLE;
+    case GET_TLE_SUCCESS_OLD:
+        break;
+    case GET_TLE_SUCCESS_NEW:
+        break;
+    }
+
     pos_status =
             pos_lookup(tle_line1, tle_line2, UTC, 0.0, &longitude, &latitude,
                        &altitude, &geocentric_radius, &geocentric_latitude);
+
+    switch (pos_status) {
+    case SGP4_ERROR:
+        return DET_POS_LOOKUP_ERROR;
+    case TEME2ITRS_ERROR:
+        return DET_POS_LOOKUP_ERROR;
+    case ITRS2LLA_ERROR:
+        return DET_POS_LOOKUP_ERROR;
+    case POS_LOOKUP_SUCCESS:
+        break;
+    }
+
     double pos[3] = {longitude, latitude, altitude}; // get current satellite position x, y, z
     double vel[3] = {0, 0, 0}; // get current satellite velocity vx, vy, vz
     make_observer_in_space(pos, vel, &location); // check if we can assume that satellite is in space or it could also be on the surface
