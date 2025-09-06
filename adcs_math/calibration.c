@@ -38,6 +38,7 @@ getMag_status getMag(vi_sensor sensor, vec3 prevVal, vec3 *currVal) {
         *(magCurrPtr + i) = currVal;
 
         sensor.field.mag_value += 1;
+
     }
 
     return GET_MAG_SUCCESS;
@@ -84,8 +85,8 @@ getIMU_status getIMU(vi_sensor sensor, vec3 prevVal, vec3 *currVal) {
 
     sensor.field.imu_value = VI_IMU1_X;
     if (vi_get_sensor_calibration(sensor, &sensor_offset, &sensor_scalar,
-                                   &sensor_filter_constant)) {}
-    else return IMU_CALIBRATION_FAILURE;
+                                  &sensor_filter_constant))
+        return IMU_CALIBRATION_FAILURE;
     reading.x = get_sensor_calibration(reading.x, prevVal.x, sensor_offset,
                                        sensor_scalar, sensor_filter_constant);
 
@@ -122,6 +123,7 @@ getCSS_status getCSS(vi_sensor sensor, double prevVal, double *currVal) {
         return CSS_CALIBRATION_FAILURE;
     reading = get_sensor_calibration(reading, prevVal, sensor_offset,
                                      sensor_scalar, sensor_filter_constant);
+
 
     return GET_CSS_SUCCESS;
 }

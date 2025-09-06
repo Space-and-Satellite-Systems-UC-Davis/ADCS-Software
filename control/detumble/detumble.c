@@ -41,6 +41,7 @@ detumble_status detumble(vec3 needle, bool isTesting) {
     //Compute Angular Velocity
     if (getMag(magnotometer, mag_prev, &mag_curr)) 
         return DETUMBLING_FAILURE_MAGNOTOMETER;
+
     angVel = findAngVel(mag_prev, mag_curr, delta_t);
 
     // Note: May be do something to account for integer overflow
