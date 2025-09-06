@@ -14,9 +14,9 @@
 #define PRINT 0  // if print is defined characteristics will be printed that many ms
 //#define PROFILE false  // if profile is defined loop time will be printed
 
-double P_GAIN = 12.0; // 0.9
+double P_GAIN = 4.0; // 0.9
 double I_GAIN = 0.0;
-double D_GAIN = 4.0;  // 1.1
+double D_GAIN = 24.0;  // 1.1
 
 void readPIDUART(PID_controller *pid, double *P, double *I, double *D, double angvel_z, int doPrint);
 
@@ -119,8 +119,10 @@ PID_status PID_experiment()
     	    //continue;
     	}
 
+    	timeLastOn = curr_millis;
+
     	//Plug it into the control function
-    	throttle = PID_command(doPrint, -angvel_z, curr_millis, &controller);
+    	throttle = PID_command(doPrint, angvel_z, curr_millis, &controller);
 
 #ifdef PROFILE
     	vi_get_curr_millis(&nextCheckpoint);
@@ -139,11 +141,13 @@ PID_status PID_experiment()
     	duty2 = pwm_getDutyCycle(PWM1);
     	if ((throttle > 0 && duty2 <= MID_DUTY) || (throttle < 0 && duty1 > MID_DUTY)) {
     		hdd_choice = VI_HDD1;
-    		if (throttle < 0) { throttle = -(pwm_getDutyCycle(PWM0) - MID_DUTY); }
+    		led_d2(1);
+    		led_d3(0);
     	} else {
     		hdd_choice = VI_HDD2;
-    		if (throttle > 0) { throttle = -(pwm_getDutyCycle(PWM1) - MID_DUTY); }
-    		else { throttle = -throttle; }  // make throttle positive
+    		led_d2(0);
+    		led_d3(1);
+    		throttle *= -1;  // invert because 2nd HDD is inverted
     	}
 
 #ifdef PROFILE
