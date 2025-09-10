@@ -14,9 +14,9 @@
 #define PRINT 0  // if print is defined characteristics will be printed that many ms
 //#define PROFILE false  // if profile is defined loop time will be printed
 
-double P_GAIN = 4.0; // 0.9
+double P_GAIN = 0.25; // 0.9
 double I_GAIN = 0.0;
-double D_GAIN = 24.0;  // 1.1
+double D_GAIN = 0.0;  // 1.1
 
 void readPIDUART(PID_controller *pid, double *P, double *I, double *D, double angvel_z, int doPrint);
 
@@ -132,7 +132,7 @@ PID_status PID_experiment()
 
     	// bound the resulting throttle
     	if (throttle > MID_DUTY) { throttle = MID_DUTY; }
-    	else if (throttle < MID_DUTY) { throttle = -MID_DUTY; }
+    	else if (throttle < -MID_DUTY) { throttle = -MID_DUTY; }
 
     	// we define HDD1 to be in the same orientation
     	// (face up in the same z direction)

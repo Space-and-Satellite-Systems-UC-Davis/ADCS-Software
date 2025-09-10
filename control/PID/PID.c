@@ -9,7 +9,7 @@ double PID_command(
 	PID_controller *controller
 ) {
 	if (target) { printMsg("\r\nPrev Controller parameters => ePrev: %f, eCum: %f, dt: %u\r\n", controller->e_prev, controller->e_cumulative, t_curr - controller->t_prev); }
-	float e_curr = 0 - state;
+	float e_curr = state;
 	float dt = get_delta_t(t_curr, (controller->t_prev));
 	dt /= 100;
 	if (dt <= 0) {
