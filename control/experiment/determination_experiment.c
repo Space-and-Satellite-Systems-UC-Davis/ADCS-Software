@@ -1,5 +1,6 @@
 #include "control/experiment/determination_experiment.h"
 #include "adcs_math/sensors.h"
+#include "adcs_math/calibration.h"
 #include "adcs_math/vector.h"
 #include "determination/determination.h"
 

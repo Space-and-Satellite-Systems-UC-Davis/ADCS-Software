@@ -22,8 +22,8 @@ detumble_status detumble(vec3 needle, bool isTesting, uint64_t maxTime,
                          uint64_t minTime)
 {
     // Magnotometer & IMU readings
-    vec3 mag_curr = (vec3){ 0, 0, 0 }, mag_prev = (vec3){ 0, 0, 0 };
-    vec3 imu_curr = (vec3){ 0, 0, 0 }, imu_prev = (vec3){ 0, 0, 0 };
+    vec3 mag_curr = undefined_vec3, mag_prev = undefined_vec3;
+    vec3 imu_curr = undefined_vec3, imu_prev = undefined_vec3;
 
     // Time varibles
     uint64_t startTime = 0, curr_millis = 0, prev_millis = 0;
