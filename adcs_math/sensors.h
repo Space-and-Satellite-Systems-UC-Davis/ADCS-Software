@@ -17,6 +17,8 @@
 #include <stdint.h>
 
 
+extern const vec3 undefined_vec3;
+
 typedef enum getMag{
     GET_MAG_SUCCESS,
     GET_MAG_FAILURE,

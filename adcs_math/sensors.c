@@ -2,6 +2,8 @@
 
 #define MAX_RETRIES 3
 
+const vec3 undefined_vec3 = {NAN, NAN, NAN};
+
 getMag_status getMag(vi_sensor sensor, vec3 prevVal, vec3 *currVal)
 {
     int errorCount = 0;
@@ -60,7 +62,7 @@ int is_in_eclipse()
     //      px1, px2, nx1, nx2, py1, py2, ny1, ny2, pz1, pz2, nz1, nz2;
     double readingsOne[6];
     double readingsTwo[6];
-    double prevValOne = 0.0, prevValTwo = 0.0; // TODO: MUST CHANGE
+    double prevValOne = NAN, prevValTwo = NAN;
 
     vi_sensor sensorOne = { CSS, ONE, PX };
     vi_sensor sensorTwo = { CSS, TWO, PX };
