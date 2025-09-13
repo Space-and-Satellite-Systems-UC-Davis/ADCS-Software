@@ -10,6 +10,7 @@
 #include "control/detumble/detumble.h"
 #include "adcs_math/calibration.h"
 #include "adcs_math/sensors.h"
+#include "adcs_math/calibration.h"
 #include "adcs_math/vector.h"
 #include "control/bdot/bdot_control.h"
 #include "control/detumble/detumble_util.h"

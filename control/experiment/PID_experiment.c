@@ -1,6 +1,5 @@
 #include "control/experiment/PID_experiment.h"
 #include "adcs_math/sensors.h"
-#include "adcs_math/calibration.h"
 #include "virtual_intellisat.h"
 
 #include <math.h>
