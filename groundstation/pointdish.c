@@ -89,6 +89,8 @@ int satellite_pos(char* tle1, char* tle2, double UTC1, double UTC2, vec3 *output
 }
 
 int main() {
+    setbuf(stdout, NULL);
+
     char lines[3][100]; //pipe to here 
 
     double az_dish;
@@ -137,6 +139,6 @@ int main() {
     }
 
     point_dish(lat, lon, el, satellite_position, &az_dish, &el_dish);
-    printf("%lf,%lf\n", az_dish, el_dish); 
+    printf("Azimuth %lf Elevation %lf", az_dish, el_dish);
     return 0;
 }
