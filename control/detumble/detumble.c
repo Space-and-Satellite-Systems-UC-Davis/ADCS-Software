@@ -49,7 +49,16 @@ detumble_status detumble(vec3 needle, bool isTesting, uint64_t maxTime,
         return DETUMBLING_FAILURE_CURR_MILLIS;
     startTime = curr_millis;
 
+<<<<<<< HEAD
     // Note: May be do something to account for integer overflow
+=======
+    //Compute Angular Velocity
+    if (getMag(magnotometer, mag_prev, &mag_curr)) 
+        return DETUMBLING_FAILURE_MAGNOTOMETER;
+
+    angVel = findAngVel(mag_prev, mag_curr, delta_t);
+
+>>>>>>> f48e4b3 (detumble: use get_delta_t for timeout)
     do {
 
         // Perform delay for the coil magnetic field decay
@@ -83,10 +92,10 @@ detumble_status detumble(vec3 needle, bool isTesting, uint64_t maxTime,
 
         // Decide whether detumbling needs to continue
         timeElapsed = curr_millis - startTime;
-        bool isTimeOut = timeElapsed > maxTime;
+        bool isTimeOut = get_delta_t(curr_millis, startTime) > LIMIT;
         bool isTooSoon = timeElapsed < minTime;
         keepDetumbling =
-            aboveThreshold(imu_curr, 0.5) && !isTimeOut && isTooSoon;
+            isTooSoon || (!isTimeOut && aboveThreshold(imu_curr, 0.5));
 
     } while (isTesting || keepDetumbling);
 
