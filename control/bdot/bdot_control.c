@@ -12,9 +12,10 @@
  */
 
 #include "bdot_control.h"
+#include "adcs_math/vector.h"
+#include "adcs_math/sensors.h"
 
-
-const double control_constant = 67200.0; // TODO: tune :p
+const float control_constant = 1.0; // TODO: compute
 
 void bdot_control(
     vec3    mag,
@@ -24,7 +25,7 @@ void bdot_control(
 ) {
     vec3 derivative;    // = (mag - last_mag)/delta_t
     
-    if (delta_t == 0) {
+    if (delta_t == 0 || last_mag == undefined_vec3) {
         *bdot = (vec3){0.0,0.0,0.0};
         return;
     }

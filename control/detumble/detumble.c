@@ -30,8 +30,9 @@ detumble_status detumble(vec3 needle, bool isTesting, uint64_t maxTime,
     uint64_t delta_t = 0, timeElapsed = 0;
 
     // Extra varibles
-    vec3 mdm;            // Magnetic Dipole Moment
-    bool keepDetumbling; // Keep loop running?
+    vec3 mdm;                   // Magnetic Dipole Moment
+    vec3 angVel;                    // Angular Velocity
+    bool keepDetumbling = true; // Keep loop running?
     int generation = vi_get_detumbling_generation();
 
     // Declare varibles for sensor alternation
@@ -49,16 +50,6 @@ detumble_status detumble(vec3 needle, bool isTesting, uint64_t maxTime,
         return DETUMBLING_FAILURE_CURR_MILLIS;
     startTime = curr_millis;
 
-<<<<<<< HEAD
-    // Note: May be do something to account for integer overflow
-=======
-    //Compute Angular Velocity
-    if (getMag(magnotometer, mag_prev, &mag_curr)) 
-        return DETUMBLING_FAILURE_MAGNOTOMETER;
-
-    angVel = findAngVel(mag_prev, mag_curr, delta_t);
-
->>>>>>> f48e4b3 (detumble: use get_delta_t for timeout)
     do {
 
         // Perform delay for the coil magnetic field decay
