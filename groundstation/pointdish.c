@@ -4,19 +4,22 @@
 
 #include "adcs_math/vector.h"
 #include "adcs_math/matrix.h"
+
 #include <math.h>
+#include <stdio.h>
+#include <time.h>
 
 
-void point_dish(double gs_lat, double gs_lon, vec3 sat_pos_ecef, double *dish_az, double *dish_el){
-    double R_earth = 6371.0; // Could customize to our particular ground station, although that might be overkill
+void point_dish(double gs_lat, double gs_lon, double gs_el, vec3 sat_pos_ecef, double *dish_az, double *dish_el){
+    double R_total = 6371.0 + gs_el; // Radius of earth + elevation of groundstation
 
     gs_lat = gs_lat * (M_PI/180.0);
     gs_lon = gs_lon * (M_PI/180.0);
 
     vec3 gs_pos_ecef;
-    vec_set(R_earth * cos(gs_lat) * cos(gs_lon),
-            R_earth * cos(gs_lat) * sin(gs_lon),
-            R_earth * sin(gs_lat),
+    vec_set(R_total * cos(gs_lat) * cos(gs_lon),
+            R_total * cos(gs_lat) * sin(gs_lon),
+            R_total * sin(gs_lat),
             &gs_pos_ecef);
 
     vec3 diff_vector_ecef; // Can also be thought of as the satellite's position in earth fixed gs centered coordinates
@@ -86,35 +89,56 @@ int satellite_pos(char* tle1, char* tle2, double UTC1, double UTC2, vec3 *output
 }
 
 int main() {
+    setbuf(stdout, NULL);
 
- 
-    // { echo "38.53"; echo "121.76"; curl -s 'https://tle.ivanstanojevic.me/api/tle/25544' | jq '.line1, .line2' | tr -d '"'; curl -s "https://ssd-api.jpl.nasa.gov/jd_cal.api?cd=$(date +%F_%T)" | jq -r '.jd'; } | ./pointdish
- 
-    char lines[5][100]; //pipe to here 
+    char lines[3][100]; //pipe to here 
 
-    double az;
-    double el; 
+    double az_dish;
+    double el_dish;
 
-
-    for (int i=0; i<=4; i++){
-        fgets(lines[i], sizeof(lines[i]), stdin);  
-        //printf("%s", lines[i]);
+    // Get groundstation position
+    FILE *gs_config = fopen( "gs_config.txt","r");
+    if(gs_config == NULL){
+        perror("Error opening gs_config.txt");
+        return -1;
     }
+
+    for (int i=0; i<=2; i++){
+        fgets(lines[i], sizeof(lines[i]), gs_config);  
+    }
+
     double lat = strtod(lines[0], NULL); 
     double lon = strtod(lines[1], NULL); 
-    char* tle1 = lines[2];
-    char* tle2 = lines[3];  
-    double UTC = strtod(lines[4], NULL); 
+    double el  = strtod(lines[2], NULL);
 
+    fclose(gs_config);
+
+    // Get most recent TLE data
+    FILE *most_recent_tle = fopen( "most_recent_tle.txt","r");
+    if(most_recent_tle == NULL){
+        perror("Error opening most_recent_tle.txt");
+        perror("Has get_tle.sh run yet?");
+        return -2;
+    }
+
+    for (int i=0; i<=1; i++){
+        fgets(lines[i], sizeof(lines[i]), most_recent_tle);  
+    }
+
+    char* tle1 = lines[0];
+    char* tle2 = lines[1];  
+
+    time_t t = time(NULL);
+    struct tm tm = *localtime(&t);
+
+    double UTC = julian_date (tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour + tm.tm_min/60.0 + tm.tm_sec/3600.0);
 
     vec3 satellite_position;
     if (satellite_pos(tle1, tle2, UTC, 0.0, &satellite_position) != POS_LOOKUP_SUCCESS) {
-        return -4;
+        return -3;
     }
-    else  {printf("made it\n");}
 
-
-    point_dish(lat, lon, satellite_position, &az, &el);
-    printf("Azimuth = %lf, Elevation = %lf\n", az, el); 
+    point_dish(lat, lon, el, satellite_position, &az_dish, &el_dish);
+    printf("Azimuth %lf Elevation %lf", az_dish, el_dish);
     return 0;
 }

@@ -58,11 +58,6 @@ float get_sensor_calibration(float currValue, float prevValue,
 uint64_t get_delta_t(uint64_t currTime, uint64_t prevTime);
 
 /**
- * @brief Generate a permutation of active sensors.
- */
-char get_alternation(vi_sensor sensor, unsigned int generation);
-
-/**
  * returns 1 if in eclipse, 0 if not
  * threshold for eclipse is 0 - 0.25 sun sensors reading magnitude
  */
@@ -75,7 +70,7 @@ int is_in_eclipse();
  *  specified here to choose the whole pair.
  * @param generation The generation number of the alternation [0-255].
  *
- * @return 1 or 2 The sensor choice.
+ * @return 1 or 2 The sensor choice. 0 If invalid sensor.
  */
 int sensor_pair_choice(vi_sensor sensor, int generation);
 

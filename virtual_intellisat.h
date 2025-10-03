@@ -27,86 +27,109 @@
 /*################ SENSORS AND ACTUATORS ################*/
 
 typedef enum {
-    VI_MAG1,
-    VI_MAG2
-} vi_MAG;
+    VI_MAG1 = 1,
+    VI_MAG2 = 2
+} vi_MAG_choice;
 
 typedef enum {
-    VI_IMU1,
-    VI_IMU2
-} vi_IMU;
+    VI_IMU1 = 1,
+    VI_IMU2 = 2
+} vi_IMU_choice;
 
 typedef enum {
-    VI_HDD1,
-    VI_HDD2
-} vi_HDD;
+    VI_HDD1 = 1,
+    VI_HDD2 = 2
+} vi_HDD_choice;
 
 typedef enum {
-	VI_CSS1,
-	VI_CSS2
-} vi_CSS_PX;
-
+	VI_CSS_PX = 1,
+	VI_CSS_NX = 2,
+	VI_CSS_PY = 3,
+	VI_CSS_NY = 4,
+	VI_CSS_PZ = 5,
+	VI_CSS_NZ = 6
+} vi_CSS_choice;
 
 typedef enum {
-//Start CSS
-	VI_CSS_PX1,
-	VI_CSS_PX2,
-	
-	VI_CSS_NX1,
-	VI_CSS_NX2,
-	
-	VI_CSS_PY1,
-	VI_CSS_PY2,
+	VI_TEMP_PX = 1,
+	VI_TEMP_NX = 2,
+	VI_TEMP_PY = 3,
+	VI_TEMP_NY = 4,
+    VI_TEMP_NZ = 5
+} vi_tmp_choice;
 
-	VI_CSS_NY1,
-	VI_CSS_NY2,
+typedef enum {
+	VI_SP_PX = 1,
+	VI_SP_NX = 2,
+	VI_SP_PY = 3,
+	VI_SP_NY = 4
+} vi_sol_choice;
+
+typedef enum {
+	VI_MAG_X1 = 1,
+	VI_MAG_Y1 = 2,
+	VI_MAG_Z1 = 3,
+
+	VI_MAG_X2 = 4,
+	VI_MAG_Y2 = 5,
+	VI_MAG_Z2 = 6
+} vi_MAG_value;
+
+typedef enum {
+	VI_IMU1_X = 1,
+	VI_IMU1_Y = 2,
+	VI_IMU1_Z = 3,
 	
-	VI_CSS_PZ1,
-	VI_CSS_PZ2,
-	
-	VI_CSS_NZ1,
-	VI_CSS_NZ2,
-//End CSS
-//Start MAG
-	VI_MAG1_X,
-	VI_MAG2_X,
-	
-	VI_MAG1_Y,
-	VI_MAG2_Y,
-	
-	VI_MAG1_Z,
-	VI_MAG2_Z,
-//End MAG
-//Start IMU
-	VI_IMU1_X,
-	VI_IMU2_X,
-	
-	VI_IMU1_Y,
-	VI_IMU2_Y,
-	
-	VI_IMU1_Z,
-	VI_IMU2_Z
-//End IMU
+	VI_IMU2_X = 4,
+	VI_IMU2_Y = 5,
+	VI_IMU2_Z = 6
+} vi_IMU_value;
+
+typedef enum {
+	VI_CSS_PX1 = 1,
+	VI_CSS_NX1 = 2,
+	VI_CSS_PY1 = 3,
+	VI_CSS_NY1 = 4,
+	VI_CSS_PZ1 = 5,
+	VI_CSS_NZ1 = 6,
+
+	VI_CSS_PX2 = 7,
+	VI_CSS_NX2 = 8, 
+	VI_CSS_PY2 = 9,
+	VI_CSS_NY2 = 10,
+	VI_CSS_PZ2 = 11,
+	VI_CSS_NZ2 = 12
+} vi_CSS_value;
+
+typedef enum {
+    VI_COMP_MAG_CHOICE,
+    VI_COMP_MAG_VALUE,
+    VI_COMP_IMU_CHOICE,
+    VI_COMP_IMU_VALUE,
+    VI_COMP_HDD_CHOICE,
+    VI_COMP_CSS_CHOICE,
+    VI_COMP_CSS_VALUE,
+    VI_COMP_TMP_CHOICE,
+    VI_COMP_SOL_CHOICE
+} vi_component;
+
+typedef union {
+    vi_MAG_choice mag_choice;
+    vi_MAG_value  mag_value;
+    vi_IMU_choice imu_choice;
+    vi_IMU_value  imu_value;
+    vi_HDD_choice hdd_choice;
+    vi_CSS_choice css_choice;
+    vi_CSS_value  css_value;
+    vi_tmp_choice temp_sensor;
+    vi_sol_choice solar_panel;
+} vi_field;
+
+typedef struct {
+    vi_component component;
+    vi_field field;
 } vi_sensor;
 
-typedef enum {
-	VI_TEMP1_X,
-	VI_TEMP2_X,
-
-	VI_TEMP1_Y,
-	VI_TEMP2_Y,
-
-	VI_TEMP1_Z,
-	VI_TEMP2_Z
-} vi_temp_sensor;
-
-typedef enum {
-	VI_SP1_X,
-	VI_SP2_X,
-
-	VI_SP1_Y,
-	VI_SP2_Y
-} vi_solar_panel;
 
 /*################## ACTUATOR COMMANDS ##################*/
 
@@ -130,7 +153,7 @@ typedef enum {
  */
 vi_hdd_command_status
 vi_hdd_command(
-    vi_HDD hdd,
+    vi_HDD_choice hdd,
     double throttle
 );
 
@@ -214,7 +237,7 @@ typedef enum {
  */
 vi_get_angvel_status
 vi_get_angvel(
-    vi_IMU imu,
+    vi_IMU_choice imu,
     double *angvel_x, 
     double *angvel_y,
     double *angvel_z
@@ -235,7 +258,7 @@ typedef enum {
  */
 vi_get_mag_status
 vi_get_mag(
-    vi_MAG mag,
+    vi_MAG_choice mag,
 	double *mag_x,
 	double *mag_y,
 	double *mag_z
@@ -261,7 +284,7 @@ typedef enum {
  */
 vi_get_css_status
 vi_get_css(
-    vi_sensor css,
+    vi_CSS_choice css,
     double *magnitude
 );
 
@@ -279,7 +302,7 @@ typedef enum {
  */
 vi_get_temp_status 
 vi_get_temp(
-	vi_temp_sensor sensor, 
+	vi_tmp_choice sensor, 
 	double* temp
 );
 
@@ -315,15 +338,15 @@ typedef enum {
 
 vi_get_solar_panel_current_status
 vi_get_solar_panel_current(
-	vi_solar_panel sp,
+	vi_sol_choice sp,
 	double* current
 );
 
 /*###################### CONSTANTS ######################*/
 
 typedef enum{
-	GET_CONSTANT_SUCCESS,
-	GET_CONSTANT_FAILURE
+	GET_CONSTANT_SUCCESS = 0,
+	GET_CONSTANT_FAILURE = 1
 } vi_get_constant_status;
 
 /**@brief Get the current calibration values for a sensor.

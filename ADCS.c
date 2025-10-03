@@ -22,29 +22,37 @@ ADCS_MAIN(adcs_mode mode) {
     switch(mode) {
         case ADCS_DETUMBLE:
             switch(detumble((vec3){0,0,0}, false)) {
-                case DETUMBLING_FAILURE:
-                    return ADCS_MAIN_DETUMBLE_ERR;
-                    break;
                 case DETUMBLING_SUCCESS:
                     break;
-
-                case COILS_TESTING_SUCCESS: //noop
+                case DETUMBLING_FAILURE_CURR_MILLIS:
+                    return ADCS_MAIN_DETUMBLE_ERR;
                     break;
-                case COILS_TESTING_FAILURE: //noop
+                case DETUMBLING_FAILURE_MAGNOTOMETER:
+                    return ADCS_MAIN_DETUMBLE_ERR;
+                    break;
+                case DETUMBLING_FAILURE_CONTORL_COILS:
+                    return ADCS_MAIN_DETUMBLE_ERR;
+                    break;
+                case DETUMBLING_FAILURE_DELAY_MS:
+                    return ADCS_MAIN_DETUMBLE_ERR;
                     break;
             }
             break;
         case ADCS_COILS_TESTING:
             switch(detumble((vec3){0,0,0}, true)) {
-                case COILS_TESTING_FAILURE:
+                case DETUMBLING_SUCCESS:
+                    break;
+                case DETUMBLING_FAILURE_CURR_MILLIS:
                     return ADCS_MAIN_COILS_TESTING_ERR;
                     break;
-                case COILS_TESTING_SUCCESS:
+                case DETUMBLING_FAILURE_MAGNOTOMETER:
+                    return ADCS_MAIN_COILS_TESTING_ERR;
                     break;
-
-                case DETUMBLING_SUCCESS: //noop
+                case DETUMBLING_FAILURE_CONTORL_COILS:
+                    return ADCS_MAIN_COILS_TESTING_ERR;
                     break;
-                case DETUMBLING_FAILURE: //noop
+                case DETUMBLING_FAILURE_DELAY_MS:
+                    return ADCS_MAIN_COILS_TESTING_ERR;
                     break;
             }
             break;
