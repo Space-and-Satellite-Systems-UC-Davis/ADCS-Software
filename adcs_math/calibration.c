@@ -7,10 +7,14 @@ getMag_status getMag(vi_sensor sensor, vec3 prevVal, vec3 *currVal) {
     float sensor_offset, sensor_scalar, sensor_filter_constant;
     vi_MAG_choice choice = sensor.field.mag_choice;
     vec3 mag; // Local varible to store the magnotometer reading
+    int errorCount = 0; //Local varible to store error occurances
 
-    if (vi_get_mag(choice, &(mag.x), &(mag.y), &(mag.z))) {
-        return GET_MAG_FAILURE;
-    }
+    errorCount = 0;
+    while(vi_get_mag(choice, &(mag.x), &(mag.y), &(mag.z)))
+    {
+        errorCount++;
+        if (errorCount >= 3) return GET_MAG_FAILURE;
+    };
 
     /*################ PROTOTYPE CODE ################*/
     // I think it works but I have noooo idea if it works
@@ -26,13 +30,16 @@ getMag_status getMag(vi_sensor sensor, vec3 prevVal, vec3 *currVal) {
     // Perform calibration on each axis
     for (int i = 0; i < 3; i++) {
 
-        // Perhaps flip it so that 0 can be failure)
-        if (vi_get_sensor_calibration(sensor, &sensor_offset, &sensor_scalar,
-                                      &sensor_filter_constant))
-            return MAG_CALIBRATION_FAILURE;
+        int errorCount = 0;
+        while(vi_get_sensor_calibration(sensor, &sensor_offset, &sensor_scalar, &sensor_filter_constant))
+        {
+            errorCount++;
+            if (errorCount >= 3) return MAG_CALIBRATION_FAILURE;
+        }
 
         double currVal = *(magCurrPtr + i);
         double prevVal = *(magPrevPtr + i);
+
         currVal = get_sensor_calibration(currVal, prevVal, sensor_offset,
                                          sensor_scalar, sensor_filter_constant);
         *(magCurrPtr + i) = currVal;
