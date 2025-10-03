@@ -95,7 +95,7 @@ determination_status determination(mat3 *attitude) {
 
     // Get current magnetic field reading
     if (getMag(magnotometer, mag_prev, &measured_mag)) {
-        return DET_UNHANDLED_ERROR;
+        return DET_MAG_FAILURE;
     }
 
     // Get current Sun sensor readings

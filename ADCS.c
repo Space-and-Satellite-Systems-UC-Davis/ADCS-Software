@@ -1,4 +1,5 @@
-/**@file ADCS.c
+/**
+ * @file ADCS.c
  *
  * @brief Implementation of Intellisat's interface to the ADCS software.
  *
@@ -72,10 +73,11 @@ ADCS_MAIN(adcs_mode mode) {
             break;
         case ADCS_ROTISSERIE:
             switch (PID_experiment(.0872665, 1)){
-                case PID_EXPERIMENT_FAILURE:
-                    return ADCS_ROTISSERIE_ERR;
                 case PID_EXPERIMENT_SUCCESS:
                     break;
+                default:
+                    return ADCS_ROTISSERIE_ERR;
+                
             }
 
 
