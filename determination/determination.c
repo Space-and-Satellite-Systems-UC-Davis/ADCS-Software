@@ -91,16 +91,16 @@ determination_status determination(mat3 *attitude) {
     // Get current Time
     if (vi_get_epoch(&year, &month, &day, &hour, &minute, &second) ==
         GET_EPOCH_FAILURE)
-        return DET_UNHANDLED_ERROR;
+        return DET_EPOCH_FAILURE;
 
     // Get current magnetic field reading
     if (getMag(magnotometer, mag_prev, &measured_mag)) {
-        return DET_UNHANDLED_ERROR;
+        return DET_MAG_FAILURE;
     }
 
     // Get current Sun sensor readings
     if (get_measured_sun(generation, &measured_sun) == VI_GET_CSS_FAILURE) {
-        return DET_UNHANDLED_ERROR;
+        return DET_CSS_FAILURE;
     }
 
     double UTC =

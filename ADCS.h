@@ -18,6 +18,7 @@ typedef enum {
     ADCS_HDD_EXP_RAMP,
     ADCS_TESTING,
     ADCS_COILS_TESTING,
+    ADCS_HDD_TESTING,
     ADCS_ROTISSERIE
 } adcs_mode; //TODO: full list
 

@@ -13,7 +13,7 @@ run_ramp_experiment_status ramp_experiment(){
     vi_hdd_command_status command_status;
     vi_get_curr_millis_status millis_status = vi_get_curr_millis(&t0);
     if (millis_status == GET_CURR_MILLIS_FAILURE){
-        return RUN_RAMP_EXPERIMENT_FAILURE;
+        return RUN_RAMP_EXPERIMENT_MILLIS_FAILURE;
     }
 
     init_ramp_controller(t0, 1000, 1000, 2000, 1.0, &controller);
@@ -25,14 +25,14 @@ run_ramp_experiment_status ramp_experiment(){
 
         millis_status = vi_get_curr_millis(&ti);
         if (millis_status == GET_CURR_MILLIS_FAILURE){
-            return RUN_RAMP_EXPERIMENT_FAILURE;
+            return RUN_RAMP_EXPERIMENT_MILLIS_FAILURE;
         }
 
         double command = linear_ramp_command(ti , &controller);
         
         command_status = vi_hdd_command(HDD_CHOICE, command);
         if (command_status == HDD_COMMAND_FAILURE){
-            return RUN_RAMP_EXPERIMENT_FAILURE;
+            return RUN_RAMP_EXPERIMENT_COMMAND_FAILURE;
         }
     }
     

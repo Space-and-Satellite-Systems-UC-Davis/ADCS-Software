@@ -36,12 +36,12 @@ PID_status PID_experiment(double target, int infinite) {
   double throttle = 0;
 
   if (getIMU(imu, angVel_prev, &angVel_curr))
-    return PID_EXPERIMENT_FAILURE;
+    return PID_EXPERIMENT_ANGVEL_FAILURE;
 
   // Get the current time (Virtual Intellisat)
   uint64_t curr_millis = 0;
   if (vi_get_curr_millis(&curr_millis))
-    return PID_EXPERIMENT_FAILURE;
+    return PID_EXPERIMENT_MILLIS_FAILURE;
 
   // Declare and initlialize PID controller
   PID_controller controller;
@@ -50,9 +50,9 @@ PID_status PID_experiment(double target, int infinite) {
   // Run a while loop
   while (infinite || (fabs(target - angVel_curr.z) > 0.1)) {
 
-    if (getIMU(imu, angVel_prev, &angVel_curr)) return PID_EXPERIMENT_FAILURE;
+    if (getIMU(imu, angVel_prev, &angVel_curr)) return PID_EXPERIMENT_ANGVEL_FAILURE;
     // Get the current time (Virtual Intellisat)
-    if (vi_get_curr_millis(&curr_millis)) return PID_EXPERIMENT_FAILURE;
+    if (vi_get_curr_millis(&curr_millis)) return PID_EXPERIMENT_MILLIS_FAILURE;
 
     // PLug it into the control function
     throttle += PID_command(target, angVel_curr.z, curr_millis, &controller);
@@ -69,7 +69,7 @@ PID_status PID_experiment(double target, int infinite) {
 
     // Take output and plug it into HDD
     if (vi_hdd_command(hdd.field.hdd_choice, throttle) == HDD_COMMAND_FAILURE)
-      return PID_EXPERIMENT_FAILURE;
+      return PID_EXPERIMENT_COMMAND_FAILURE;
 
     angVel_prev = angVel_curr;
   }

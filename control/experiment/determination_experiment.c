@@ -28,7 +28,7 @@ determination_exp_status determination_experiment() {
   uint64_t prev_millis = 0;
   uint64_t curr_millis = 0;
   if (vi_get_curr_millis(&prev_millis) == GET_CURR_MILLIS_FAILURE)
-    return DETERMINATION_EXPERIMENT_FAILURE;
+    return DETERMINATION_EXPERIMENT_MILLIS_FAILURE;
 
   // Declare and initlialize PID controller
   PID_controller controller;
@@ -48,7 +48,7 @@ determination_exp_status determination_experiment() {
     determination(&currAttitude);
     // Get the current time (Virtual Intellisat)
     if (vi_get_curr_millis(&curr_millis) == GET_CURR_MILLIS_FAILURE)
-      return DETERMINATION_EXPERIMENT_FAILURE;
+      return DETERMINATION_EXPERIMENT_MILLIS_FAILURE;
 
     int delta_t = get_delta_t(curr_millis, prev_millis);
 
@@ -59,9 +59,10 @@ determination_exp_status determination_experiment() {
 
     // PLug it into the control function
     double throttle = PID_command(target, zrotation, curr_millis, &controller);
+    
     // Take output and plug it into HDD
     if (vi_hdd_command(hdd_choice, throttle) == HDD_COMMAND_FAILURE)
-      return DETERMINATION_EXPERIMENT_FAILURE;
+      return DETERMINATION_EXPERIMENT_HDD_COMMAND_FAILURE;
     prevAttitude = currAttitude;
     prev_millis = curr_millis;
   }

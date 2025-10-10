@@ -9,53 +9,58 @@
 #define SENSORS_H
 
 #include "determination/novasc3.1/novas.h"
+#include "adcs_math/vector.h"
+#include "adcs_math/calibration.h"
 #include "virtual_intellisat.h"
 
 #include <limits.h>
 #include <stdint.h>
 
 
+typedef enum getMag{
+    GET_MAG_SUCCESS,
+    GET_MAG_FAILURE,
+    MAG_CALIBRATION_FAILURE
+} getMag_status;
 
 /**
- * @brief Implement lowpass filter on sensor raw values to mitigate the effect
- * of noise from abnormally high values
+ * @brief Retrive sensor data from Virtual Intellisat and perform calibration 
  *
- * @param currValue current sensor raw value
- * @param prevValue previous sensor raw value
- * @param filterConstant constant between 0-1; a greater value is a greater damp
- * on unusually large jumps in sensor data
- *
- * @return filtered sensor value
+ * @param sensor the sensor to read from 
+ * @param prevValue previous sensor value
+ * @param currValue the current sensor value to be read 
  */
-float lowpass_filter(float currValue, float prevValue, float filterConstant);
+getMag_status getMag(vi_sensor sensor, vec3 prevVal, vec3 *currVal);
+
+typedef enum getIMU{
+    GET_IMU_SUCCESS,
+    GET_IMU_FAILURE,
+    IMU_CALIBRATION_FAILURE
+} getIMU_status;
 
 /**
- * @brief Calculates sensor calibration value after filtering data through
- * simple lowpass filter with default constant 0.5
+ * @brief Retrive sensor data from Virtual Intellisat and perform calibration 
  *
- * @param currValue current sensor raw value
- * @param prevValue previous sensor raw value
- * @param offset constant the sensor reads when it is not supposed to read
- * anything
- * @param scalar constant multiplier for sensor raw values
- * @param filterConstant attenuation constant between 0-1 for lowpass filter; a
- * greater value is a greater damp on unusually large jumps in sensor data
- *
- * @return sensor calibration value after filtration
+ * @param sensor the sensor to read from 
+ * @param prevValue previous sensor value
+ * @param currValue the current sensor value to be read 
  */
-float get_sensor_calibration(float currValue, float prevValue,
-                             float offset, float scalar, float filterConstant);
+getIMU_status getIMU(vi_sensor sensor, vec3 prevVal, vec3 *currVal);
 
+typedef enum getCSS{
+    GET_CSS_SUCCESS,
+    GET_CSS_FAILURE,
+    CSS_CALIBRATION_FAILURE
+} getCSS_status;
 
 /**
- * @brief Safely calculate delta_t accounting for integer overflow
+ * @brief Retrive sensor data from Virtual Intellisat and perform calibration 
  *
- * @param currTime current timestamp in milliseconds
- * @param prevTime previous timestamp in milliseconds
- *
- * @return delta_t change in time
+ * @param sensor the sensor to read from 
+ * @param prevValue previous sensor value
+ * @param currValue the current sensor value to be read 
  */
-uint64_t get_delta_t(uint64_t currTime, uint64_t prevTime);
+getCSS_status getCSS(vi_sensor sensor, double prevVal, double *currVal);
 
 /**
  * returns 1 if in eclipse, 0 if not
