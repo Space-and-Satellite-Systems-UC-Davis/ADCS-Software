@@ -12,8 +12,10 @@
 #include "determination/determination.h"
 #include "control/detumble/detumble.h"
 #include "control/experiment/PID_experiment.h"
+#include "control/experiment/determination_experiment.h"
+#include "control/experiment/ramp_experiment.h"
 #include "adcs_math/vector.h"
-#include "control/experiment/PID_experiment.h"
+
 
 #include <stdbool.h>
 
@@ -26,56 +28,52 @@ ADCS_MAIN(adcs_mode mode) {
                 case DETUMBLING_SUCCESS:
                     break;
                 case DETUMBLING_FAILURE_CURR_MILLIS:
-                    return ADCS_MAIN_DETUMBLE_ERR;
-                    break;
                 case DETUMBLING_FAILURE_MAGNOTOMETER:
-                    return ADCS_MAIN_DETUMBLE_ERR;
-                    break;
                 case DETUMBLING_FAILURE_CONTORL_COILS:
-                    return ADCS_MAIN_DETUMBLE_ERR;
-                    break;
                 case DETUMBLING_FAILURE_DELAY_MS:
-                    return ADCS_MAIN_DETUMBLE_ERR;
-                    break;
+                    return ADCS_MAIN_DETUMBLE_ERR;     
             }
             break;
+
         case ADCS_COILS_TESTING:
             switch(detumble((vec3){0,0,0}, true)) {
                 case DETUMBLING_SUCCESS:
                     break;
                 case DETUMBLING_FAILURE_CURR_MILLIS:
-                    return ADCS_MAIN_COILS_TESTING_ERR;
-                    break;
                 case DETUMBLING_FAILURE_MAGNOTOMETER:
-                    return ADCS_MAIN_COILS_TESTING_ERR;
-                    break;
                 case DETUMBLING_FAILURE_CONTORL_COILS:
-                    return ADCS_MAIN_COILS_TESTING_ERR;
-                    break;
                 case DETUMBLING_FAILURE_DELAY_MS:
                     return ADCS_MAIN_COILS_TESTING_ERR;
-                    break;
             }
             break;
+
         case ADCS_HDD_EXP_ANGVEL:
-        	while (1){
-        		//vi_hdd_command(0, 2.5);
-        		PID_experiment(0, 0);
-        		//vi_delay_ms(3000);
-        	}
+        	PID_experiment(0, 0);
             break;
+
         case ADCS_HDD_EXP_TRIAD:
+            determination_experiment();
             break;
+
         case ADCS_HDD_EXP_RAMP:
+            ramp_experiment();
             break;
+
+        case ADCS_HDD_TESTING:
+            PID_experiment(0, 1); //for infinite
+            break;
+
         case ADCS_TESTING:
             vi_print("Testing!");
             break;
+            
         case ADCS_ROTISSERIE:
             switch (PID_experiment(.0872665, 1)){
                 case PID_EXPERIMENT_SUCCESS:
                     break;
-                default:
+                case PID_EXPERIMENT_ANGVEL_FAILURE:
+                case PID_EXPERIMENT_MILLIS_FAILURE:
+                case PID_EXPERIMENT_COMMAND_FAILURE:
                     return ADCS_ROTISSERIE_ERR;
                 
             }
