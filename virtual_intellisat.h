@@ -37,9 +37,16 @@ typedef enum {
 } vi_IMU_choice;
 
 typedef enum {
-    VI_HDD1 = 1,
-    VI_HDD2 = 2
-} vi_HDD_choice;
+	VI_CSS1 = 1,
+	VI_CSS2 = 2,
+	/* Kept here to avoid conflict with sensor_pair_choice */
+	VI_CSS_PX = 3,
+	VI_CSS_NX = 4,
+	VI_CSS_PY = 5,
+	VI_CSS_NY = 6,
+	VI_CSS_PZ = 7,
+	VI_CSS_NZ = 8
+} vi_CSS_choice;
 
 typedef enum {
 	VI_CSS_PX = 1,
@@ -48,7 +55,12 @@ typedef enum {
 	VI_CSS_NY = 4,
 	VI_CSS_PZ = 5,
 	VI_CSS_NZ = 6
-} vi_CSS_choice;
+} vi_CSS_face;
+
+typedef enum {
+    VI_HDD1 = 1,
+    VI_HDD2 = 2
+} vi_HDD_choice;
 
 typedef enum {
 	VI_TEMP_PX = 1,
@@ -102,15 +114,15 @@ typedef enum {
 } vi_CSS_value;
 
 typedef enum {
-    VI_COMP_MAG_CHOICE,
-    VI_COMP_MAG_VALUE,
-    VI_COMP_IMU_CHOICE,
-    VI_COMP_IMU_VALUE,
-    VI_COMP_HDD_CHOICE,
-    VI_COMP_CSS_CHOICE,
-    VI_COMP_CSS_VALUE,
-    VI_COMP_TMP_CHOICE,
-    VI_COMP_SOL_CHOICE
+    VI_COMP_MAG_CHOICE = 1,
+    VI_COMP_MAG_VALUE = 2,
+    VI_COMP_IMU_CHOICE = 3,
+    VI_COMP_IMU_VALUE = 4,
+    VI_COMP_HDD_CHOICE = 5,
+    VI_COMP_CSS_CHOICE = 6,
+    VI_COMP_CSS_VALUE = 7,
+    VI_COMP_TMP_CHOICE = 8,
+    VI_COMP_SOL_CHOICE = 9
 } vi_component;
 
 typedef union {
