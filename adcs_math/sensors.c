@@ -29,8 +29,9 @@ getMag_status getMag(vi_sensor sensor, vec3 prevVal, vec3 *currVal) {
     for (int i = 0; i < 3; i++) {
 
         int errorCount = 0;
-        while (vi_get_sensor_calibration(sensor, &sensor_offset, &sensor_scalar,
-                                         &sensor_filter_constant)) {
+        while(vi_get_sensor_calibration(sensor, &sensor_offset, &sensor_scalar, 
+                                        &sensor_filter_constant))
+        {
             errorCount++;
             if (errorCount >= 3)
                 return MAG_CALIBRATION_FAILURE; 
@@ -83,10 +84,50 @@ getIMU_status getIMU(vi_sensor sensor, vec3 prevVal, vec3 *currVal) {
     float sensor_offset, sensor_scalar, sensor_filter_constant;
     vi_IMU_choice choice = sensor.field.imu_choice;
     vec3 reading; // Local varible to store sensor
+    int errorCount = 0;
 
-    if (vi_get_angvel(choice, &(reading.x), &(reading.y), &(reading.z))) {
-        return GET_IMU_FAILURE;
+
+      while(vi_get_angvel(choice, &(reading.x), &(reading.y), &(reading.z)))
+    {
+        errorCount++;
+        if (errorCount >= 3) return GET_IMU_FAILURE;
+    };
+
+
+
+    sensor.component = VI_COMP_IMU_VALUE;
+    sensor.field.imu_value = choice == VI_IMU1 ? VI_IMU1_X : VI_IMU2_X;
+    
+    //
+    double *magCurrPtr = (double *)&reading;
+    double *magPrevPtr = (double *)&prevVal;
+
+    for (int i = 0; i < 3; i++){
+
+        int errorCount = 0;
+        while(vi_get_sensor_calibration(sensor, &sensor_offset, &sensor_scalar, 
+                                        &sensor_filter_constant)){
+            errorCount++;
+            if(errorCount >= 3) return GET_IMU_FAILURE;
+
+                                  }
+        
+        double currVal = *(magCurrPtr + i);
+        double prevVal = *(magPrevPtr + i);
+
+        currVal = get_sensor_calibration(currVal, prevVal, sensor_offset, 
+                                       sensor_scalar, sensor_filter_constant);
+
+        *(magCurrPtr + i) = currVal;
+
+        sensor.field.imu_value += 1;
+
     }
+
+    return GET_IMU_SUCCESS;
+
+    /*
+    Old code: 
 
     sensor.field.imu_value = VI_IMU1_X;
     if (vi_get_sensor_calibration(sensor, &sensor_offset, &sensor_scalar,
@@ -108,8 +149,8 @@ getIMU_status getIMU(vi_sensor sensor, vec3 prevVal, vec3 *currVal) {
         return IMU_CALIBRATION_FAILURE;
     reading.z = get_sensor_calibration(reading.z, prevVal.z, sensor_offset,
                                        sensor_scalar, sensor_filter_constant);
+    */
 
-    return GET_IMU_SUCCESS;
 }
 
 getCSS_status getCSS(vi_sensor sensor, vi_CSS_face face, double prevVal,
