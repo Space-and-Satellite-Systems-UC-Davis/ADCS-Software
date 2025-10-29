@@ -3,7 +3,7 @@
  *
  * @brief Utility functions for calibrating sensor input
  *
- * @author Chunho Li (lchli@ucdavis.edu) 6/23/2025
+ * @author Chun Ho Li (lchli@ucdavis.edu) 6/23/2025
  */
 
 #ifndef CALIBRATION_H

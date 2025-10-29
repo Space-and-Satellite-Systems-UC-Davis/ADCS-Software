@@ -1,4 +1,5 @@
-/**@file triad.h
+/**
+ * @file triad.h
  *
  * @brief Interface to the TRIAD algorithm.
  *
@@ -15,7 +16,7 @@
  * The attitude matrix can later be converted into a quaternion
  *  or Euler angles.
  *
- *  See:
+ * @see:
  *   https://en.wikipedia.org/wiki/Triad_method
  * 	 https://arc.aiaa.org/doi/10.2514/3.2555
  * 	 And check the SSS google drive!

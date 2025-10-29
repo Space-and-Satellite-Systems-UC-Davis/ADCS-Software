@@ -1,6 +1,7 @@
 #include "sensors.h"
 
-getMag_status getMag(vi_sensor sensor, vec3 prevVal, vec3 *currVal) {
+getMag_status getMag(vi_sensor sensor, vec3 prevVal, vec3 *currVal)
+{
 
     float sensor_offset, sensor_scalar, sensor_filter_constant;
     vi_MAG_choice choice = sensor.field.mag_choice;
@@ -34,7 +35,7 @@ getMag_status getMag(vi_sensor sensor, vec3 prevVal, vec3 *currVal) {
         {
             errorCount++;
             if (errorCount >= 3)
-                return MAG_CALIBRATION_FAILURE; 
+                return MAG_CALIBRATION_FAILURE;
         }
 
         double currVal = *(magCurrPtr + i);
@@ -79,7 +80,8 @@ getMag_status getMag(vi_sensor sensor, vec3 prevVal, vec3 *currVal) {
     */
 }
 
-getIMU_status getIMU(vi_sensor sensor, vec3 prevVal, vec3 *currVal) {
+getIMU_status getIMU(vi_sensor sensor, vec3 prevVal, vec3 *currVal)
+{
 
     float sensor_offset, sensor_scalar, sensor_filter_constant;
     vi_IMU_choice choice = sensor.field.imu_choice;
@@ -154,24 +156,24 @@ getIMU_status getIMU(vi_sensor sensor, vec3 prevVal, vec3 *currVal) {
 }
 
 getCSS_status getCSS(vi_sensor sensor, vi_CSS_face face, double prevVal,
-                     double *currVal) {
+                     double *currVal)
+{
 
     float sensor_offset, sensor_scalar, sensor_filter_constant;
     vi_CSS_choice choice = sensor.field.css_choice;
-    
+
     double reading; // Local varible to store sensor
 
-    //Todo: Implement retries
+    // Todo: Implement retries
     if (vi_get_css(choice, &reading)) {
         return GET_CSS_FAILURE;
     }
 
-    //Instruct which sensor to read from
+    // Instruct which sensor to read from
     sensor.field.css_value = choice == VI_CSS1 ? VI_CSS_PX1 : VI_CSS_PX2;
 
-    //Instruct which face to read from
+    // Instruct which face to read from
     sensor.field.css_value += face;
-
 
     if (vi_get_sensor_calibration(sensor, &sensor_offset, &sensor_scalar,
                                   &sensor_filter_constant))
@@ -182,7 +184,8 @@ getCSS_status getCSS(vi_sensor sensor, vi_CSS_face face, double prevVal,
     return GET_CSS_SUCCESS;
 }
 
-int is_in_eclipse() {
+int is_in_eclipse()
+{
 
     static int iteration = 0;
     //     px1, px2, nx1, nx2, py1, py2, ny1, ny2, pz1, pz2, nz1, nz2;
@@ -266,49 +269,51 @@ static const char alternations[256] = {
     0b11101101, 0b11110101, 0b00000001, 0b00000010, 0b00001000, 0b00100011,
     0b10001110, 0b11000110, 0b11001001, 0b11010001, 0b00111110, 0b10011111,
     0b00000100, 0b10011001, 0b00110111, 0b10011100, 0b10111110, 0b00000110,
-    0b00001011, 0b00001111, 0b01100010, 0b00000000};
+    0b00001011, 0b00001111, 0b01100010, 0b00000000
+};
 
-int sensor_pair_choice(vi_sensor sensor, int generation) {
+int sensor_pair_choice(vi_sensor sensor, int generation)
+{
     int mask = 0;
     switch (sensor.component) {
-    case VI_COMP_CSS_CHOICE:
-        switch (sensor.field.css_choice) {
-        case VI_CSS_PX:
-            mask = 1;
+        case VI_COMP_CSS_CHOICE:
+            switch (sensor.field.css_choice) {
+                case VI_CSS_PX:
+                    mask = 1;
+                    break;
+                case VI_CSS_NX:
+                    mask = 2;
+                    break;
+                case VI_CSS_PY:
+                    mask = 3;
+                    break;
+                case VI_CSS_NY:
+                    mask = 4;
+                    break;
+                case VI_CSS_PZ:
+                    mask = 5;
+                    break;
+                case VI_CSS_NZ:
+                    mask = 6;
+                    break;
+            }
             break;
-        case VI_CSS_NX:
-            mask = 2;
-            break;
-        case VI_CSS_PY:
-            mask = 3;
-            break;
-        case VI_CSS_NY:
-            mask = 4;
-            break;
-        case VI_CSS_PZ:
-            mask = 5;
-            break;
-        case VI_CSS_NZ:
-            mask = 6;
-            break;
-        }
-        break;
 
-    case VI_COMP_MAG_CHOICE:
-        mask = 7;
-        break;
+        case VI_COMP_MAG_CHOICE:
+            mask = 7;
+            break;
 
-    case VI_COMP_IMU_CHOICE:
-        mask = 8;
-        break;
+        case VI_COMP_IMU_CHOICE:
+            mask = 8;
+            break;
 
-    case VI_COMP_HDD_CHOICE:
-    case VI_COMP_TMP_CHOICE:
-    case VI_COMP_SOL_CHOICE:
-    case VI_COMP_CSS_VALUE:
-    case VI_COMP_IMU_VALUE:
-    case VI_COMP_MAG_VALUE:
-        return 0;
+        case VI_COMP_HDD_CHOICE:
+        case VI_COMP_TMP_CHOICE:
+        case VI_COMP_SOL_CHOICE:
+        case VI_COMP_CSS_VALUE:
+        case VI_COMP_IMU_VALUE:
+        case VI_COMP_MAG_VALUE:
+            return 0;
     }
 
     if ((alternations[generation % 256] | (1 << mask)) != 0) {
