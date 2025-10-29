@@ -41,12 +41,12 @@ typedef enum {
 	VI_CSS1 = 1,
 	VI_CSS2 = 2,
 	/* Kept here to avoid conflict with sensor_pair_choice */
-	VI_CSS_PX = 3,
-	VI_CSS_NX = 4,
-	VI_CSS_PY = 5,
-	VI_CSS_NY = 6,
-	VI_CSS_PZ = 7,
-	VI_CSS_NZ = 8
+	// VI_CSS_PX = 3,
+	// VI_CSS_NX = 4,
+	// VI_CSS_PY = 5,
+	// VI_CSS_NY = 6,
+	// VI_CSS_PZ = 7,
+	// VI_CSS_NZ = 8
 } vi_CSS_choice;
 
 typedef enum {
