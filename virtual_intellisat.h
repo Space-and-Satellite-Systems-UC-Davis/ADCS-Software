@@ -1,12 +1,13 @@
-/**@file virtual_intellisat.h
+/**
+ * @file virtual_intellisat.h
  *
  * @brief ADCS Software's interface to Intellisat.
  *
- * This file contains the function prototype for every
+ *  This file contains the function prototype for every
  *  actuator-commanding and sensor-reading function
  *  the ADCS Software needs from Intellisat.
  *
- * Their corresponding definitions will be written in the Intellisat
+ *  Their corresponding definitions will be written in the Intellisat
  *  repo by the CS team. While this means any ADCS code that uses
  *  these functions cannot run outside of the Intellisat repo, 
  *  this approach allows for complete separation of the two repos,
@@ -37,9 +38,16 @@ typedef enum {
 } vi_IMU_choice;
 
 typedef enum {
-    VI_HDD1 = 1,
-    VI_HDD2 = 2
-} vi_HDD_choice;
+	VI_CSS1 = 1,
+	VI_CSS2 = 2,
+	/* Kept here to avoid conflict with sensor_pair_choice */
+	// VI_CSS_PX = 3,
+	// VI_CSS_NX = 4,
+	// VI_CSS_PY = 5,
+	// VI_CSS_NY = 6,
+	// VI_CSS_PZ = 7,
+	// VI_CSS_NZ = 8
+} vi_CSS_choice;
 
 typedef enum {
 	VI_CSS_PX = 1,
@@ -48,7 +56,12 @@ typedef enum {
 	VI_CSS_NY = 4,
 	VI_CSS_PZ = 5,
 	VI_CSS_NZ = 6
-} vi_CSS_choice;
+} vi_CSS_face;
+
+typedef enum {
+    VI_HDD1 = 1,
+    VI_HDD2 = 2
+} vi_HDD_choice;
 
 typedef enum {
 	VI_TEMP_PX = 1,
@@ -102,15 +115,15 @@ typedef enum {
 } vi_CSS_value;
 
 typedef enum {
-    VI_COMP_MAG_CHOICE,
-    VI_COMP_MAG_VALUE,
-    VI_COMP_IMU_CHOICE,
-    VI_COMP_IMU_VALUE,
-    VI_COMP_HDD_CHOICE,
-    VI_COMP_CSS_CHOICE,
-    VI_COMP_CSS_VALUE,
-    VI_COMP_TMP_CHOICE,
-    VI_COMP_SOL_CHOICE
+    VI_COMP_MAG_CHOICE = 1,
+    VI_COMP_MAG_VALUE = 2,
+    VI_COMP_IMU_CHOICE = 3,
+    VI_COMP_IMU_VALUE = 4,
+    VI_COMP_HDD_CHOICE = 5,
+    VI_COMP_CSS_CHOICE = 6,
+    VI_COMP_CSS_VALUE = 7,
+    VI_COMP_TMP_CHOICE = 8,
+    VI_COMP_SOL_CHOICE = 9
 } vi_component;
 
 typedef union {
@@ -138,7 +151,8 @@ typedef enum {
     HDD_COMMAND_FAILURE
 } vi_hdd_command_status;
 
-/**@brief Send a throttle command to the HDD.
+/**
+ * @brief Send a throttle command to the HDD.
  *
  * @param hdd Which HDD to command.
  * @param throttle The desired throttle in the range [-1.0, 1.0].
@@ -163,7 +177,8 @@ typedef enum {
 	VI_CONTROL_COIL_FAILURE
 } vi_control_coil_status;
 
-/**@brief Set the coils' dipole vector.
+/**
+ * @brief Set the coils' dipole vector.
  *
  * @param command_x,command_y,command_z The dipole vector.
  *
@@ -184,7 +199,8 @@ typedef enum {
     GET_EPOCH_FAILURE
 } vi_get_epoch_status;
 
-/**@brief Report the current date and time to second accuracy.
+/**
+ * @brief Report the current date and time to second accuracy.
  *
  * @param year,month,day,hour,minute,second Return-by-reference ptrs.
  *
@@ -206,7 +222,8 @@ typedef enum {
     GET_CURR_MILLIS_FAILURE
 } vi_get_curr_millis_status;
 
-/**@brief Report the value of Intellisat's millisecond counter.
+/**
+ * @brief Report the value of Intellisat's millisecond counter.
  *
  * This will be used to calculate change in time for control loops.
  *
@@ -225,7 +242,8 @@ typedef enum {
     GET_ANGVEL_FAILURE
 } vi_get_angvel_status;
 
-/**@brief Retrieve angular velocity data from the IMU.
+/**
+ * @brief Retrieve angular velocity data from the IMU.
  *
  * @param imu Which inertial measurement unit to read from.
  * @param angvel_x,angvel_y,angvel_z Return-by-reference ptrs.
@@ -249,7 +267,8 @@ typedef enum {
 	VI_GET_MAG_FAILURE
 } vi_get_mag_status;
 
-/**@brief Get the current magnetic field value.
+/**
+ * @brief Get the current magnetic field value.
  *
  * @param mag Which magnetometer to read from.
  * @param mag_x,mag_y,mag_z The magnetic field vector.
@@ -270,7 +289,8 @@ typedef enum {
     VI_GET_CSS_FAILURE
 } vi_get_css_status;
 
-/**@brief Get a coarse sun sensor (CSS) reading.
+/**
+ * @brief Get a coarse sun sensor (CSS) reading.
  *
  * @param css Which CSS to read from.
  * @param magnitude Return-by-reference pointer.
@@ -293,7 +313,8 @@ typedef enum {
     VI_GET_TEMP_FAILURE
 } vi_get_temp_status;
 
-/**@brief Get a temperature sensor reading.
+/**
+ * @brief Get a temperature sensor reading.
  *
  * @param sensor Which temperature sensor to read from.
  * @param temp Return-by-reference pointer.
@@ -306,36 +327,40 @@ vi_get_temp(
 	double* temp
 );
 
-/**@brief Get a coils current reading.
- *
- * @param currentX, currentY, currentZ Return-by-reference pointer for each of the coils' current
- *
- * @return vi_get_coils_current_status A return code, success/failure.
- */
+
 typedef enum {
     VI_GET_COILS_CURRENT_SUCCESS,
     VI_GET_COILS_CURRENT_FAILURE
 } vi_get_coils_current_status;
 
-vi_get_coils_current_status
-vi_get_coils_current(
+/**
+ * @brief Get a coils current reading.
+ *
+ * @param currentX, currentY, currentZ Return-by-reference pointer for each 
+ * 		  of the coils' current
+ *
+ * @return vi_get_coils_current_status A return code, success/failure.
+ */
+vi_get_coils_current_status vi_get_coils_current(
 	double* currentX,
 	double* currentY, 
 	double* currentZ
 );
 
-/**@brief Get a solar panel current reading.
+
+typedef enum {
+    VI_GET_SOLAR_PANEL_CURRENT_SUCCESS,
+    VI_GET_SOLAR_PANEL_CURRENT_FAILURE
+} vi_get_solar_panel_current_status;
+
+/**
+ * @brief Get a solar panel current reading.
  *
  * @param sp Which solar panel to read from.
  * @param current Return-by-reference pointer.
  *
  * @return vi_get_solar_panel_current_status A return code, success/failure.
  */
-typedef enum {
-    VI_GET_SOLAR_PANEL_CURRENT_SUCCESS,
-    VI_GET_SOLAR_PANEL_CURRENT_FAILURE
-} vi_get_solar_panel_current_status;
-
 vi_get_solar_panel_current_status
 vi_get_solar_panel_current(
 	vi_sol_choice sp,
@@ -349,6 +374,13 @@ typedef enum{
 	GET_CONSTANT_FAILURE = 1
 } vi_get_constant_status;
 
+// Note: I really really want to make the offset, scalar & constant into struct
+typedef struct{
+	float offset;
+	float scalar;
+	float filter_constant;
+}  sensorCal;
+
 /**@brief Get the current calibration values for a sensor.
  *
  * @param sensor we want calibration for.
@@ -359,8 +391,7 @@ typedef enum{
  *
  * @return vi_get_constant_status A return code, success/failure.
  */
-vi_get_constant_status
-vi_get_sensor_calibration(
+vi_get_constant_status vi_get_sensor_calibration(
 	vi_sensor sensor, 
 	float *offset,
 	float *scalar,

@@ -1,8 +1,9 @@
-/**@file detumble.h
+/**
+ * @file detumble.h
  *
  * @brief Detumbling routine for REALOP.
  * 
- * The detumble() function calls virtual_intellisat.h functions to 
+ *  The detumble() function calls virtual_intellisat.h functions to 
  *  get magnetometer and accelerometer measurements, then calls
  *  bdot_control and issues that command to the magnetorquers. It
  *  continues doing this on a loop until the satellite's angular 
@@ -31,9 +32,11 @@ typedef enum detumble{
 
 } detumble_status;
 
-/**@brief Detumbling function.
+/**
+ * @brief Detumbling function.
  *
  * @param needle a vector to give the detumbling a biase
+ * @param isTesting a boolean var to indicate whether we're in testing mode
  * @return detumble_status A return code.
  */
 detumble_status detumble(vec3 needle, bool isTesting);

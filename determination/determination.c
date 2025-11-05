@@ -57,7 +57,7 @@ vi_get_css_status get_measured_sun(int generation, vec3 *measured_sun) {
     }
 
     for (int i = 0; i < 6; i++){
-        if (getCSS(sensors[i], prevVals[i], &(currVals[i])))
+        if (getCSS(sensors[i], i, prevVals[i], &(currVals[i])))
             return VI_GET_CSS_FAILURE;
     }
 

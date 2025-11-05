@@ -1,17 +1,18 @@
 #include "sensors.h"
 
-getMag_status getMag(vi_sensor sensor, vec3 prevVal, vec3 *currVal) {
+getMag_status getMag(vi_sensor sensor, vec3 prevVal, vec3 *currVal)
+{
 
     float sensor_offset, sensor_scalar, sensor_filter_constant;
     vi_MAG_choice choice = sensor.field.mag_choice;
-    vec3 mag; // Local varible to store the magnotometer reading
-    int errorCount = 0; //Local varible to store error occurances
+    vec3 mag;           // Local varible to store the magnotometer reading
+    int errorCount = 0; // Local varible to store error occurances
 
     errorCount = 0;
-    while(vi_get_mag(choice, &(mag.x), &(mag.y), &(mag.z)))
-    {
+    while (vi_get_mag(choice, &(mag.x), &(mag.y), &(mag.z))) {
         errorCount++;
-        if (errorCount >= 3) return GET_MAG_FAILURE;
+        if (errorCount >= 3)
+            return GET_MAG_FAILURE;
     };
 
     /*################ PROTOTYPE CODE ################*/
@@ -29,10 +30,12 @@ getMag_status getMag(vi_sensor sensor, vec3 prevVal, vec3 *currVal) {
     for (int i = 0; i < 3; i++) {
 
         int errorCount = 0;
-        while(vi_get_sensor_calibration(sensor, &sensor_offset, &sensor_scalar, &sensor_filter_constant))
+        while(vi_get_sensor_calibration(sensor, &sensor_offset, &sensor_scalar, 
+                                        &sensor_filter_constant))
         {
             errorCount++;
-            if (errorCount >= 3) return MAG_CALIBRATION_FAILURE;
+            if (errorCount >= 3)
+                return MAG_CALIBRATION_FAILURE;
         }
 
         double currVal = *(magCurrPtr + i);
@@ -43,7 +46,6 @@ getMag_status getMag(vi_sensor sensor, vec3 prevVal, vec3 *currVal) {
         *(magCurrPtr + i) = currVal;
 
         sensor.field.mag_value += 1;
-
     }
 
     return GET_MAG_SUCCESS;
@@ -78,15 +80,56 @@ getMag_status getMag(vi_sensor sensor, vec3 prevVal, vec3 *currVal) {
     */
 }
 
-getIMU_status getIMU(vi_sensor sensor, vec3 prevVal, vec3 *currVal) {
+getIMU_status getIMU(vi_sensor sensor, vec3 prevVal, vec3 *currVal)
+{
 
     float sensor_offset, sensor_scalar, sensor_filter_constant;
     vi_IMU_choice choice = sensor.field.imu_choice;
     vec3 reading; // Local varible to store sensor
+    int errorCount = 0;
 
-    if (vi_get_angvel(choice, &(reading.x), &(reading.y), &(reading.z))) {
-        return GET_IMU_FAILURE;
+
+      while(vi_get_angvel(choice, &(reading.x), &(reading.y), &(reading.z)))
+    {
+        errorCount++;
+        if (errorCount >= 3) return GET_IMU_FAILURE;
+    };
+
+
+
+    sensor.component = VI_COMP_IMU_VALUE;
+    sensor.field.imu_value = choice == VI_IMU1 ? VI_IMU1_X : VI_IMU2_X;
+    
+    //
+    double *magCurrPtr = (double *)&reading;
+    double *magPrevPtr = (double *)&prevVal;
+
+    for (int i = 0; i < 3; i++){
+
+        int errorCount = 0;
+        while(vi_get_sensor_calibration(sensor, &sensor_offset, &sensor_scalar, 
+                                        &sensor_filter_constant)){
+            errorCount++;
+            if(errorCount >= 3) return GET_IMU_FAILURE;
+
+                                  }
+        
+        double currVal = *(magCurrPtr + i);
+        double prevVal = *(magPrevPtr + i);
+
+        currVal = get_sensor_calibration(currVal, prevVal, sensor_offset, 
+                                       sensor_scalar, sensor_filter_constant);
+
+        *(magCurrPtr + i) = currVal;
+
+        sensor.field.imu_value += 1;
+
     }
+
+    return GET_IMU_SUCCESS;
+
+    /*
+    Old code: 
 
     sensor.field.imu_value = VI_IMU1_X;
     if (vi_get_sensor_calibration(sensor, &sensor_offset, &sensor_scalar,
@@ -108,65 +151,71 @@ getIMU_status getIMU(vi_sensor sensor, vec3 prevVal, vec3 *currVal) {
         return IMU_CALIBRATION_FAILURE;
     reading.z = get_sensor_calibration(reading.z, prevVal.z, sensor_offset,
                                        sensor_scalar, sensor_filter_constant);
+    */
 
-    return GET_IMU_SUCCESS;
 }
 
-getCSS_status getCSS(vi_sensor sensor, double prevVal, double *currVal) {
+getCSS_status getCSS(vi_sensor sensor, vi_CSS_face face, double prevVal,
+                     double *currVal)
+{
 
     float sensor_offset, sensor_scalar, sensor_filter_constant;
     vi_CSS_choice choice = sensor.field.css_choice;
+
     double reading; // Local varible to store sensor
 
+    // Todo: Implement retries
     if (vi_get_css(choice, &reading)) {
         return GET_CSS_FAILURE;
     }
 
-    sensor.field.css_value = choice;
+    // Instruct which sensor to read from
+    sensor.field.css_value = choice == VI_CSS1 ? VI_CSS_PX1 : VI_CSS_PX2;
+
+    // Instruct which face to read from
+    sensor.field.css_value += face;
+
     if (vi_get_sensor_calibration(sensor, &sensor_offset, &sensor_scalar,
                                   &sensor_filter_constant))
         return CSS_CALIBRATION_FAILURE;
     reading = get_sensor_calibration(reading, prevVal, sensor_offset,
                                      sensor_scalar, sensor_filter_constant);
 
-
     return GET_CSS_SUCCESS;
 }
 
-int is_in_eclipse() {
+int is_in_eclipse()
+{
 
     static int iteration = 0;
     //     px1, px2, nx1, nx2, py1, py2, ny1, ny2, pz1, pz2, nz1, nz2;
-    double readingsOne[6]; 
+    double readingsOne[6];
     double readingsTwo[6];
-    double prevValOne, prevValTwo = 0; //TODO: MUST CHANGE
+    double prevValOne, prevValTwo = 0; // TODO: MUST CHANGE
 
     vi_sensor sensorOne, sensorTwo;
     sensorOne.component = VI_COMP_CSS_CHOICE;
     sensorTwo.component = VI_COMP_CSS_CHOICE;
 
-    sensorOne.field.css_choice = VI_CSS_PX;
-    sensorTwo.field.css_choice = VI_CSS_PX;
+    sensorOne.field.css_choice = VI_CSS1;
+    sensorTwo.field.css_choice = VI_CSS2;
 
-    for (int i = VI_CSS_PX; i <= VI_CSS_NZ; i++)
-    {
-        //Get Readings from sensor
-        getCSS(sensorOne, prevValOne, &readingsOne[i - 1]);
-        getCSS(sensorTwo, prevValTwo, &readingsTwo[i - 1]);
+    for (int face = VI_CSS_PX; face <= VI_CSS_NZ; face++) {
+        // Get Readings from sensor
+        getCSS(sensorOne, face, prevValOne, &readingsOne[face - 1]);
+        getCSS(sensorTwo, face, prevValTwo, &readingsTwo[face - 1]);
 
-        //Increment to next set of sensors
-        sensorOne.field.css_choice ++;
-        sensorTwo.field.css_choice ++;
+        // Increment to next set of sensors
+        // sensorOne.field.css_choice++;
+        // sensorTwo.field.css_choice++;
     }
 
     double sum = 0;
-    for (int i = 0; i < 6; i++)
-    {
+    for (int i = 0; i < 6; i++) {
         sum += pow(readingsOne[i], 2) + pow(readingsTwo[i], 2);
     }
 
     double magnitude = sqrt(sum);
-
 
     iteration++;
 
@@ -220,26 +269,28 @@ static const char alternations[256] = {
     0b11101101, 0b11110101, 0b00000001, 0b00000010, 0b00001000, 0b00100011,
     0b10001110, 0b11000110, 0b11001001, 0b11010001, 0b00111110, 0b10011111,
     0b00000100, 0b10011001, 0b00110111, 0b10011100, 0b10111110, 0b00000110,
-    0b00001011, 0b00001111, 0b01100010, 0b00000000};
+    0b00001011, 0b00001111, 0b01100010, 0b00000000
+};
 
-int sensor_pair_choice(vi_sensor sensor, int generation) {
+int sensor_pair_choice(vi_sensor sensor, int generation)
+{
     int mask = 0;
     switch (sensor.component) {
         case VI_COMP_CSS_CHOICE:
             switch (sensor.field.css_choice) {
-	            case VI_CSS_PX:
+                case VI_CSS_PX:
                     mask = 1;
                     break;
-	            case VI_CSS_NX:
+                case VI_CSS_NX:
                     mask = 2;
                     break;
-	            case VI_CSS_PY:
+                case VI_CSS_PY:
                     mask = 3;
                     break;
-	            case VI_CSS_NY:
+                case VI_CSS_NY:
                     mask = 4;
                     break;
-	            case VI_CSS_PZ:
+                case VI_CSS_PZ:
                     mask = 5;
                     break;
                 case VI_CSS_NZ:
