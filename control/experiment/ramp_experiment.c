@@ -11,7 +11,7 @@ run_ramp_experiment_status ramp_experiment(){
     ramp_controller controller;
     uint64_t t0;
 
-    vi_sensor Hdd = {HDD, One, PX};
+    vi_sensor Hdd = {HDD, ONE, PX};
     vi_hdd_command_status command_status;
     vi_get_curr_millis_status millis_status = vi_get_curr_millis(&t0);
     if (millis_status == GET_CURR_MILLIS_FAILURE){

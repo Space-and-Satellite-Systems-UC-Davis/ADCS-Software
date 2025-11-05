@@ -9,7 +9,7 @@ determination_exp_status determination_experiment() {
   mat3 prevAttitude;
   mat3 currAttitude;
   vec3 sun;
-  vi_sensor hdd = {HDD, One, PX};
+  vi_sensor hdd = {HDD, ONE, PX};
 
   // Get current generation for sensor alternation
   int generation = vi_get_experiment_generation();

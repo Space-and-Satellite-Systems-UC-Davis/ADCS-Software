@@ -72,7 +72,7 @@ getIMU_status getIMU(vi_sensor sensor, vec3 prevVal, vec3 *outVal)
         while (vi_get_sensor_calibration(sensor, &sensor_offset, &sensor_scalar,
                                          &sensor_filter_constant)) {
             errorCount++;
-            if (errorCount >= 3) return MAG_CALIBRATION_FAILURE;
+            if (errorCount >= 3) return IMU_CALIBRATION_FAILURE;
         }
 
         double currVal = *(imuCurrPtr + i);
@@ -146,8 +146,8 @@ int is_in_eclipse()
     double readingsTwo[6];
     double prevValOne, prevValTwo = 0; // TODO: MUST CHANGE
 
-    vi_sensor sensorOne = {CSS, One, PX}; 
-    vi_sensor sensorTwo = {CSS, Two, PX};
+    vi_sensor sensorOne = {CSS, ONE, PX}; 
+    vi_sensor sensorTwo = {CSS, TWO, PX};
 
     for (int face = PX; face <= NZ; face++) {
         // Get Readings from sensor
@@ -244,6 +244,8 @@ int sensor_pair_choice(vi_sensor sensor, int generation)
                     break;
                 case NZ:
                     mask = 6;
+                    break;
+                default:
                     break;
             }
             break;

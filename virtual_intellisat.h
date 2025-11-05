@@ -37,11 +37,13 @@ typedef enum {
 } vi_component;
 
 typedef enum {
-	One = 1,
-	Two = 2,
+    NSA = 0, //No Sensor Alternation
+	ONE = 1,
+	TWO = 2,
 } vi_choice;
 
 typedef enum {
+    NA = 0, //Not applicable
 	PX = 1,
 	PY = 2,
 	PZ = 3,

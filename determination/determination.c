@@ -51,7 +51,7 @@ vi_get_css_status get_measured_sun(int generation, vec3 *measured_sun) {
 
     for (int i = 0; i < 6; i++) {
         sensors[i].choice = 
-            sensor_pair_choice(sensors[i], generation) == 1 ? One : Two; 
+            sensor_pair_choice(sensors[i], generation) == 1 ? ONE : TWO; 
     }
 
     for (int i = 0; i < 6; i++){
@@ -84,7 +84,7 @@ determination_status determination(mat3 *attitude) {
 
     // Ger magotometer choice
     magnotometer.choice =
-        sensor_pair_choice(magnotometer, generation) == 1 ? One : Two;
+        sensor_pair_choice(magnotometer, generation) == 1 ? ONE : TWO;
 
     // Get current Time
     if (vi_get_epoch(&year, &month, &day, &hour, &minute, &second) ==

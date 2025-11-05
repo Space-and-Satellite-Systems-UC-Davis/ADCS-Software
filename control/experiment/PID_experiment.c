@@ -26,10 +26,9 @@ PID_status PID_experiment(double target, int infinite) {
   int generation = vi_get_experiment_generation();
 
   // Get IMU sensor choice
-  imu.choice = 
-      sensor_pair_choice(imu, generation) == 1 ? One : Two ;
+  imu.choice = sensor_pair_choice(imu, generation) == 1 ? ONE : TWO ;
 
-  hdd.choice = One;
+  hdd.choice = ONE;
   
   // Verify experiment is running
 
@@ -59,11 +58,11 @@ PID_status PID_experiment(double target, int infinite) {
 
      //Clamp the output
     if (throttle >= 0) {
-      hdd.choice = One;
+      hdd.choice = ONE;
       if (throttle > 2.5) throttle = 2.5;
 		} 
     else {
-        hdd.choice  = Two;
+        hdd.choice  = TWO;
         if (throttle < -2.5) throttle = -2.5;
     }
 

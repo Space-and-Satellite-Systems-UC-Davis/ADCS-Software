@@ -30,7 +30,7 @@ detumble_status detumble(vec3 needle, bool isTesting) {
     vi_sensor magnotometer; // Initialize it to VI_MAG1
     magnotometer.component = MAG;
     magnotometer.choice =
-        sensor_pair_choice(magnotometer, generation) == 1 ? One : Two;
+        sensor_pair_choice(magnotometer, generation) == 1 ? ONE : TWO;
 
     if (vi_get_curr_millis(&curr_millis))
         return DETUMBLING_FAILURE_CURR_MILLIS;
