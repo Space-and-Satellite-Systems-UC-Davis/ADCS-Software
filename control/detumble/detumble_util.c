@@ -31,6 +31,7 @@ vec3 findAngVel(vec3 b0, vec3 b1, uint64_t delta_t) {
 }
 
 // TODO: work on this function
+// Look into vi_get_coils_current()
 double computeB_coils(double current) { return current; }
 
 double computeDecay(double B_initial) {
@@ -53,6 +54,7 @@ bool detumbleDelay(vec3 mdm)
     return false;
 }
 
+/* MDM = - K * ( Bdot * needle) */
 vec3 computeMDM(vec3 mag_curr, vec3 mag_prev, uint64_t delta_t, vec3 coils_curr,
                 vec3 needle) {
 

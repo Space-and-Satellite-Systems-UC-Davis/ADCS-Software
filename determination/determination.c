@@ -46,18 +46,16 @@ vi_get_css_status get_measured_sun(int generation, vec3 *measured_sun) {
     static double prevVals[6];  // Not sure how that could be implemented
 
     for (int i = 0; i < 6; i++){
-        sensors[i].component = VI_COMP_CSS_CHOICE;
+        sensors[i].component = CSS;
     }
 
     for (int i = 0; i < 6; i++) {
-        sensors[i].field.css_choice = 
-            sensor_pair_choice(sensors[i], generation) == 1
-            ? i * 2         //VI_CSS_**1           
-            : i * 2 + 1;    //VI_CSS_**2
+        sensors[i].choice = 
+            sensor_pair_choice(sensors[i], generation) == 1 ? One : Two; 
     }
 
     for (int i = 0; i < 6; i++){
-        if (getCSS(sensors[i], i, prevVals[i], &(currVals[i])))
+        if (getCSS(sensors[i], prevVals[i], &(currVals[i])))
             return VI_GET_CSS_FAILURE;
     }
 
@@ -79,14 +77,14 @@ determination_status determination(mat3 *attitude) {
     vec3 mag_prev;
 
     vi_sensor magnotometer;
-    magnotometer.component = VI_COMP_MAG_CHOICE;
+    magnotometer.component = MAG;
 
     // Get current generation
     int generation = vi_get_determination_generation();
 
     // Ger magotometer choice
-    magnotometer.field.mag_choice =
-        sensor_pair_choice(magnotometer, generation) == 1 ? VI_MAG1 : VI_MAG2;
+    magnotometer.choice =
+        sensor_pair_choice(magnotometer, generation) == 1 ? One : Two;
 
     // Get current Time
     if (vi_get_epoch(&year, &month, &day, &hour, &minute, &second) ==
