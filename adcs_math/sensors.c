@@ -1,118 +1,43 @@
 #include "sensors.h"
 
-getMag_status getMag(vi_sensor sensor, vec3 prevVal, vec3 *outVal)
+
+getMag_status getMag(vi_sensor sensor, vec3 prevVal, vec3 *currVal)
 {
-
-    float sensor_offset, sensor_scalar, sensor_filter_constant;
-
-    vec3 magCurr;   // Local varible to store the magnotometer reading
     int errorCount; // Local varible to store error occurances
 
     errorCount = 0;
-    while (vi_get_mag(sensor, &(magCurr.x), &(magCurr.y), &(magCurr.z))) {
+    while (vi_get_mag(sensor, &currVal->x, &currVal->y, &currVal->z)) {
         errorCount++;
         if (errorCount >= 3) return GET_MAG_FAILURE;
     };
 
-    // Starting from the X - axis
-    sensor.axis = PX;
-    double *magCurrPtr = &(magCurr.x); //magCurr.x
-    double *magPrevPtr = &(prevVal.x); //prevVal.x
-    double *outValPtr  = &(outVal->x);  //outVal->x
-
-    // Perform calibration on each axis
-    for (int i = 0; i < 3; i++) {
-
-        int errorCount = 0;
-        while (vi_get_sensor_calibration(sensor, &sensor_offset, &sensor_scalar,
-                                         &sensor_filter_constant)) {
-            errorCount++;
-            if (errorCount >= 3) return MAG_CALIBRATION_FAILURE;
-        }
-
-        double currVal = *(magCurrPtr + i);
-        double prevVal = *(magPrevPtr + i);
-
-        currVal = get_sensor_calibration(currVal, prevVal, sensor_offset,
-                                         sensor_scalar, sensor_filter_constant);
-        
-        *(outValPtr + i) = currVal;
-
-        sensor.axis += 1;
+    errorCount = 0;
+    while (calibrateVec3(sensor, prevVal, currVal)){
+        errorCount++;
+        if (errorCount >= 3) return MAG_CALIBRATION_FAILURE;
     }
 
     return GET_MAG_SUCCESS;
 
 }
 
-getIMU_status getIMU(vi_sensor sensor, vec3 prevVal, vec3 *outVal)
+getIMU_status getIMU(vi_sensor sensor, vec3 prevVal, vec3 *currVal)
 {
-
-    float sensor_offset, sensor_scalar, sensor_filter_constant;
-
-    vec3 imuCurr;   // Local varible to store the magnotometer reading
     int errorCount; // Local varible to store error occurances
 
-    errorCount = 0;
-    while (vi_get_mag(sensor, &(imuCurr.x), &(imuCurr.y), &(imuCurr.z))) {
+    errorCount = 0;         
+    while (vi_get_angvel(sensor, &currVal->x, &currVal->y, &currVal->z)) {
         errorCount++;
         if (errorCount >= 3) return GET_IMU_FAILURE;
     };
 
-    // Starting from the X - axis
-    sensor.axis = PX;
-    double *imuCurrPtr = &(imuCurr.x); //magCurr.x
-    double *imuPrevPtr = &(prevVal.x); //prevVal.x
-    double *outValPtr  = &(outVal->x);  //outVal->x
-
-    // Perform calibration on each axis
-    for (int i = 0; i < 3; i++) {
-
-        int errorCount = 0;
-        while (vi_get_sensor_calibration(sensor, &sensor_offset, &sensor_scalar,
-                                         &sensor_filter_constant)) {
-            errorCount++;
-            if (errorCount >= 3) return IMU_CALIBRATION_FAILURE;
-        }
-
-        double currVal = *(imuCurrPtr + i);
-        double prevVal = *(imuPrevPtr + i);
-
-        currVal = get_sensor_calibration(currVal, prevVal, sensor_offset,
-                                         sensor_scalar, sensor_filter_constant);
-        
-        *(outValPtr + i) = currVal;
-
-        sensor.axis += 1;
+    errorCount = 0;
+    while (calibrateVec3(sensor, prevVal, currVal)){
+        errorCount++;
+        if (errorCount >= 3) return IMU_CALIBRATION_FAILURE;
     }
 
-
     return GET_IMU_SUCCESS;
-
-    /*
-    Old code:
-
-    sensor.field.imu_value = VI_IMU1_X;
-    if (vi_get_sensor_calibration(sensor, &sensor_offset, &sensor_scalar,
-                                  &sensor_filter_constant))
-        return IMU_CALIBRATION_FAILURE;
-    reading.x = get_sensor_calibration(reading.x, prevVal.x, sensor_offset,
-                                       sensor_scalar, sensor_filter_constant);
-
-    sensor.field.imu_value = VI_IMU1_Y;
-    if (vi_get_sensor_calibration(sensor, &sensor_offset, &sensor_scalar,
-                                  &sensor_filter_constant))
-        return IMU_CALIBRATION_FAILURE;
-    reading.y = get_sensor_calibration(reading.y, prevVal.y, sensor_offset,
-                                       sensor_scalar, sensor_filter_constant);
-
-    sensor.field.imu_value = VI_IMU1_Z;
-    if (vi_get_sensor_calibration(sensor, &sensor_offset, &sensor_scalar,
-                                  &sensor_filter_constant))
-        return IMU_CALIBRATION_FAILURE;
-    reading.z = get_sensor_calibration(reading.z, prevVal.z, sensor_offset,
-                                       sensor_scalar, sensor_filter_constant);
-    */
 }
 
 getCSS_status getCSS(vi_sensor sensor, double prevVal, double *currVal)
@@ -120,19 +45,16 @@ getCSS_status getCSS(vi_sensor sensor, double prevVal, double *currVal)
 
     float sensor_offset, sensor_scalar, sensor_filter_constant;
 
-    double reading; // Local varible to store sensor
-
-    // Instruct which sensor to read from
-        // Todo: Implement retries
-    if (vi_get_css(sensor, &reading)) {
-        return GET_CSS_FAILURE;
+    int errorCount = 0;
+    while (vi_get_css(sensor, currVal)) {
+        errorCount++;
+        if(errorCount >= 3) return GET_CSS_FAILURE;
     }
 
-    if (vi_get_sensor_calibration(sensor, &sensor_offset, &sensor_scalar,
-                                  &sensor_filter_constant))
-        return CSS_CALIBRATION_FAILURE;
-    reading = get_sensor_calibration(reading, prevVal, sensor_offset,
-                                     sensor_scalar, sensor_filter_constant);
+    while(calibrateDbl(sensor, prevVal, currVal)){
+        errorCount++;
+        if(errorCount >= 3) return CSS_CALIBRATION_FAILURE;
+    }                
 
     return GET_CSS_SUCCESS;
 }
@@ -226,28 +148,7 @@ int sensor_pair_choice(vi_sensor sensor, int generation)
     int mask = 0;
     switch (sensor.component) {
         case CSS:
-            switch (sensor.axis) {
-                case PX:
-                    mask = 1;
-                    break;
-                case NX:
-                    mask = 2;
-                    break;
-                case PY:
-                    mask = 3;
-                    break;
-                case NY:
-                    mask = 4;
-                    break;
-                case PZ:
-                    mask = 5;
-                    break;
-                case NZ:
-                    mask = 6;
-                    break;
-                default:
-                    break;
-            }
+            mask = sensor.axis;
             break;
 
         case MAG:

@@ -45,11 +45,11 @@ typedef enum {
 typedef enum {
     NA = 0, //Not applicable
 	PX = 1,
-	PY = 2,
-	PZ = 3,
-	NX = 4,
-	NY = 5,
-	NZ = 6,
+    NX = 2,
+    PY = 3,
+    NY = 4,
+    PZ = 5,
+    NZ = 6,
 } vi_axis;
 
 /**
