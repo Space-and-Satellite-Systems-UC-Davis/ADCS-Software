@@ -47,11 +47,11 @@ float get_sensor_calibration(float currValue, float prevValue, float offset,
 /**
  * @brief perform sensor calibration on sensor readings
  *
- * @param prevVal previous sensor value used in calibration
+ * @param prevVal previous sensor value, used in calibration
  * 
- * @param currVal current sensor value 
+ * @param currVal current sensor value, calibrated value returned-by-reference
  *
- * @return currVal calibrated sensor value returned by reference
+ * @return true if calibration is sucessful, false if otherwise
  */
 bool calibrateDbl(vi_sensor sensor, double prevVal, double *currVal);
 
@@ -59,11 +59,11 @@ bool calibrateDbl(vi_sensor sensor, double prevVal, double *currVal);
 /**
  * @brief perform sensor calibration on sensor readings in a vec3 type
  *
- * @param prevVal previous sensor value used in calibration
+ * @param prevVal previous sensor value, used in calibration
  * 
- * @param currVal current sensor value 
+ * @param currVal current sensor value, calibrated  value returned-by-reference
  *
- * @return currVal calibrated sensor value returned by reference
+ * @return true if calibration is sucessful, false if otherwise
  */
 bool calibrateVec3(vi_sensor sensor, vec3 prevVal, vec3 *currVal);
 

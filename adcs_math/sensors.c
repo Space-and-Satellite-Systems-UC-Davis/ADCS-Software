@@ -1,5 +1,7 @@
 #include "sensors.h"
 
+#define MAX_RETRIES 3
+
 
 getMag_status getMag(vi_sensor sensor, vec3 prevVal, vec3 *currVal)
 {
@@ -8,13 +10,13 @@ getMag_status getMag(vi_sensor sensor, vec3 prevVal, vec3 *currVal)
     errorCount = 0;
     while (vi_get_mag(sensor, &currVal->x, &currVal->y, &currVal->z)) {
         errorCount++;
-        if (errorCount >= 3) return GET_MAG_FAILURE;
+        if (errorCount >= MAX_RETRIES) return GET_MAG_FAILURE;
     };
 
     errorCount = 0;
     while (calibrateVec3(sensor, prevVal, currVal)){
         errorCount++;
-        if (errorCount >= 3) return MAG_CALIBRATION_FAILURE;
+        if (errorCount >= MAX_RETRIES) return MAG_CALIBRATION_FAILURE;
     }
 
     return GET_MAG_SUCCESS;
@@ -28,13 +30,13 @@ getIMU_status getIMU(vi_sensor sensor, vec3 prevVal, vec3 *currVal)
     errorCount = 0;         
     while (vi_get_angvel(sensor, &currVal->x, &currVal->y, &currVal->z)) {
         errorCount++;
-        if (errorCount >= 3) return GET_IMU_FAILURE;
+        if (errorCount >= MAX_RETRIES) return GET_IMU_FAILURE;
     };
 
     errorCount = 0;
     while (calibrateVec3(sensor, prevVal, currVal)){
         errorCount++;
-        if (errorCount >= 3) return IMU_CALIBRATION_FAILURE;
+        if (errorCount >= MAX_RETRIES) return IMU_CALIBRATION_FAILURE;
     }
 
     return GET_IMU_SUCCESS;
