@@ -44,9 +44,6 @@ getIMU_status getIMU(vi_sensor sensor, vec3 prevVal, vec3 *currVal)
 
 getCSS_status getCSS(vi_sensor sensor, double prevVal, double *currVal)
 {
-
-    float sensor_offset, sensor_scalar, sensor_filter_constant;
-
     int errorCount = 0;
     while (vi_get_css(sensor, currVal)) {
         errorCount++;
@@ -64,11 +61,11 @@ getCSS_status getCSS(vi_sensor sensor, double prevVal, double *currVal)
 int is_in_eclipse()
 {
 
-    static int iteration = 0;
+    //static int iteration = 0;
     //     px1, px2, nx1, nx2, py1, py2, ny1, ny2, pz1, pz2, nz1, nz2;
     double readingsOne[6];
     double readingsTwo[6];
-    double prevValOne, prevValTwo = 0; // TODO: MUST CHANGE
+    double prevValOne = 0.0, prevValTwo = 0.0; // TODO: MUST CHANGE
 
     vi_sensor sensorOne = {CSS, ONE, PX}; 
     vi_sensor sensorTwo = {CSS, TWO, PX};
@@ -90,7 +87,7 @@ int is_in_eclipse()
 
     double magnitude = sqrt(sum);
 
-    iteration++;
+    //iteration++;
 
     if (magnitude <= 0.25) {
         return 1;

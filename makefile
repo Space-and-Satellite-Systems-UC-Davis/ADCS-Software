@@ -1,5 +1,5 @@
 CC := gcc
-CFLAGS := -I. -lm -Wswitch -c
+CFLAGS := -I. -lm -Wswitch -c -Wall
 
 # Source files
 SOURCES := \

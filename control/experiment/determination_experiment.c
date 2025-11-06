@@ -12,7 +12,7 @@ determination_exp_status determination_experiment() {
   vi_sensor hdd = {HDD, ONE, PX};
 
   // Get current generation for sensor alternation
-  int generation = vi_get_experiment_generation();
+  //int generation = vi_get_experiment_generation();
 
   // TODO: default values for now, waiting for sun sensors to implement get_sun
   sun.x = 0;

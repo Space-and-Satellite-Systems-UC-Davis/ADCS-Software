@@ -55,10 +55,10 @@ vec3 findAngVel(vec3 b0, vec3 b1, uint64_t delta_t) {
 }
 
 /* MDM = - K * ( Bdot * needle) */
-vec3 computeMDM(vec3 mag_curr, vec3 mag_prev, uint64_t delta_t, vec3 coils_curr,
-                vec3 needle) {
+vec3 computeMDM(vec3 mag_curr, vec3 mag_prev, uint64_t delta_t, vec3 needle) {
 
     vec3 mdm;
+    vec3 coils_curr;
     bdot_control(mag_curr, mag_prev, delta_t, &coils_curr);
     vec_sub(coils_curr, needle, &coils_curr);
     vec_scalar(-control_constant, coils_curr, &mdm);
