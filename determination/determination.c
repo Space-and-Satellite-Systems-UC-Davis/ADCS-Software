@@ -74,7 +74,7 @@ determination_status determination(mat3 *attitude) {
 
     vec3 measured_mag;
     vec3 measured_sun;
-    vec3 mag_prev;
+    vec3 mag_prev = (vec3){0, 0, 0};
 
     vi_sensor magnotometer;
     magnotometer.component = MAG;
@@ -113,8 +113,8 @@ determination_status determination(mat3 *attitude) {
     }
 
     int update_IGRF = 0; // false
-    char *tle_line1;
-    char *tle_line2;
+    char *tle_line1 = NULL;
+    char *tle_line2 = NULL;
 
     vi_get_TLE_status tle_status = vi_get_TLE(tle_line1, tle_line2);
 

@@ -44,6 +44,7 @@ vec3 findAngVel(vec3 b0, vec3 b1, uint64_t delta_t) {
     if (delta_t == 0)
         return (vec3){0.0, 0.0, 0.0};
 
+    // angVel = 1/|b0| x bDot
     bdot_control(b1, b0, delta_t, &bdot);
     vec_scalar((1.0 / vec_mag(b0)), bdot, &angVel);
 
