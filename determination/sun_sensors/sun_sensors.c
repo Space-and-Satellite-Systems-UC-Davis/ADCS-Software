@@ -82,11 +82,12 @@ int is_eclipsed(float sensor_readings[NUM_SUN_SENSORS], double longitude, double
     double flattening_factor = 1/298.257223563;
     double eccentricity = sqrt(2.0f*flattening_factor-powf(flattening_factor,2));
     double mag_sun=sqrt(powf(sun_vec.x,2) + powf(sun_vec.y,2)+ powf(sun_vec.z,2));
-    double mag_sat=sqrt(powf(r_eci.x,2) + powf(r_eci.x,2) + powf(r_eci.z,2));
+    double mag_sat=sqrt(powf(r_eci.x,2) + powf(r_eci.y,2) + powf(r_eci.z,2));
     sun_vec.z=sun_vec.z/sqrt(1-powf(eccentricity,2));
     r_eci.z=r_eci.z/sqrt(1-powf(eccentricity,2));
-
-    float t_min = (mag_sun*mag_sun - vec_dot(sun_vec,r_eci))/(mag_sun*mag_sun + mag_sat*mag_sat - 2 * vec_dot(sun_vec,r_eci));
+    double denom = (mag_sun*mag_sun + mag_sat*mag_sat - 2 * vec_dot(sun_vec,r_eci));
+    //TODO implement division by 0 protection
+    double t_min = (mag_sun*mag_sun - vec_dot(sun_vec,r_eci))/denom;
 
     int los = 0; 
 
@@ -106,6 +107,4 @@ int is_eclipsed(float sensor_readings[NUM_SUN_SENSORS], double longitude, double
                 los = 0;
             }
     }
-
-
 }
