@@ -29,13 +29,13 @@ bool calibrateVec3(vi_sensor sensor, vec3 prevVal, vec3 *currVal)
 {
 
     sensor.axis = PX;
-    if (calibrateDbl(sensor, prevVal.x, &currVal->x))
+    if (calibrateDbl(sensor, prevVal.x, &(currVal->x)))
         return false;
     sensor.axis = PY;
-    if (calibrateDbl(sensor, prevVal.y, &currVal->y))
+    if (calibrateDbl(sensor, prevVal.y, &(currVal->y)))
         return false;
     sensor.axis = PZ;
-    if (calibrateDbl(sensor, prevVal.z, &currVal->z))
+    if (calibrateDbl(sensor, prevVal.z, &(currVal->z)))
         return false;
 
     return true;

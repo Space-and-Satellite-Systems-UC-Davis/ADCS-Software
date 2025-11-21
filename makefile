@@ -12,10 +12,11 @@ DEPENDENCIES := $(patsubst %.o,%.d,$(OBJECTS))
 $(TARGET): $(OBJECTS)
 	@echo "AR $@"
 	$(Q)ar rcs $@ $^
-	@echo "CLEAN $@ objects & dependencies"
-	$(Q)rm -f $(OBJECTS) $(DEPENDENCIES)
+# 	@echo "Cleaning $@ objects & dependencies"
+# 	$(Q)rm -f $(OBJECTS) $(DEPENDENCIES)
 
 %.o: %.c
+	@mkdir -p ./build
 	@echo "CC $@"
 	$(Q)$(CC) $(CFLAGS) -c $< -o $@ 
 
@@ -24,7 +25,7 @@ run:
 
 clean:
 	@echo "CLEAN"
-	$(Q)rm -f $(TARGET) $(OBJECTS) $(DEPENDENCIES)
+	$(Q)rm -f $(TARGET) ./build/$(OBJECTS) $(DEPENDENCIES)
 
 .PHONY: all clean run
 
