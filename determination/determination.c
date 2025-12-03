@@ -253,7 +253,7 @@ determination_status get_moon_direction(vec3 *moon_attitude) {
     //vi_get_epoch_status epoch_status = vi_get_epoch(&year, &month, &day, &hour, &minute, &second);
     if (vi_get_epoch(&year, &month, &day, &hour, &minute, &second) ==
         GET_EPOCH_FAILURE)
-        return DET_UNHANDLED_ERROR; //TODO: fix error handling w/ return type
+        return DET_EPOCH_FAILURE; //TODO: fix error handling w/ return type
 
     // adding delta_t = 69 seconds to UTC to convert to TT
     double TT = julian_date(year, month, day, hour + minute / 60.0 + (second + delta_t) / 3600.0); 
