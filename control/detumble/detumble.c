@@ -17,26 +17,31 @@
 
 #include <math.h>
 
+detumble_status detumble(vec3 needle, bool isTesting, uint64_t maxTime,
+                         uint64_t minTime)
+{
+    // Magnotometer & IMU readings
+    vec3 mag_curr = (vec3){ 0, 0, 0 }, mag_prev = (vec3){ 0, 0, 0 };
+    vec3 imu_curr = (vec3){ 0, 0, 0 }, imu_prev = (vec3){ 0, 0, 0 };
 
-detumble_status detumble(vec3 needle, bool isTesting, uint64_t maxTime, uint64_t minTime) {
-    vec3 mag_curr, mag_prev = {0,0,0}; // Magnotometer readings
-    //vec3 coils_curr;
-    uint64_t startTime = 0, curr_millis = 0, prev_millis = 0, delta_t = 0, timeElapsed;
+    // Time varibles
+    uint64_t startTime = 0, curr_millis = 0, prev_millis = 0;
+    uint64_t delta_t = 0, timeElapsed = 0;
+
+    // Extra varibles
     vec3 mdm;            // Magnetic Dipole Moment
-    vec3 imu_curr, imu_prev = {0,0,0};         // Angular Velocity
     bool keepDetumbling; // Keep loop running?
     int generation = vi_get_detumbling_generation();
 
     // Declare varibles for sensor alternation
-    vi_sensor magnotometer; // Initialize it to VI_MAG1
+    vi_sensor magnotometer;
     magnotometer.component = MAG;
     magnotometer.choice =
         sensor_pair_choice(magnotometer, generation) == 1 ? ONE : TWO;
-    
+
     vi_sensor imu;
-    magnotometer.component = IMU;
-    magnotometer.choice =
-        sensor_pair_choice(imu, generation) == 1 ? ONE : TWO;
+    imu.component = IMU;
+    imu.choice = sensor_pair_choice(imu, generation) == 1 ? ONE : TWO;
 
     // Get startTime
     if (vi_get_curr_millis(&curr_millis))
@@ -65,7 +70,7 @@ detumble_status detumble(vec3 needle, bool isTesting, uint64_t maxTime, uint64_t
             return DETUMBLING_FAILURE_CONTROL_COILS;
 
         // Get IMU readings (A.K.A.: Angular Velocity) for exit condition
-        if(getIMU(imu, imu_prev, &imu_curr)){
+        if (getIMU(imu, imu_prev, &imu_curr)) {
             return DETUMBLING_FAILURE_IMU;
         }
 
@@ -79,9 +84,10 @@ detumble_status detumble(vec3 needle, bool isTesting, uint64_t maxTime, uint64_t
         timeElapsed = curr_millis - startTime;
         bool isTimeOut = timeElapsed > maxTime;
         bool isTooSoon = timeElapsed < minTime;
-        keepDetumbling = aboveThreshold(imu_curr, 0.5) && !isTimeOut && isTooSoon;
+        keepDetumbling =
+            aboveThreshold(imu_curr, 0.5) && !isTimeOut && isTooSoon;
 
-    } while(isTesting || keepDetumbling);
+    } while (isTesting || keepDetumbling);
 
     // Increment generation on successful execution
     vi_increment_detumbling_generation();
