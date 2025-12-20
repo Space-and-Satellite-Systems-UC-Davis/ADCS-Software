@@ -17,12 +17,13 @@
 
 #include <math.h>
 
-detumble_status detumble(vec3 needle, bool isTesting) {
+
+detumble_status detumble(vec3 needle, bool isTesting, uint64_t maxTime, uint64_t minTime) {
     vec3 mag_curr, mag_prev = {0,0,0}; // Magnotometer readings
     //vec3 coils_curr;
-    uint64_t startTime = 0, curr_millis = 0, prev_millis = 0, delta_t = 0;
+    uint64_t startTime = 0, curr_millis = 0, prev_millis = 0, delta_t = 0, timeElapsed;
     vec3 mdm;            // Magnetic Dipole Moment
-    vec3 angVel;         // Angular Velocity
+    vec3 imu_curr, imu_prev = {0,0,0};         // Angular Velocity
     bool keepDetumbling; // Keep loop running?
     int generation = vi_get_detumbling_generation();
 
@@ -31,31 +32,27 @@ detumble_status detumble(vec3 needle, bool isTesting) {
     magnotometer.component = MAG;
     magnotometer.choice =
         sensor_pair_choice(magnotometer, generation) == 1 ? ONE : TWO;
+    
+    vi_sensor imu;
+    magnotometer.component = IMU;
+    magnotometer.choice =
+        sensor_pair_choice(imu, generation) == 1 ? ONE : TWO;
 
+    // Get startTime
     if (vi_get_curr_millis(&curr_millis))
         return DETUMBLING_FAILURE_CURR_MILLIS;
     startTime = curr_millis;
 
-    // Compute Angular Velocity
-    if (getMag(magnotometer, mag_prev, &mag_curr))
-        return DETUMBLING_FAILURE_MAGNOTOMETER;
-
-    angVel = findAngVel(mag_prev, mag_curr, delta_t);
-
     // Note: May be do something to account for integer overflow
     do {
-        prev_millis = curr_millis;
-        if (vi_get_curr_millis(&curr_millis))
-            return DETUMBLING_FAILURE_CURR_MILLIS;
 
         // Perform delay for the coil magnetic field decay
         if (vi_control_coil(0, 0, 0))
-            return DETUMBLING_FAILURE_CONTORL_COILS;
+            return DETUMBLING_FAILURE_CONTROL_COILS;
         if (detumbleDelay(mdm))
             return DETUMBLING_FAILURE_DELAY_MS;
 
-        delta_t = get_delta_t(curr_millis, prev_millis);
-
+        // Get MAG readings
         mag_prev = mag_curr;
         if (getMag(magnotometer, mag_prev, &mag_curr))
             return DETUMBLING_FAILURE_MAGNOTOMETER;
@@ -65,15 +62,26 @@ detumble_status detumble(vec3 needle, bool isTesting) {
 
         // Send control command to coils
         if (vi_control_coil(mdm.x, mdm.y, mdm.z))
-            return DETUMBLING_FAILURE_CONTORL_COILS;
+            return DETUMBLING_FAILURE_CONTROL_COILS;
 
-        angVel = findAngVel(mag_prev, mag_curr, delta_t);
+        // Get IMU readings (A.K.A.: Angular Velocity) for exit condition
+        if(getIMU(imu, imu_prev, &imu_curr)){
+            return DETUMBLING_FAILURE_IMU;
+        }
+
+        // Keep track of deltaT and timeElapsed
+        prev_millis = curr_millis;
+        if (vi_get_curr_millis(&curr_millis))
+            return DETUMBLING_FAILURE_CURR_MILLIS;
+        delta_t = get_delta_t(curr_millis, prev_millis);
 
         // Decide whether detumbling needs to continue
-        bool isTimeOut = curr_millis - startTime > LIMIT;
-        keepDetumbling = aboveThreshold(angVel, 0.5) && isTimeOut;
+        timeElapsed = curr_millis - startTime;
+        bool isTimeOut = timeElapsed > maxTime;
+        bool isTooSoon = timeElapsed < minTime;
+        keepDetumbling = aboveThreshold(imu_curr, 0.5) && !isTimeOut && isTooSoon;
 
-    } while (isTesting || keepDetumbling);
+    } while(isTesting || keepDetumbling);
 
     // Increment generation on successful execution
     vi_increment_detumbling_generation();

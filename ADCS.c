@@ -24,24 +24,26 @@ adcs_main_status
 ADCS_MAIN(adcs_mode mode) {
     switch(mode) {
         case ADCS_DETUMBLE:
-            switch(detumble((vec3){0,0,0}, false)) {
+            switch(detumble((vec3){0,0,0}, false, 0, 3600)) {
                 case DETUMBLING_SUCCESS:
                     break;
                 case DETUMBLING_FAILURE_CURR_MILLIS:
                 case DETUMBLING_FAILURE_MAGNOTOMETER:
-                case DETUMBLING_FAILURE_CONTORL_COILS:
+                case DETUMBLING_FAILURE_IMU:
+                case DETUMBLING_FAILURE_CONTROL_COILS:
                 case DETUMBLING_FAILURE_DELAY_MS:
                     return ADCS_MAIN_DETUMBLE_ERR;     
             }
             break;
 
         case ADCS_COILS_TESTING:
-            switch(detumble((vec3){0,0,0}, true)) {
+            switch(detumble((vec3){0,0,0}, true, 0, 3600)) {
                 case DETUMBLING_SUCCESS:
                     break;
                 case DETUMBLING_FAILURE_CURR_MILLIS:
                 case DETUMBLING_FAILURE_MAGNOTOMETER:
-                case DETUMBLING_FAILURE_CONTORL_COILS:
+                case DETUMBLING_FAILURE_IMU:
+                case DETUMBLING_FAILURE_CONTROL_COILS:
                 case DETUMBLING_FAILURE_DELAY_MS:
                     return ADCS_MAIN_COILS_TESTING_ERR;
             }
