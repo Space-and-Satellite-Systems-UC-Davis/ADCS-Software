@@ -2,14 +2,15 @@
 
 float lowpass_filter(float currValue, float prevValue, float filterConstant)
 {
-    return ((1 - filterConstant) * currValue) + (filterConstant * prevValue);
+    return (filterConstant * currValue) + ((1 - filterConstant) * prevValue);
 }
 
 float get_sensor_calibration(float currValue, float prevValue, float offset,
                              float scalar, float filterConstant)
 {
-    return (lowpass_filter(currValue, prevValue, filterConstant) + offset) *
-           scalar;
+    currValue = (currValue + offset) * scalar;
+
+    return (lowpass_filter(currValue, prevValue, filterConstant));
 }
 
 bool calibrateDbl(vi_sensor sensor, double prev, double *curr)
