@@ -2,7 +2,6 @@
 
 #define MAX_RETRIES 3
 
-
 getMag_status getMag(vi_sensor sensor, vec3 prevVal, vec3 *currVal)
 {
     int errorCount; // Local varible to store error occurances
@@ -10,33 +9,36 @@ getMag_status getMag(vi_sensor sensor, vec3 prevVal, vec3 *currVal)
     errorCount = 0;
     while (vi_get_mag(sensor, &(currVal->x), &(currVal->y), &(currVal->z))) {
         errorCount++;
-        if (errorCount >= MAX_RETRIES) return GET_MAG_FAILURE;
+        if (errorCount >= MAX_RETRIES)
+            return GET_MAG_FAILURE;
     };
 
     errorCount = 0;
-    while (calibrateVec3(sensor, prevVal, currVal)){
+    while (calibrateVec3(sensor, prevVal, currVal)) {
         errorCount++;
-        if (errorCount >= MAX_RETRIES) return MAG_CALIBRATION_FAILURE;
+        if (errorCount >= MAX_RETRIES)
+            return MAG_CALIBRATION_FAILURE;
     }
 
     return GET_MAG_SUCCESS;
-
 }
 
 getIMU_status getIMU(vi_sensor sensor, vec3 prevVal, vec3 *currVal)
 {
     int errorCount; // Local varible to store error occurances
 
-    errorCount = 0;         
+    errorCount = 0;
     while (vi_get_angvel(sensor, &(currVal->x), &(currVal->y), &(currVal->z))) {
         errorCount++;
-        if (errorCount >= MAX_RETRIES) return GET_IMU_FAILURE;
+        if (errorCount >= MAX_RETRIES)
+            return GET_IMU_FAILURE;
     };
 
     errorCount = 0;
-    while (calibrateVec3(sensor, prevVal, currVal)){
+    while (calibrateVec3(sensor, prevVal, currVal)) {
         errorCount++;
-        if (errorCount >= MAX_RETRIES) return IMU_CALIBRATION_FAILURE;
+        if (errorCount >= MAX_RETRIES)
+            return IMU_CALIBRATION_FAILURE;
     }
 
     return GET_IMU_SUCCESS;
@@ -47,13 +49,15 @@ getCSS_status getCSS(vi_sensor sensor, double prevVal, double *currVal)
     int errorCount = 0;
     while (vi_get_css(sensor, currVal)) {
         errorCount++;
-        if(errorCount >= 3) return GET_CSS_FAILURE;
+        if (errorCount >= 3)
+            return GET_CSS_FAILURE;
     }
 
-    while(calibrateDbl(sensor, prevVal, currVal)){
+    while (calibrateDbl(sensor, prevVal, currVal)) {
         errorCount++;
-        if(errorCount >= 3) return CSS_CALIBRATION_FAILURE;
-    }                
+        if (errorCount >= 3)
+            return CSS_CALIBRATION_FAILURE;
+    }
 
     return GET_CSS_SUCCESS;
 }
@@ -61,23 +65,24 @@ getCSS_status getCSS(vi_sensor sensor, double prevVal, double *currVal)
 int is_in_eclipse()
 {
 
-    //static int iteration = 0;
-    //     px1, px2, nx1, nx2, py1, py2, ny1, ny2, pz1, pz2, nz1, nz2;
+    // static int iteration = 0;
+    //      px1, px2, nx1, nx2, py1, py2, ny1, ny2, pz1, pz2, nz1, nz2;
     double readingsOne[6];
     double readingsTwo[6];
     double prevValOne = 0.0, prevValTwo = 0.0; // TODO: MUST CHANGE
 
-    vi_sensor sensorOne = {CSS, ONE, PX}; 
-    vi_sensor sensorTwo = {CSS, TWO, PX};
+    vi_sensor sensorOne = { CSS, ONE, PX };
+    vi_sensor sensorTwo = { CSS, TWO, PX };
 
     for (int face = PX; face <= NZ; face++) {
+
+        // Set sensor face to current face
+        sensorOne.axis = face;
+        sensorTwo.axis = face;
+
         // Get Readings from sensor
         getCSS(sensorOne, prevValOne, &readingsOne[face - 1]);
         getCSS(sensorTwo, prevValTwo, &readingsTwo[face - 1]);
-
-        // Increment to next set of sensors
-        // sensorOne.field.css_choice++;
-        // sensorTwo.field.css_choice++;
     }
 
     double sum = 0;
@@ -87,7 +92,7 @@ int is_in_eclipse()
 
     double magnitude = sqrt(sum);
 
-    //iteration++;
+    // iteration++;
 
     if (magnitude <= 0.25) {
         return 1;
