@@ -27,7 +27,8 @@ typedef enum detumble{
     DETUMBLING_SUCCESS,
     DETUMBLING_FAILURE_CURR_MILLIS,
     DETUMBLING_FAILURE_MAGNOTOMETER,
-    DETUMBLING_FAILURE_CONTORL_COILS,
+    DETUMBLING_FAILURE_CONTROL_COILS,
+    DETUMBLING_FAILURE_IMU,
     DETUMBLING_FAILURE_DELAY_MS,
 
 } detumble_status;
@@ -39,7 +40,7 @@ typedef enum detumble{
  * @param isTesting a boolean var to indicate whether we're in testing mode
  * @return detumble_status A return code.
  */
-detumble_status detumble(vec3 needle, bool isTesting);
+detumble_status detumble(vec3 needle, bool isTesting, uint64_t maxTime, uint64_t minTime);
 
 #ifdef __cplusplus
 }
