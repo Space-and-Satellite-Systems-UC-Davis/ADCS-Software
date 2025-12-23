@@ -82,8 +82,9 @@ detumble_status detumble(vec3 needle, bool isTesting, uint64_t maxTime,
         timeElapsed = get_delta_t(curr_millis, startTime);
         bool isTimeOut = timeElapsed > maxTime;
         bool isTooSoon = timeElapsed < minTime;
-        keepDetumbling =
-            isTooSoon || (!isTimeOut && aboveThreshold(imu_curr, 0.5));
+        bool isTooFast = aboveThreshold(imu_curr, 0.5);
+
+        keepDetumbling = isTooSoon || (!isTimeOut && isTooFast);
 
     } while (isTesting || keepDetumbling);
 
