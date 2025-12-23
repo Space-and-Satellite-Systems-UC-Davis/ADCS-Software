@@ -1,8 +1,13 @@
+#include <math.h>
+
 #include "calibration.h"
 
 float lowpass_filter(float currValue, float prevValue, float filterConstant)
 {
-    return (filterConstant * currValue) + ((1 - filterConstant) * prevValue);
+    if (isnan(prevValue))
+        return currValue;
+    else
+        return ((1 - filterConstant) * currValue) + (filterConstant * prevValue);
 }
 
 float get_sensor_calibration(float currValue, float prevValue, float offset,

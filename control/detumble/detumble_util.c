@@ -8,7 +8,6 @@ const double coilResistance = 1;         // TODO: Measure (Ohms)
 const double B_Earth = 1;                // TODO: I need
 const double decayPercent = 0.2;         // TODO: Decide on percentage
 
-
 // TODO: work on this function
 // Look into vi_get_coils_current()
 double computeB_coils(double current) { return current; }

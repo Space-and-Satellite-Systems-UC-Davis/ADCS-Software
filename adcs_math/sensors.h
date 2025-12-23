@@ -16,7 +16,10 @@
 #include <limits.h>
 #include <stdint.h>
 
-typedef enum getMag {
+
+extern const vec3 undefined_vec3;
+
+typedef enum getMag{
     GET_MAG_SUCCESS,
     GET_MAG_FAILURE,
     MAG_CALIBRATION_FAILURE
@@ -55,8 +58,7 @@ typedef enum getCSS {
 /**
  * @brief Retrive sensor data from Virtual Intellisat and perform calibration
  *
- * @param sensor the sensor to read from
- * @param face the desired sun sensor face
+ * @param sensor the sensor to read from 
  * @param prevValue previous sensor value
  * @param currValue the current sensor value to be read
  */

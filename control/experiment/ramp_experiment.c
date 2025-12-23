@@ -1,5 +1,5 @@
 #include "control/experiment/ramp_experiment.h"
-#include "adcs_math/sensors.h"
+#include "adcs_math/calibration.h"
 #include "virtual_intellisat.h"
 
 //TODO: HDD alternation?

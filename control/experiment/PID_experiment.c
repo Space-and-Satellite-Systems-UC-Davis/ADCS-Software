@@ -1,6 +1,5 @@
 #include "control/experiment/PID_experiment.h"
 #include "adcs_math/sensors.h"
-#include "adcs_math/calibration.h"
 #include "virtual_intellisat.h"
 
 #include <math.h>
@@ -19,8 +18,8 @@ PID_status PID_experiment(double target, int infinite) {
   imu.component = IMU;
   hdd.component = HDD;
 
-  vec3 angVel_curr = (vec3){0,0,0};
-  vec3 angVel_prev = (vec3){0,0,0};
+  vec3 angVel_curr;
+  vec3 angVel_prev = undefined_vec3;
 
   // Get current generation for sensor alternation
   int generation = vi_get_experiment_generation();

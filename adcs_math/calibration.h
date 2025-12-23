@@ -9,7 +9,7 @@
 #ifndef CALIBRATION_H
 #define CALIBRATION_H
 
-#include "vector.h"
+#include "adcs_math/vector.h"
 #include "virtual_intellisat.h"
 #include <stdbool.h>
 #include <stdint.h>
@@ -77,5 +77,6 @@ calibration_status calibrateVec3(vi_sensor sensor, vec3 prevVal, vec3 *currVal);
  * @return delta_t change in time
  */
 uint64_t get_delta_t(uint64_t currTime, uint64_t prevTime);
+
 
 #endif

@@ -44,7 +44,7 @@ vi_get_css_status get_measured_sun(int generation, vec3 *measured_sun)
     // px_choice, nx_choice, py_choice, ny_choice, pz_choice, nz_choice;
     vi_sensor sensors[6]; // PX, NX, PY, NY, PZ, NZ
     double currVals[6];
-    static double prevVals[6]; // Not sure how that could be implemented
+    static double prevVals[6] = {NAN, NAN, NAN, NAN, NAN, NAN};
 
     for (int i = 0; i < 6; i++) {
         sensors[i].component = CSS;
@@ -76,7 +76,7 @@ determination_status determination(mat3 *attitude)
 
     vec3 measured_mag;
     vec3 measured_sun;
-    vec3 mag_prev = (vec3){ 0, 0, 0 };
+    vec3 mag_prev = undefined_vec3;
 
     vi_sensor magnotometer;
     magnotometer.component = MAG;
