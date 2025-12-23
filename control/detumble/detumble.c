@@ -5,8 +5,6 @@
 //  Created by Chandler Shellabarger on 9/21/24.
 //
 
-#define LIMIT 100
-
 #include "control/detumble/detumble.h"
 #include "adcs_math/calibration.h"
 #include "adcs_math/sensors.h"
@@ -21,16 +19,17 @@ detumble_status detumble(vec3 needle, bool isTesting, uint64_t maxTime,
                          uint64_t minTime)
 {
     // Magnotometer & IMU readings
-    vec3 mag_curr = (vec3){ 0, 0, 0 }, mag_prev = (vec3){ 0, 0, 0 };
-    vec3 imu_curr = (vec3){ 0, 0, 0 }, imu_prev = (vec3){ 0, 0, 0 };
+    vec3 mag_curr = undefined_vec3, mag_prev = undefined_vec3;
+    vec3 imu_curr = undefined_vec3, imu_prev = undefined_vec3;
 
     // Time varibles
     uint64_t startTime = 0, curr_millis = 0, prev_millis = 0;
     uint64_t delta_t = 0, timeElapsed = 0;
 
     // Extra varibles
-    vec3 mdm;            // Magnetic Dipole Moment
-    bool keepDetumbling; // Keep loop running?
+    vec3 mdm;                   // Magnetic Dipole Moment
+    vec3 angVel;                // Angular Velocity
+    bool keepDetumbling = true; // Keep loop running?
     int generation = vi_get_detumbling_generation();
 
     // Declare varibles for sensor alternation
@@ -48,7 +47,6 @@ detumble_status detumble(vec3 needle, bool isTesting, uint64_t maxTime,
         return DETUMBLING_FAILURE_CURR_MILLIS;
     startTime = curr_millis;
 
-    // Note: May be do something to account for integer overflow
     do {
 
         // Perform delay for the coil magnetic field decay
@@ -81,11 +79,11 @@ detumble_status detumble(vec3 needle, bool isTesting, uint64_t maxTime,
         delta_t = get_delta_t(curr_millis, prev_millis);
 
         // Decide whether detumbling needs to continue
-        timeElapsed = curr_millis - startTime;
+        timeElapsed = get_delta_t(curr_millis, startTime);
         bool isTimeOut = timeElapsed > maxTime;
         bool isTooSoon = timeElapsed < minTime;
         keepDetumbling =
-            aboveThreshold(imu_curr, 0.5) && !isTimeOut && isTooSoon;
+            isTooSoon || (!isTimeOut && aboveThreshold(imu_curr, 0.5));
 
     } while (isTesting || keepDetumbling);
 
