@@ -147,7 +147,7 @@ static const char alternations[256] = {
     0b00001011, 0b00001111, 0b01100010, 0b00000000
 };
 
-int sensor_pair_choice(vi_sensor sensor, int generation)
+vi_choice sensor_pair_choice(vi_sensor sensor, int generation)
 {
     int mask = 0;
     switch (sensor.component) {
@@ -170,8 +170,8 @@ int sensor_pair_choice(vi_sensor sensor, int generation)
     }
 
     if ((alternations[generation % 256] | (1 << mask)) != 0) {
-        return 2;
+        return TWO;
     } else {
-        return 1;
+        return ONE;
     }
 }
