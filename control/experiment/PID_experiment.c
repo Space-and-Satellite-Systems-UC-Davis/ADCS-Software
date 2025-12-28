@@ -11,12 +11,12 @@
 //TODO: IMU alternation?
 //      Negative PID output should activate VI_HDD2
 #define IMU_CHOICE VI_IMU1
-#define PRINT 0  // if print is defined characteristics will be printed that many ms
+//#define PRINT 0  // if print is defined characteristics will be printed that many ms
 //#define PROFILE false  // if profile is defined loop time will be printed
 
-double P_GAIN = 0.25; // 0.9
+double P_GAIN = 0.2;
 double I_GAIN = 0.0;
-double D_GAIN = 0.0;  // 1.1
+double D_GAIN = 0.55;
 
 void readPIDUART(PID_controller *pid, double *P, double *I, double *D, double angvel_z, int doPrint);
 
@@ -106,7 +106,7 @@ PID_status PID_experiment()
 #endif
 
     	// if the velocity is too low to respond to
-    	if (fabs(target - angvel_z) <= 0.5) {
+    	if (fabs(target - angvel_z) <= 0.1) {
     	    if (doPrint) { printMsg("\r\nDid not detect significant angular velocity.\r\n"); }
 
     	    // after a minute, stop the PID experiment
