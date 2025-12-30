@@ -2,11 +2,18 @@
 
 #define MAX_RETRIES 3
 
-const vec3 undefined_vec3 = {NAN, NAN, NAN};
+const vec3 undefined_vec3 = { NAN, NAN, NAN };
 
 getMag_status getMag(vi_sensor sensor, vec3 prevVal, vec3 *currVal)
 {
     int errorCount = 0;
+
+    while (vi_get_mag(sensor, &(currVal->x), &(currVal->y), &(currVal->z))) {
+        errorCount++;
+        if (errorCount >= MAX_RETRIES)
+            return GET_MAG_FAILURE;
+    };
+
     while (calibrateVec3(sensor, prevVal, currVal) != CALIBRATION_SUCESS) {
         errorCount++;
         if (errorCount >= MAX_RETRIES)

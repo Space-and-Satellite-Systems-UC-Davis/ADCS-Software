@@ -52,7 +52,7 @@ detumble_status detumble(vec3 needle, bool isTesting, uint64_t maxTime,
         // Perform delay for the coil magnetic field decay
         if (vi_control_coil(0, 0, 0))
             return DETUMBLING_FAILURE_CONTROL_COILS;
-        if (detumbleDelay(mdm))
+        if (detumbleDelay())
             return DETUMBLING_FAILURE_DELAY_MS;
 
         // Get MAG readings
