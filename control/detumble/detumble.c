@@ -9,7 +9,7 @@
 #include "adcs_math/calibration.h"
 #include "adcs_math/sensors.h"
 #include "adcs_math/vector.h"
-#include "control/bdot/bdot_control.h"
+#include "control/detumble/bdot_control.h"
 #include "control/detumble/detumble_util.h"
 #include "virtual_intellisat.h"
 
@@ -61,7 +61,7 @@ detumble_status detumble(vec3 needle, bool isTesting, uint64_t maxTime,
             return DETUMBLING_FAILURE_MAGNOTOMETER;
 
         // Compute the magetic dipole moment: M = -k(bDot - n)
-        mdm = computeMDM(mag_curr, mag_prev, delta_t, needle);
+        mdm = computeMDM(magnotometer, mag_curr, mag_prev, delta_t, needle);
 
         // Send control command to coils
         if (vi_control_coil(mdm.x, mdm.y, mdm.z))
