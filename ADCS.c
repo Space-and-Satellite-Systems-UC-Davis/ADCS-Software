@@ -18,85 +18,109 @@
 
 #include <stdbool.h>
 
+adcs_main_status detumbleEX(vec3 needle, uint64_t minTime, uint64_t maxTime)
+{
+    switch (detumble(needle, false, minTime, maxTime)) {
+        case DETUMBLING_SUCCESS:
+            return ADCS_MAIN_SUCCESS;
+        case DETUMBLING_FAILURE_CURR_MILLIS:
+        case DETUMBLING_FAILURE_MAGNOTOMETER:
+        case DETUMBLING_FAILURE_IMU:
+        case DETUMBLING_FAILURE_CONTROL_COILS:
+        case DETUMBLING_FAILURE_DELAY_MS:
+        case DETUMBLING_HAS_RESTARTED:
+            return ADCS_MAIN_DETUMBLE_ERR;
+    }
+}
+
 adcs_main_status ADCS_MAIN(adcs_mode mode)
 {
     switch (mode) {
-        case ADCS_DETUMBLE:
-            switch (detumble((vec3){ 0, 0, 0 }, false, 0, 3600)) {
-                case DETUMBLING_SUCCESS:
-                    break;
-                case DETUMBLING_FAILURE_CURR_MILLIS:
-                case DETUMBLING_FAILURE_MAGNETOMETER:
-                case DETUMBLING_FAILURE_IMU:
-                case DETUMBLING_FAILURE_CONTROL_COILS:
-                case DETUMBLING_FAILURE_DELAY_MS:
-                    return ADCS_MAIN_DETUMBLE_ERR;
-            }
-            break;
+        case ADCS_INITIAL_DETUMBLE:
+            return detumbleEX((vec3){ 0, 0, 0 }, 3600, 36000);
 
+        case ADCS_DETUMBLE:
+            return detumbleEX((vec3){ 0, 0, 0 }, 0, 3600);
+
+        // SHOULD NEVER EVER EVER BE ENGAGED IN PRODUCTION (SPACE)
         case ADCS_COILS_TESTING:
             switch (detumble((vec3){ 0, 0, 0 }, true, 0, 3600)) {
-                case DETUMBLING_SUCCESS:
+                switch (detumble((vec3){ 0, 0, 0 }, true, 0, 3600)) {
+                    case DETUMBLING_SUCCESS:
+                        break;
+                    case DETUMBLING_FAILURE_CURR_MILLIS:
+                        // Do something
+                    case DETUMBLING_FAILURE_MAGNOTOMETER:
+                        // Do something
+                    case DETUMBLING_FAILURE_IMU:
+                        // Do something
+                    case DETUMBLING_FAILURE_CONTROL_COILS:
+                        // Do something
+                    case DETUMBLING_FAILURE_DELAY_MS:
+                        // Do something
+                    case DETUMBLING_HAS_RESTARTED:
+                        return ADCS_MAIN_COILS_TESTING_ERR;
+                }
+                break;
+
+                case ADCS_HDD_EXP_ANGVEL:
+                    PID_experiment(0, 0);
+                    PID_experiment(0, 0);
                     break;
-                case DETUMBLING_FAILURE_CURR_MILLIS:
-                case DETUMBLING_FAILURE_MAGNETOMETER:
-                case DETUMBLING_FAILURE_IMU:
-                case DETUMBLING_FAILURE_CONTROL_COILS:
-                case DETUMBLING_FAILURE_DELAY_MS:
-                    return ADCS_MAIN_COILS_TESTING_ERR;
-            }
-            break;
 
-        case ADCS_HDD_EXP_ANGVEL:
-            PID_experiment(0, 0);
-            break;
-
-        case ADCS_HDD_EXP_TRIAD:
-            determination_experiment();
-            break;
-
-        case ADCS_HDD_EXP_RAMP:
-            ramp_experiment();
-            break;
-
-        case ADCS_HDD_TESTING:
-            PID_experiment(0, 1); // for infinite
-            break;
-
-        case ADCS_TESTING:
-            vi_print("Testing!");
-            break;
-
-        case ADCS_ROTISSERIE:
-            switch (PID_experiment(.0872665, 1)) {
-                case PID_EXPERIMENT_SUCCESS:
+                case ADCS_HDD_EXP_TRIAD:
+                    determination_experiment();
                     break;
-                case PID_EXPERIMENT_ANGVEL_FAILURE:
-                case PID_EXPERIMENT_MILLIS_FAILURE:
-                case PID_EXPERIMENT_COMMAND_FAILURE:
-                    return ADCS_ROTISSERIE_ERR;
+
+                case ADCS_HDD_EXP_RAMP:
+                    ramp_experiment();
+                    break;
+
+                case ADCS_HDD_TESTING:
+                    PID_experiment(0, 1); // for infinite
+                    PID_experiment(0, 1); // for infinite
+                    break;
+
+                case ADCS_TESTING:
+                    vi_print("Testing!");
+                    break;
+
+                case ADCS_ROTISSERIE:
+                    switch (PID_experiment(.0872665, 1)) {
+                        switch (PID_experiment(.0872665, 1)) {
+                            case PID_EXPERIMENT_SUCCESS:
+                                break;
+                            case PID_EXPERIMENT_ANGVEL_FAILURE:
+                            case PID_EXPERIMENT_MILLIS_FAILURE:
+                            case PID_EXPERIMENT_COMMAND_FAILURE:
+                                return ADCS_ROTISSERIE_ERR;
+                        }
+                    }
+
+                    return ADCS_MAIN_SUCCESS;
             }
-    }
 
-    return ADCS_MAIN_SUCCESS;
-}
+            adcs_mode ADCS_recommend_mode()
+            {
+                static int iteration = 0; // Starts as true on reboot
+                adcs_mode ADCS_recommend_mode()
+                {
+                    static int iteration = 0; // Starts as true on reboot
+                    adcs_mode mode;
 
-adcs_mode ADCS_recommend_mode()
-{
-    static int iteration = 0; // Starts as true on reboot
-    adcs_mode mode;
+                    if (iteration == 0) {
+                        mode = ADCS_HDD_EXP_ANGVEL;
+                        // loop through other experiments
+                        // loop through other experiments
+                    } else if (iteration % 3 == 1) {
+                        mode = ADCS_HDD_EXP_TRIAD;
+                    } else if (iteration % 3 == 2) {
+                        mode = ADCS_HDD_EXP_RAMP;
+                    } else /*if (iteration % 3 == 0)*/ {
+                        mode = ADCS_HDD_EXP_ANGVEL;
+                    }
+                }
 
-    if (iteration == 0) {
-        mode = ADCS_HDD_EXP_ANGVEL;
-        // loop through other experiments
-    } else if (iteration % 3 == 1) {
-        mode = ADCS_HDD_EXP_TRIAD;
-    } else if (iteration % 3 == 2) {
-        mode = ADCS_HDD_EXP_RAMP;
-    } else /*if (iteration % 3 == 0)*/ {
-        mode = ADCS_HDD_EXP_ANGVEL;
-    }
-
-    iteration++;
-    return mode;
-}
+                iteration++;
+                return mode;
+            }
