@@ -12,6 +12,7 @@
 #include "control/bdot/bdot_control.h"
 #include "control/detumble/detumble_util.h"
 #include "virtual_intellisat.h"
+#include "virtual_ros.h"
 
 #include <math.h>
 
@@ -48,6 +49,12 @@ detumble_status detumble(vec3 needle, bool isTesting, uint64_t maxTime,
     startTime = curr_millis;
 
     do {
+        vi_enter_critical();
+
+        if (vi_task_has_restarted()) {
+            // Reset all the varibles
+            return DETUMBLING_HAS_RESTARTED;
+        }
 
         // Perform delay for the coil magnetic field decay
         if (vi_control_coil(0, 0, 0))
@@ -85,6 +92,8 @@ detumble_status detumble(vec3 needle, bool isTesting, uint64_t maxTime,
         bool isTooFast = aboveThreshold(imu_curr, 0.5);
 
         keepDetumbling = isTooSoon || (!isTimeOut && isTooFast);
+
+        vi_exit_critical();
 
     } while (isTesting || keepDetumbling);
 
