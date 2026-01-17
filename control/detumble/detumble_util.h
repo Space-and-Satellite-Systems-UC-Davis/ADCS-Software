@@ -48,7 +48,7 @@ bool detumbleDelay();
  *
  * @return true if threshold has been exceeded
  */
-bool aboveThreshold(vec3 input, double threshold);
+bool aboveThreshold(vec3 curr, vec3 prev, double threshold);
 
 /**
  * @brief checks if current exceeds threshold
