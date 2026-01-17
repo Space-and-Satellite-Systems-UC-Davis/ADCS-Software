@@ -42,9 +42,12 @@ bool detumbleDelay()
     return false;
 }
 
-bool aboveThreshold(vec3 input, double threshold)
+bool aboveThreshold(vec3 curr, vec3 prev, double threshold)
 {
-    if (input.x > threshold || input.y > threshold || input.z > threshold)
+    if (prev.x > threshold || prev.y > threshold || prev.z > threshold)
+        return true;
+
+    if (curr.x > threshold || curr.y > threshold || curr.z > threshold)
         return true;
 
     return false;
