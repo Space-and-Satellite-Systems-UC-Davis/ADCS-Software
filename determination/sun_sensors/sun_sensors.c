@@ -18,10 +18,12 @@
 #include <math.h>
 #include "determination/sun_lookup/sun_lookup.h"
 
-int estimate_sun_photodiodes(vec3 *sun_vec, double sensor_readings[NUM_SUN_SENSORS])
+int estimate_sun_photodiodes(vec3 *sun_vec, double photodiode_currVals[NUM_SUN_SENSORS])
 {
     double x_reading = 0.0, y_reading = 0.0, z_reading = 0.0;
-    //Take either + or - for x,y,z
+    double sensor_readings[NUM_SUN_SENSORS];
+    for (int i = 0; i < NUM_SUN_SENSORS; i++)
+        sensor_readings[i] = (photodiode_currVals[i] > 0.0) ? photodiode_currVals[i] : 0.0;
     if(sensor_readings[pX]>sensor_readings[nX])
     {
         x_reading = sensor_readings[pX];
