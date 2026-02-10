@@ -1,4 +1,5 @@
-/**@file determination/determination.h
+/**
+ * @file determination/determination.h
  *
  * @brief Interface to attitude determination routine.
  *
@@ -26,7 +27,8 @@ typedef enum {
 } determination_status;
 
 
-/**@brief Calculate attitude from time and sun+mag vectors.
+/**
+ * @brief Calculate attitude from time and sun+mag vectors.
  *
  * Will run SGP4, SPA, and IGRF.
  *

@@ -33,7 +33,8 @@ typedef enum {
     IGRF_SET_DATE_OUT_OF_BOUNDS
 } igrf_set_date_status;
 
-/**@brief Update IGRF's date/time state variable.
+/**
+ * @brief Update IGRF's date/time state variable.
  *
  * The time only needs to be updated before running
  * igrf_update() with interpolate_flag set to true.

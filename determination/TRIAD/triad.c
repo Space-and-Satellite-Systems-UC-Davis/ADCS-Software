@@ -1,4 +1,5 @@
-/**@file triad.c
+/**
+ * @file triad.c
  *
  * @brief Implementation of the TRIAD algorithm.
  *
