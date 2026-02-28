@@ -24,7 +24,7 @@ adcs_main_status detumbleEX(vec3 needle, uint64_t minTime, uint64_t maxTime)
         case DETUMBLING_SUCCESS:
             return ADCS_MAIN_SUCCESS;
         case DETUMBLING_FAILURE_CURR_MILLIS:
-        case DETUMBLING_FAILURE_MAGNOTOMETER:
+        case DETUMBLING_FAILURE_MAGNETOMETER:
         case DETUMBLING_FAILURE_IMU:
         case DETUMBLING_FAILURE_CONTROL_COILS:
         case DETUMBLING_FAILURE_DELAY_MS:

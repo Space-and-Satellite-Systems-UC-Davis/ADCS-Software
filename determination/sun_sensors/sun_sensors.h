@@ -1,20 +1,23 @@
-/**@file sun_sensors/sun_sensors.h
+/**
+ * @file sun_sensors/sun_sensors.h
  *
- * @brief Functions to determine orientation relative to the sun and eclipse status
+ * @brief Functions to determine orientation relative to the sun and eclipse
+ * status
  *
  * @author Soren Keck (sorenkeck@gmail.com)
  *
  * @date 10/16/2025
  */
 
-#ifndef SUN_SENSORS.H
-#define SUN_SENSORS.H
+#ifndef SUN_SENSORS_H
+#define SUN_SENSORS_H
 
 #define NUM_SUN_SENSORS 6
 
 #include "adcs_math/vector.h"
 
-/**@brief Estimate the Sun direction from coarse photodiode measurements.
+/**
+ * @brief Estimate the Sun direction from coarse photodiode measurements.
  *
  * Selects the illuminated face on each axis (+/- X,Y,Z), forms a signed
  * vector from the three strongest axis readings, and normalizes it.
@@ -26,9 +29,11 @@
  *
  * @return Status code (0 = success, non-zero = insufficient signal / invalid).
  */
-vec3 estimate_sun_photodiodes(double sensor_readings[NUM_SUN_SENSORS]);
+int estimate_sun_photodiodes(double sensor_readings[NUM_SUN_SENSORS],
+                             vec3 *sun_vec);
 
-/**@brief Detect whether the spacecraft is in eclipse using photodiode signals.
+/**
+ * @brief Detect whether the spacecraft is in eclipse using photodiode signals.
  *
  * Computes the total illumination from the selected illuminated face on each
  * axis and compares it to a fixed fraction of the expected maximum photodiode
@@ -40,9 +45,6 @@ vec3 estimate_sun_photodiodes(double sensor_readings[NUM_SUN_SENSORS]);
  *
  * @return 1 if eclipsed, 0 otherwise.
  */
-int is_eclipsed_photodiodes(
-    float sensor_readings[NUM_SUN_SENSORS]
-);
+int is_eclipsed_photodiodes(float sensor_readings[NUM_SUN_SENSORS]);
 
 #endif
-

@@ -15,41 +15,35 @@
 #define nZ 5
 
 #include "adcs_math/vector.h"
-#include <math.h>
 #include "determination/sun_lookup/sun_lookup.h"
+#include <math.h>
 
-int estimate_sun_photodiodes(vec3 *sun_vec, double photodiode_currVals[NUM_SUN_SENSORS])
+int estimate_sun_photodiodes(double photodiode_currVals[NUM_SUN_SENSORS],
+                             vec3 *sun_vec)
 {
     double x_reading = 0.0, y_reading = 0.0, z_reading = 0.0;
     double sensor_readings[NUM_SUN_SENSORS];
     for (int i = 0; i < NUM_SUN_SENSORS; i++)
-        sensor_readings[i] = (photodiode_currVals[i] > 0.0) ? photodiode_currVals[i] : 0.0;
-    if(sensor_readings[pX]>sensor_readings[nX])
-    {
+        sensor_readings[i] =
+            (photodiode_currVals[i] > 0.0) ? photodiode_currVals[i] : 0.0;
+    if (sensor_readings[pX] > sensor_readings[nX]) {
         x_reading = sensor_readings[pX];
-    }
-    else
-    {
+    } else {
         x_reading = -sensor_readings[nX];
     }
-    if(sensor_readings[pY]>sensor_readings[nY])
-    {
+    if (sensor_readings[pY] > sensor_readings[nY]) {
         y_reading = sensor_readings[pY];
-    }
-    else
-    {
+    } else {
         y_reading = -sensor_readings[nY];
     }
-    if(sensor_readings[pZ]>sensor_readings[nZ])
-    {
+    if (sensor_readings[pZ] > sensor_readings[nZ]) {
         z_reading = sensor_readings[pZ];
-    }
-    else
-    {
+    } else {
         z_reading = -sensor_readings[nZ];
     }
-    vec3 sun_vec_raw = (vec3){x_reading,y_reading,z_reading};
-    double mag2 = x_reading*x_reading + y_reading*y_reading + z_reading*z_reading;
+    vec3 sun_vec_raw = (vec3){ x_reading, y_reading, z_reading };
+    double mag2 =
+        x_reading * x_reading + y_reading * y_reading + z_reading * z_reading;
     if (mag2 < 1e-12) {
         sun_vec->x = sun_vec->y = sun_vec->z = 0.0;
         return -1;
@@ -61,36 +55,25 @@ int estimate_sun_photodiodes(vec3 *sun_vec, double photodiode_currVals[NUM_SUN_S
 int is_eclipsed_photodiodes(double sensor_readings[NUM_SUN_SENSORS])
 {
     double x_reading = 0.0, y_reading = 0.0, z_reading = 0.0;
-    if(sensor_readings[pX]>sensor_readings[nX])
-    {
+    if (sensor_readings[pX] > sensor_readings[nX]) {
         x_reading = sensor_readings[pX];
-    }
-    else
-    {
+    } else {
         x_reading = -sensor_readings[nX];
     }
-    if(sensor_readings[pY]>sensor_readings[nY])
-    {
+    if (sensor_readings[pY] > sensor_readings[nY]) {
         y_reading = sensor_readings[pY];
-    }
-    else
-    {
+    } else {
         y_reading = -sensor_readings[nY];
     }
-    if(sensor_readings[pZ]>sensor_readings[nZ])
-    {
+    if (sensor_readings[pZ] > sensor_readings[nZ]) {
         z_reading = sensor_readings[pZ];
-    }
-    else
-    {
+    } else {
         z_reading = -sensor_readings[nZ];
     }
     double total = fabs(x_reading) + fabs(y_reading) + fabs(z_reading);
-    if(total < 0.1 * MAX_EXPECTED_PHOTODIODE_VOLTAGE)
-    {
+    if (total < 0.1 * MAX_EXPECTED_PHOTODIODE_VOLTAGE) {
         return 1;
-    }
-    else{
+    } else {
         return 0;
     }
 }
