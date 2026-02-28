@@ -48,9 +48,7 @@ adcs_main_status ADCS_MAIN(adcs_mode mode)
                 case DETUMBLING_SUCCESS:
                     break;
                 case DETUMBLING_FAILURE_CURR_MILLIS:
-                    // Do something
-                case DETUMBLING_FAILURE_MAGNOTOMETER:
-                    // Do something
+                case DETUMBLING_FAILURE_MAGNETOMETER:
                 case DETUMBLING_FAILURE_IMU:
                     // Do something
                 case DETUMBLING_FAILURE_CONTROL_COILS:

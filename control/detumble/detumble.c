@@ -9,7 +9,7 @@
 #include "adcs_math/calibration.h"
 #include "adcs_math/sensors.h"
 #include "adcs_math/vector.h"
-#include "control/bdot/bdot_control.h"
+#include "control/detumble/bdot_control.h"
 #include "control/detumble/detumble_util.h"
 #include "virtual_intellisat.h"
 #include "virtual_ros.h"
@@ -34,10 +34,10 @@ detumble_status detumble(vec3 needle, bool isTesting, uint64_t maxTime,
     int generation = vi_get_detumbling_generation();
 
     // Declare varibles for sensor alternation
-    vi_sensor magnotometer;
-    magnotometer.component = MAG;
-    magnotometer.choice =
-        sensor_pair_choice(magnotometer, generation) == 1 ? ONE : TWO;
+    vi_sensor magnetometer;
+    magnetometer.component = MAG;
+    magnetometer.choice =
+        sensor_pair_choice(magnetometer, generation) == 1 ? ONE : TWO;
 
     vi_sensor imu;
     imu.component = IMU;
@@ -64,17 +64,18 @@ detumble_status detumble(vec3 needle, bool isTesting, uint64_t maxTime,
 
         // Get MAG readings
         mag_prev = mag_curr;
-        if (getMag(magnotometer, mag_prev, &mag_curr))
-            return DETUMBLING_FAILURE_MAGNOTOMETER;
+        if (getMag(magnetometer, mag_prev, &mag_curr))
+            return DETUMBLING_FAILURE_MAGNETOMETER;
 
         // Compute the magetic dipole moment: M = -k(bDot - n)
-        mdm = computeMDM(mag_curr, mag_prev, delta_t, needle);
+        mdm = computeMDM(magnetometer, mag_curr, mag_prev, delta_t, needle);
 
         // Send control command to coils
         if (vi_control_coil(mdm.x, mdm.y, mdm.z))
             return DETUMBLING_FAILURE_CONTROL_COILS;
 
         // Get IMU readings (A.K.A.: Angular Velocity) for exit condition
+        imu_prev = imu_curr;
         if (getIMU(imu, imu_prev, &imu_curr)) {
             return DETUMBLING_FAILURE_IMU;
         }
@@ -89,7 +90,7 @@ detumble_status detumble(vec3 needle, bool isTesting, uint64_t maxTime,
         timeElapsed = get_delta_t(curr_millis, startTime);
         bool isTimeOut = timeElapsed > maxTime;
         bool isTooSoon = timeElapsed < minTime;
-        bool isTooFast = aboveThreshold(imu_curr, 0.5);
+        bool isTooFast = aboveThreshold(imu_curr, imu_prev, 0.5);
 
         keepDetumbling = isTooSoon || (!isTimeOut && isTooFast);
 
@@ -102,3 +103,5 @@ detumble_status detumble(vec3 needle, bool isTesting, uint64_t maxTime,
 
     return DETUMBLING_SUCCESS;
 }
+
+// Hello world Happy New Year 2026 :) Yippee

@@ -61,7 +61,8 @@ vi_get_css_status get_measured_sun(int generation, vec3 *measured_sun)
     }
 
     // Implement logic to combine readings into vector
-    *measured_sun = (vec3){ 0.0, 0.0, 0.0 };
+    *measured_sun = (vec3){0.0, 0.0, 0.0};
+    estimate_sun_photodiodes(measured_sun, currVals);
 
     // Clone currVals into prevVals;
     memcpy(prevVals, currVals, sizeof(currVals));

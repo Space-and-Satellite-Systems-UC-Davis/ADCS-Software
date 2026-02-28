@@ -5,8 +5,8 @@
  *
  *  The detumble() function calls virtual_intellisat.h functions to
  *  get magnetometer and accelerometer measurements, then calls
- *  bdot_control and issues that command to the magnetorquers. It
- *  continues doing this on a loop until the satellite's angular
+ *  compute_bdot and issues that command to the magnetorquers. It
+ *  continues doing this on a loop until the satellite's angular 
  *  velocity is below a required threshold.
  *
  * @author Charles Kvoriak (charles.kvoriak@gmail.com) 10/04/2024
@@ -26,7 +26,7 @@ extern "C" {
 typedef enum detumble {
     DETUMBLING_SUCCESS,
     DETUMBLING_FAILURE_CURR_MILLIS,
-    DETUMBLING_FAILURE_MAGNOTOMETER,
+    DETUMBLING_FAILURE_MAGNETOMETER,
     DETUMBLING_FAILURE_CONTROL_COILS,
     DETUMBLING_FAILURE_IMU,
     DETUMBLING_FAILURE_DELAY_MS,
