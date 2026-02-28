@@ -40,6 +40,13 @@ determination_exp_status determination_experiment()
 
     // Run a while loop
     while (fabs(target - angvel_z) > 0.1) {
+
+        vi_enter_critical();
+        if (vi_task_has_restarted()) {
+            // Return to Schedulers to restart Detumbling
+            return DETERMINATION_EXPERIMENT_HAS_RESTARTED;
+        }
+
         vi_delay_ms(100);
 
         // default values for now, waiting for sun sensors to implement get_sun
@@ -68,6 +75,8 @@ determination_exp_status determination_experiment()
             return DETERMINATION_EXPERIMENT_HDD_COMMAND_FAILURE;
         prevAttitude = currAttitude;
         prev_millis = curr_millis;
+
+        vi_exit_critical();
     }
 
     // Increment generation on successful execution
