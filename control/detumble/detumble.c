@@ -52,7 +52,7 @@ detumble_status detumble(vec3 needle, bool isTesting, uint64_t maxTime,
         vi_enter_critical();
 
         if (vi_task_has_restarted()) {
-            // Reset all the varibles
+            // Return to Schedulers to restart Detumbling
             return DETUMBLING_HAS_RESTARTED;
         }
 
