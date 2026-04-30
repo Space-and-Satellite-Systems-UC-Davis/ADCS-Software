@@ -4,6 +4,29 @@
 
 const vec3 undefined_vec3 = { NAN, NAN, NAN };
 
+vi_sensor makeSensor(vi_component component, vi_choice choice, vi_axis axis)
+{
+    vi_sensor sensor;
+    sensor.component = component;
+    sensor.choice = choice;
+    sensor.axis = axis;
+    return sensor;
+}
+
+vi_choice selectSensor(vi_sensor sensor, int generation)
+{
+    // Sensor Alteration
+    sensor.choice = sensor_pair_choice(sensor, generation) == 1 ? ONE : TWO;
+
+    // Logic to swap the sensor is the sensor is OFF
+    sensor_status status;
+    vi_get_sensor_status(sensor, &status);
+    if (status == SENSOR_OFF)
+        sensor.choice = (sensor.choice == ONE) ? TWO : ONE;
+
+    return sensor.choice;
+}
+
 getMag_status getMag(vi_sensor sensor, vec3 prevVal, vec3 *currVal)
 {
     int errorCount = 0;

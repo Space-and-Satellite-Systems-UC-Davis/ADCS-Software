@@ -32,15 +32,13 @@ detumble_status detumble(vec3 needle, bool isTesting, uint64_t maxTime,
     bool keepDetumbling = true; // Keep loop running?
     int generation = vi_get_detumbling_generation();
 
-    // Declare varibles for sensor alternation
-    vi_sensor magnetometer;
-    magnetometer.component = MAG;
-    magnetometer.choice =
-        sensor_pair_choice(magnetometer, generation) == 1 ? ONE : TWO;
+    // Declare the sensors
+    vi_sensor magnetometer = makeSensor(MAG, ONE, PX);
+    magnetometer.choice = selectSensor(magnetometer, generation);
 
-    vi_sensor imu;
-    imu.component = IMU;
-    imu.choice = sensor_pair_choice(imu, generation) == 1 ? ONE : TWO;
+    vi_sensor imu = makeSensor(IMU, ONE, PX);
+    imu.choice = selectSensor(imu, generation);
+
 
     // Get startTime
     if (vi_get_curr_millis(&curr_millis))

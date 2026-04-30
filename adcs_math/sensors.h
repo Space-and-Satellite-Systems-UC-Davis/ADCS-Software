@@ -19,6 +19,13 @@
 
 extern const vec3 undefined_vec3;
 
+
+
+vi_sensor makeSensor(vi_component component, vi_choice choice, vi_axis axis);
+
+vi_choice selectSensor(vi_sensor sensor, int generation);
+
+
 typedef enum getMag{
     GET_MAG_SUCCESS,
     GET_MAG_FAILURE,
