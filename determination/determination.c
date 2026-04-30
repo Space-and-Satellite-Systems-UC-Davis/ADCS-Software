@@ -5,6 +5,7 @@
 #include "determination/mag_lookup/mag_lookup.h"
 #include "determination/pos_lookup/pos_lookup.h"
 #include "determination/sun_lookup/sun_lookup.h"
+#include "determination/sun_sensors/sun_sensors.h"
 
 #include "adcs_math/calibration.h"
 #include "adcs_math/matrix.h"
@@ -44,15 +45,14 @@ vi_get_css_status get_measured_sun(int generation, vec3 *measured_sun)
     // px_choice, nx_choice, py_choice, ny_choice, pz_choice, nz_choice;
     vi_sensor sensors[6]; // PX, NX, PY, NY, PZ, NZ
     double currVals[6];
-    static double prevVals[6] = {NAN, NAN, NAN, NAN, NAN, NAN};
+    static double prevVals[6] = { NAN, NAN, NAN, NAN, NAN, NAN };
 
     for (int i = 0; i < 6; i++) {
         sensors[i].component = CSS;
     }
 
     for (int i = 0; i < 6; i++) {
-        sensors[i].choice =
-            sensor_pair_choice(sensors[i], generation) == 1 ? ONE : TWO;
+        sensors[i].choice = selectSensor(sensors[i], generation);
     }
 
     for (int i = 0; i < 6; i++) {
@@ -61,8 +61,8 @@ vi_get_css_status get_measured_sun(int generation, vec3 *measured_sun)
     }
 
     // Implement logic to combine readings into vector
-    *measured_sun = (vec3){0.0, 0.0, 0.0};
-    estimate_sun_photodiodes(measured_sun, currVals);
+    *measured_sun = (vec3){ 0.0, 0.0, 0.0 };
+    estimate_sun_photodiodes(currVals, measured_sun);
 
     // Clone currVals into prevVals;
     memcpy(prevVals, currVals, sizeof(currVals));
