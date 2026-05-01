@@ -1,6 +1,14 @@
 *.vim
 .vscode
+
+# Build artifacts
 *.so
 *.o
 *.a
 *.d
+
+# Test binaries
+tests/bin/
+
+# macOS debug symbols
+*.dSYM/

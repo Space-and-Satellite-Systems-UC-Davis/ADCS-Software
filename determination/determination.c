@@ -116,8 +116,8 @@ determination_status determination(mat3 *attitude)
     }
 
     int update_IGRF = 0; // false
-    char *tle_line1 = NULL;
-    char *tle_line2 = NULL;
+    char tle_line1[100] = {0};
+    char tle_line2[100] = {0};
 
     vi_get_TLE_status tle_status = vi_get_TLE(tle_line1, tle_line2);
 
@@ -284,8 +284,8 @@ determination_status get_moon_direction(vec3 *moon_attitude)
     double geocentric_radius;
     double geocentric_latitude;
     pos_lookup_status pos_status;
-    char *tle_line1 = NULL;
-    char *tle_line2 = NULL;
+    char tle_line1[100] = {0};
+    char tle_line2[100] = {0};
 
     vi_get_TLE_status tle_status = vi_get_TLE(tle_line1, tle_line2);
 

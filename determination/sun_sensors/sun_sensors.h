@@ -43,6 +43,6 @@ int estimate_sun_photodiodes(double photodiode_currVals[NUM_SUN_SENSORS],
  *
  * @return 1 if eclipsed, 0 otherwise.
  */
-int is_eclipsed_photodiodes(float sensor_readings[NUM_SUN_SENSORS]);
+int is_eclipsed_photodiodes(double sensor_readings[NUM_SUN_SENSORS]);
 
 #endif
