@@ -35,8 +35,8 @@ typedef struct {
  *
  */
 typedef enum {
-    detumblingLOG = 0,   // IMU, MAG,
-    detumblingSTART = 1, // TIME, IMU, MAG, TEMP
+    detumbleLOG = 0,   // IMU, MAG,
+    detumbleSTART = 1, // TIME, IMU, MAG, TEMP
 } log_record_tag;
 
 typedef struct {
@@ -44,14 +44,14 @@ typedef struct {
     vec3 mag;
     vec3 imu;
     vec3 mdm;
-} detumbleLOG;
+} detumbleLOGdata;
 
 typedef struct {
     TIMESTAMP time;
     vec3 imu;
     vec3 mag;
     double temp;
-} detumblingSTART;
+} detumbleSTARTdata;
 
 /**
  * @brief Create and open the file for logging

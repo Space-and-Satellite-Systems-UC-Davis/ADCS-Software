@@ -41,9 +41,9 @@ detumble_status detumble(vec3 needle, bool isTesting, uint64_t maxTime,
     imu.choice = selectSensor(imu, generation);
 
     // Open log file
-    createFile("YYYY-MM-DD_HH-MM-SS_detumble.csv", detumblingLOG);
+    createFile("YYYY-MM-DD_HH-MM-SS_detumble.csv", detumbleLOG);
     LOG_FILE *file = openFile("YYYY-MM-DD_HH-MM-SS_detumble.csv");
-    detumbleLOG data;
+    detumbleLOGdata data;
 
     // Get startTime
     if (vi_get_curr_millis(&curr_millis))
