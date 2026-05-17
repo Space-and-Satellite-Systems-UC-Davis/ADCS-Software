@@ -6,7 +6,7 @@
  *  The detumble() function calls virtual_intellisat.h functions to
  *  get magnetometer and accelerometer measurements, then calls
  *  compute_bdot and issues that command to the magnetorquers. It
- *  continues doing this on a loop until the satellite's angular 
+ *  continues doing this on a loop until the satellite's angular
  *  velocity is below a required threshold.
  *
  * @author Charles Kvoriak (charles.kvoriak@gmail.com) 10/04/2024

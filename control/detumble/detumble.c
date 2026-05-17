@@ -12,6 +12,7 @@
 #include "control/detumble/bdot_control.h"
 #include "control/detumble/detumble_util.h"
 #include "virtual_intellisat.h"
+#include "virtual_loggers.h"
 
 #include <math.h>
 
@@ -39,6 +40,10 @@ detumble_status detumble(vec3 needle, bool isTesting, uint64_t maxTime,
     vi_sensor imu = makeSensor(IMU, ONE, PX);
     imu.choice = selectSensor(imu, generation);
 
+    // Open log file
+    createFile("YYYY-MM-DD_HH-MM-SS_detumble.csv", detumbleLOG);
+    LOG_FILE *file = openFile("YYYY-MM-DD_HH-MM-SS_detumble.csv");
+    detumbleLOGdata data;
 
     // Get startTime
     if (vi_get_curr_millis(&curr_millis))
@@ -84,6 +89,12 @@ detumble_status detumble(vec3 needle, bool isTesting, uint64_t maxTime,
         bool isTooFast = aboveThreshold(imu_curr, imu_prev, 0.5);
 
         keepDetumbling = isTooSoon || (!isTimeOut && isTooFast);
+
+        data.imu = imu_curr;
+        data.mag = mag_curr;
+        data.mdm = mdm;
+
+        logRecord(file, &data);
 
     } while (isTesting || keepDetumbling);
 
