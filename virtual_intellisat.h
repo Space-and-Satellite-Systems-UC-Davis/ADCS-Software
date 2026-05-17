@@ -9,7 +9,7 @@
  *
  *  Their corresponding definitions will be written in the Intellisat
  *  repo by the CS team. While this means any ADCS code that uses
- *  these functions cannot run outside of the Intellisat repo, 
+ *  these functions cannot run outside of the Intellisat repo,
  *  this approach allows for complete separation of the two repos,
  *  which vastly simplifies development for everyone.
  *
@@ -24,27 +24,26 @@
 
 #include <stdint.h>
 
-
 /*################ SENSORS AND ACTUATORS ################*/
 
 typedef enum {
     MAG = 1,
     IMU = 2,
-	CSS = 3,
+    CSS = 3,
     HDD = 4,
     TEMP = 5,
     SOL = 6,
 } vi_component;
 
 typedef enum {
-    NSA = 0, //No Sensor Alternation
-	ONE = 1,
-	TWO = 2,
+    NSA = 0, // No Sensor Alternation
+    ONE = 1,
+    TWO = 2,
 } vi_choice;
 
 typedef enum {
-    NA = 0, //Not applicable
-	PX = 1,
+    NA = 0, // Not applicable
+    PX = 1,
     NX = 2,
     PY = 3,
     NY = 4,
@@ -54,30 +53,26 @@ typedef enum {
 
 /**
  * @brief Data Structure for sensor designation.
- * 
+ *
  * @param component (MAG, IMU, CSS, HDD, TEMP, SOL) <- For type selection
  * @param choice (One, Two) <- For sensor alternation
  * @param axis (PX, PY, PZ, NX, NY, NZ) <- For axis/face selection
- * 
+ *
  * Example: VI_MAG_X1 would be (MAG, One, PX).
  * 			VI_CSS_PX1 would be (CSS, One, PX).
- * 
+ *
  * @author Li, Chun Ho (lchli@ucdavis.edu)
  * @date 11/05/2025
  */
 typedef struct {
     vi_component component;
     vi_choice choice;
-	vi_axis axis;
+    vi_axis axis;
 } vi_sensor;
-
 
 /*################## ACTUATOR COMMANDS ##################*/
 
-typedef enum {
-    HDD_COMMAND_SUCCESS,
-    HDD_COMMAND_FAILURE
-} vi_hdd_command_status;
+typedef enum { HDD_COMMAND_SUCCESS, HDD_COMMAND_FAILURE } vi_hdd_command_status;
 
 /**
  * @brief Send a throttle command to the HDD.
@@ -93,15 +88,11 @@ typedef enum {
  *
  * @return vi_hdd_command_status A return code (SUCESS / FAILURE).
  */
-vi_hdd_command_status
-vi_hdd_command(
-    vi_sensor hdd,
-    double throttle
-);
+vi_hdd_command_status vi_hdd_command(vi_sensor hdd, double throttle);
 
 typedef enum {
-	VI_CONTROL_COIL_SUCCESS,
-	VI_CONTROL_COIL_FAILURE
+    VI_CONTROL_COIL_SUCCESS,
+    VI_CONTROL_COIL_FAILURE
 } vi_control_coil_status;
 
 /**
@@ -111,20 +102,12 @@ typedef enum {
  *
  * @return vi_control_coil_status A return code (SUCESS / FAILURE).
  */
-vi_control_coil_status 
-vi_control_coil(
-	double command_x,
-	double command_y,
-	double command_z
-);
-
+vi_control_coil_status vi_control_coil(double command_x, double command_y,
+                                       double command_z);
 
 /*################### SENSOR READINGS ###################*/
 
-typedef enum {
-    GET_EPOCH_SUCCESS,
-    GET_EPOCH_FAILURE
-} vi_get_epoch_status;
+typedef enum { GET_EPOCH_SUCCESS, GET_EPOCH_FAILURE } vi_get_epoch_status;
 
 /**
  * @brief Report the current date and time to second accuracy.
@@ -133,16 +116,8 @@ typedef enum {
  *
  * @return vi_get_epoch_status A return code (SUCESS / FAILURE).
  */
-vi_get_epoch_status
-vi_get_epoch(
-    int *year,
-    int *month,
-    int *day,
-    int *hour,
-    int *minute,
-    int *second
-);
-
+vi_get_epoch_status vi_get_epoch(int *year, int *month, int *day, int *hour,
+                                 int *minute, int *second);
 
 typedef enum {
     GET_CURR_MILLIS_SUCCESS,
@@ -158,43 +133,30 @@ typedef enum {
  *
  * @return vi_get_curr_millis_status A return code (SUCESS / FAILURE).
  */
-vi_get_curr_millis_status
-vi_get_curr_millis(
-    uint64_t *curr_millis
-);
+vi_get_curr_millis_status vi_get_curr_millis(uint64_t *curr_millis);
 
-
-typedef enum {
-    GET_ANGVEL_SUCCESS,
-    GET_ANGVEL_FAILURE
-} vi_get_angvel_status;
+typedef enum { GET_ANGVEL_SUCCESS, GET_ANGVEL_FAILURE } vi_get_angvel_status;
 
 /**
  * @brief Retrieve angular velocity data from the IMU.
- * 
+ *
  * @param imuSensor Which inertial measurement unit to read from.
  * 		  (w/ component & choice)
  * @param angvel_x Return-by-reference ptrs.
  * @param angvel_y Return-by-reference ptrs.
  * @param angvel_z Return-by-reference ptrs.
- * 
+ *
  * The sign of the angular velocity values must adhere to the
  * Right-Hand-Rule as defined by the satellite's positive axes.
  *
  * @return vi_get_angvel_status A return code (SUCESS / FAILURE).
  */
-vi_get_angvel_status
-vi_get_angvel(
-    vi_sensor imuSensor,
-    double *angvel_x, 
-    double *angvel_y,
-    double *angvel_z
-);
-
+vi_get_angvel_status vi_get_angvel(vi_sensor imuSensor, double *angvel_x,
+                                   double *angvel_y, double *angvel_z);
 
 typedef enum {
-	VI_GET_MAG_SUCCESS = 0,
-	VI_GET_MAG_FAILURE = 1,
+    VI_GET_MAG_SUCCESS = 0,
+    VI_GET_MAG_FAILURE = 1,
 } vi_get_mag_status;
 
 /**
@@ -208,19 +170,10 @@ typedef enum {
  *
  * @return vi_get_mag_status A return code (SUCESS / FAILURE).
  */
-vi_get_mag_status
-vi_get_mag(
-    vi_sensor magSensor,
-	double *mag_x,
-	double *mag_y,
-	double *mag_z
-);
+vi_get_mag_status vi_get_mag(vi_sensor magSensor, double *mag_x, double *mag_y,
+                             double *mag_z);
 
-
-typedef enum {
-    VI_GET_CSS_SUCCESS,
-    VI_GET_CSS_FAILURE
-} vi_get_css_status;
+typedef enum { VI_GET_CSS_SUCCESS, VI_GET_CSS_FAILURE } vi_get_css_status;
 
 /**
  * @brief Get a coarse sun sensor (CSS) reading.
@@ -236,16 +189,9 @@ typedef enum {
  *
  * @return vi_get_css_status A return code (SUCESS / FAILURE).
  */
-vi_get_css_status
-vi_get_css(
-    vi_sensor cssSensor,
-    double *magnitude
-);
+vi_get_css_status vi_get_css(vi_sensor cssSensor, double *magnitude);
 
-typedef enum {
-    VI_GET_TEMP_SUCCESS,
-    VI_GET_TEMP_FAILURE
-} vi_get_temp_status;
+typedef enum { VI_GET_TEMP_SUCCESS, VI_GET_TEMP_FAILURE } vi_get_temp_status;
 
 /**
  * @brief Get a temperature sensor reading.
@@ -256,12 +202,7 @@ typedef enum {
  *
  * @return vi_get_temp_status A return code (SUCESS / FAILURE).
  */
-vi_get_temp_status 
-vi_get_temp(
-	vi_sensor tempSensor, 
-	double* temp
-);
-
+vi_get_temp_status vi_get_temp(vi_sensor tempSensor, double *temp);
 
 typedef enum {
     VI_GET_COILS_CURRENT_SUCCESS,
@@ -271,18 +212,13 @@ typedef enum {
 /**
  * @brief Get a coils current reading.
  *
- * @param currentX, currentY, currentZ Return-by-reference pointer for each 
+ * @param currentX, currentY, currentZ Return-by-reference pointer for each
  * 		  of the coils' current
  *
  * @return vi_get_coils_current_status A return code (SUCESS / FAILURE).
  */
-vi_get_coils_current_status 
-vi_get_coils_current(
-	double* currentX,
-	double* currentY, 
-	double* currentZ
-);
-
+vi_get_coils_current_status
+vi_get_coils_current(double *currentX, double *currentY, double *currentZ);
 
 typedef enum {
     VI_GET_SOLAR_PANEL_CURRENT_SUCCESS,
@@ -297,25 +233,55 @@ typedef enum {
  *
  * @return vi_get_solar_panel_current_status A return code (SUCESS / FAILURE).
  */
-vi_get_solar_panel_current_status
-vi_get_solar_panel_current(
-	vi_sensor sp,
-	double* current
-);
+vi_get_solar_panel_current_status vi_get_solar_panel_current(vi_sensor sp,
+                                                             double *current);
+
+/*
+[F] The number of times the satellite has restarted since launch.
+[T] The current date and time (to the precision of seconds).
+[F] The last action taken (e.g. detumbling, experiment A, low power, etc.)
+[F] The date and time of REALOP's last communication with a groundstation.
+[F] The number of new experiments performed since the last communication.
+[F] The battery level: current, 7-day low, 7-day high, and 7-day average.
+[T] The current angular velocity from the IMU.
+[T] The current magnetic field vector from the magnetometer.
+[T] The current intensity readings from all 12 coarse sun sensors.
+[T] The current temperature on the positive and negative X and Y faces.
+[F] An arbitrary status code integer (256 possible codes).
+[T] REALOP's calculated attitude (if all required data is available).
+[T] Whether or not REALOP is currently in eclipse.
+*/
+
+int vi_get_number_of_restarts();
+
+typedef enum {
+    lastAction00 = 0,
+    lastAction01 = 1,
+} vi_lastAction;
+
+vi_lastAction vi_get_last_action();
+
+int vi_get_number_of_new_experiements_since_last_communication();
+
+double vi_get_battery_level();
+
+typedef enum { status000 = 0, status001 = 1, status002 = 2 } vi_status_code;
+
+vi_status_code vi_get_status_code();
 
 /*###################### CONSTANTS ######################*/
 
-typedef enum{
-	GET_CONSTANT_SUCCESS = 0,
-	GET_CONSTANT_FAILURE = 1
+typedef enum {
+    GET_CONSTANT_SUCCESS = 0,
+    GET_CONSTANT_FAILURE = 1
 } vi_get_constant_status;
 
 // Note: I really really want to make the offset, scalar & constant into struct
-typedef struct{
-	float offset;
-	float scalar;
-	float filter_constant;
-}  sensorCal;
+typedef struct {
+    float offset;
+    float scalar;
+    float filter_constant;
+} sensorCal;
 // Note: Still in progress of convincing Jacob, hope he comes around TT
 
 /**
@@ -330,19 +296,11 @@ typedef struct{
  *
  * @return vi_get_constant_status A return code (SUCESS / FAILURE).
  */
-vi_get_constant_status 
-vi_get_sensor_calibration(
-	vi_sensor sensor, 
-	float *offset,
-	float *scalar,
-	float *filter_constant
-);
+vi_get_constant_status vi_get_sensor_calibration(vi_sensor sensor,
+                                                 float *offset, float *scalar,
+                                                 float *filter_constant);
 
-
-typedef enum{
-    SENSOR_ON = 0,
-    SENSOR_OFF = 1
-} sensor_status;
+typedef enum { SENSOR_ON = 0, SENSOR_OFF = 1 } sensor_status;
 
 /**
  * @brief Get the current status (on/off) of a given sensor.
@@ -353,17 +311,13 @@ typedef enum{
  *
  * @return vi_get_constant_status A return code (SUCESS / FAILURE).
  */
-vi_get_constant_status
-vi_get_sensor_status(
-	vi_sensor sensor,
-    sensor_status *status
-);
+vi_get_constant_status vi_get_sensor_status(vi_sensor sensor,
+                                            sensor_status *status);
 
-
-typedef enum{
-	GET_TLE_SUCCESS_NEW,
-	GET_TLE_SUCCESS_OLD,
-	GET_TLE_FAILURE
+typedef enum {
+    GET_TLE_SUCCESS_NEW,
+    GET_TLE_SUCCESS_OLD,
+    GET_TLE_FAILURE
 } vi_get_TLE_status;
 
 /**
@@ -373,12 +327,7 @@ typedef enum{
  *
  * @return vi_get_constant_status A return code (SUCESS / FAILURE).
  */
-vi_get_TLE_status
-vi_get_TLE(
-	char *tle_line1, 
-	char *tle_line2
-);
-
+vi_get_TLE_status vi_get_TLE(char *tle_line1, char *tle_line2);
 
 /**
  * @brief Get the experiment generation.
@@ -387,12 +336,10 @@ vi_get_TLE(
  */
 int vi_get_experiment_generation();
 
-
 /**
  * @brief Increment the experiment generation.
  */
 void vi_increment_experiment_generation();
-
 
 /**
  * @brief Get the detumbling generation.
@@ -400,7 +347,6 @@ void vi_increment_experiment_generation();
  * @return The generation as an int.
  */
 int vi_get_detumbling_generation();
-
 
 /**
  * @brief Increment the detumbling generation.
@@ -414,19 +360,14 @@ void vi_increment_detumbling_generation();
  */
 int vi_get_determination_generation();
 
-
 /**
  * @brief Increment the detumbling generation.
  */
 void vi_increment_determination_generation();
 
-
 /*###################### OPERATIONS ######################*/
 
-typedef enum {
-    VI_DELAY_MS_SUCCESS,
-    VI_DELAY_MS_FAILURE
-} vi_delay_ms_status;
+typedef enum { VI_DELAY_MS_SUCCESS, VI_DELAY_MS_FAILURE } vi_delay_ms_status;
 
 /**
  * @brief Sleep for some number of milliseconds.
@@ -435,53 +376,40 @@ typedef enum {
  *
  * @return vi_delay_ms_status A return code (SUCESS / FAILURE).
  */
-vi_delay_ms_status
-vi_delay_ms(
-    int ms
-);
-
+vi_delay_ms_status vi_delay_ms(int ms);
 
 /**
  * @brief Print a string.
  *
  * @param string The string to print.
  */
-void vi_print (
-  const char *message, ...
-);
-
-
+void vi_print(const char *message, ...);
 
 /**
  * @brief Configure the data logger for a particular mode.
  *
  * @param mode The logger mode setting.
  */
-void vi_configure_logging_mode(
-    adcs_mode mode
-);
-
+void vi_configure_logging_mode(adcs_mode mode);
 
 /**
- * @brief Check if the current mode has been restarted 
+ * @brief Check if the current mode has been restarted
  *  since this last ran.
  *
  * If this returns true, it means we should discard all
  *  saved state (since it means the state is no longer valid)
  *  and reperform first-time mode setup.
- * 
+ *
  * @return Integer/Bool.
  */
-int
-vi_mode_got_restarted();
-
+int vi_mode_got_restarted();
 
 /**
  * @brief Begin control loop transaction.
  *
  * Between calls to this and vi_end_control_transaction,
  *  the scheduler will not interrupt the running mode.
- *  
+ *
  * Wrapping iterations of control loops in transactions
  *  guarantees that input sensor data is relevant to the
  *  output actuator controls. Otherwise, the scheduler
@@ -490,9 +418,7 @@ vi_mode_got_restarted();
  *
  * @return Void.
  */
-void
-vi_start_control_transaction();
-
+void vi_start_control_transaction();
 
 /**
  * @brief End control loop transaction.
@@ -502,8 +428,6 @@ vi_start_control_transaction();
  *
  * @return Void.
  */
-void
-vi_end_control_transaction();
+void vi_end_control_transaction();
 
-
-#endif//VIRTUAL_INTELLISAT_H
+#endif // VIRTUAL_INTELLISAT_H
