@@ -11,7 +11,7 @@ determination_exp_status determination_experiment()
     mat3 prevAttitude;
     mat3 currAttitude;
     vec3 sun;
-    vi_sensor hdd = { HDD, ONE, PX };
+    vi_sensor hdd = makeSensor(HDD, ONE, PX);
 
     // Get current generation for sensor alternation
     // int generation = vi_get_experiment_generation();
@@ -40,14 +40,14 @@ determination_exp_status determination_experiment()
 
     // Run a while loop
     while (fabs(target - angvel_z) > 0.1) {
-
+        vi_delay_ms(100);
+      
         vi_enter_critical();
         if (vi_task_has_restarted()) {
             // Return to Schedulers to restart Detumbling
             return DETERMINATION_EXPERIMENT_HAS_RESTARTED;
         }
 
-        vi_delay_ms(100);
 
         // default values for now, waiting for sun sensors to implement get_sun
         sun.x = 0;

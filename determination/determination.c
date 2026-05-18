@@ -52,8 +52,7 @@ vi_get_css_status get_measured_sun(int generation, vec3 *measured_sun)
     }
 
     for (int i = 0; i < 6; i++) {
-        sensors[i].choice =
-            sensor_pair_choice(sensors[i], generation) == 1 ? ONE : TWO;
+        sensors[i].choice = selectSensor(sensors[i], generation);
     }
 
     for (int i = 0; i < 6; i++) {
@@ -62,6 +61,7 @@ vi_get_css_status get_measured_sun(int generation, vec3 *measured_sun)
     }
 
     // Implement logic to combine readings into vector
+    *measured_sun = (vec3){ 0.0, 0.0, 0.0 };
     estimate_sun_photodiodes(currVals, measured_sun);
 
     // Clone currVals into prevVals;

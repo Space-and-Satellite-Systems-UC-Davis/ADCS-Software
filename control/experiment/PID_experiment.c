@@ -13,32 +13,29 @@
 PID_status PID_experiment(double target, int infinite)
 {
 
-    vi_sensor imu;
-    vi_sensor hdd;
+    vi_sensor imu = makeSensor(IMU, ONE, PX);
+    vi_sensor hdd = makeSensor(HDD, ONE, PX);
 
-    imu.component = IMU;
-    hdd.component = HDD;
-
-    vec3 angVel_curr;
+    vec3 angVel_curr = undefined_vec3;
     vec3 angVel_prev = undefined_vec3;
+
+    uint64_t curr_millis = 0;
 
     // Get current generation for sensor alternation
     int generation = vi_get_experiment_generation();
 
     // Get IMU sensor choice
-    imu.choice = sensor_pair_choice(imu, generation) == 1 ? ONE : TWO;
-
-    hdd.choice = ONE;
+    imu.choice = selectSensor(imu, generation);
 
     // Verify experiment is running
 
     double throttle = 0;
 
+    // Get the current angular velocity
     if (getIMU(imu, angVel_prev, &angVel_curr))
         return PID_EXPERIMENT_ANGVEL_FAILURE;
 
     // Get the current time (Virtual Intellisat)
-    uint64_t curr_millis = 0;
     if (vi_get_curr_millis(&curr_millis))
         return PID_EXPERIMENT_MILLIS_FAILURE;
 

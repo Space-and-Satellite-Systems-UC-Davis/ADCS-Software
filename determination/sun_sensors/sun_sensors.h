@@ -29,16 +29,16 @@
  *
  * @return Status code (0 = success, non-zero = insufficient signal / invalid).
  */
-int estimate_sun_photodiodes(double sensor_readings[NUM_SUN_SENSORS],
+int estimate_sun_photodiodes(double photodiode_currVals[NUM_SUN_SENSORS],
                              vec3 *sun_vec);
 
-/**
- * @brief Detect whether the spacecraft is in eclipse using photodiode signals.
+/**@brief Detect whether the spacecraft is in eclipse using photodiode
+ * signals.
  *
- * Computes the total illumination from the selected illuminated face on each
- * axis and compares it to a fixed fraction of the expected maximum photodiode
- * voltage. If the signal is below threshold, the spacecraft is considered to
- * be in eclipse.
+ * Computes the total illumination from the selected illuminated face on
+ * each axis and compares it to a fixed fraction of the expected maximum
+ * photodiode voltage. If the signal is below threshold, the spacecraft is
+ * considered to be in eclipse.
  *
  * @param sensor_readings Voltage readings from one photodiode on each face
  *                        ordered as {+X, -X, +Y, -Y, +Z, -Z}.
