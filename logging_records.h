@@ -1,8 +1,7 @@
 #include <stdint.h>
 
-#include "adcs_math.h"
 #include "ADCS.h"
-
+#include "adcs_math.h"
 
 /**
  *  Tagged structs for all data DOWNLINKED from REALOP
@@ -40,16 +39,11 @@ typedef struct __attribute__((packed)) {
     float mag_y;
     float mag_z;
     uint8_t css_px0;
-    uint8_t css_px1
-    uint8_t css_py0;
-    uint8_t css_py1
-    uint8_t css_pz0;
-    uint8_t css_pz1
-    uint8_t css_nx0;
-    uint8_t css_nx1
-    uint8_t css_ny0;
-    uint8_t css_ny1
-    uint8_t css_nz0;
+    uint8_t css_px1 uint8_t css_py0;
+    uint8_t css_py1 uint8_t css_pz0;
+    uint8_t css_pz1 uint8_t css_nx0;
+    uint8_t css_nx1 uint8_t css_ny0;
+    uint8_t css_ny1 uint8_t css_nz0;
     uint8_t css_nz1;
     uint8_t temp_px;
     uint8_t temp_nx;
@@ -94,7 +88,6 @@ typedef struct __attribute__((packed)) {
     float hdd_output_0;
     float hdd_output_1;
 } log_record_experiment_continue;
-
 
 /**
  *  Tagged structs for all data UPLINKED to REALOP
@@ -209,3 +202,48 @@ typedef struct __attribute__((packed)) {
     unsigned int coil_z : 1;
 } uplink_record_sensor_enable;
 
+/*
+no temperature I think (would be CSS fallback)
+sun sensor vec (or raw values?)
+magnetometer vec
+attitude estimate if available
+IMU angular velocity vec
+no coils output I think
+HDD output ideally
+onboard time
+estimated position
+current TLE received date
+experiment generation number
+maybe which sensors are enabled? 16 bits
+is in eclipse 1 bit
+AX.25
+
+How actively we perform experiments based on how much power we have (one
+frequency for each type of experiment, frequency of detumbling (in attempts per
+24 hours))
+
+Only one uplink struct because it will be so small so we don't care about
+missing fields (i.e. missing TLE) acaste42@calpoly.edu
+
+misterBIGben [EVIL] — 4:24 PM
+Since we're beaconing sensor data pretty frequently
+do we still need to log sensor data peroidically ?
+*/
+
+// Beacon alone should be enough to determine mission success with good fidelity
+/* Beacon:
+    Absolute time (7 bytes)
+    Last action taken (1 byte)
+    Time of last uplink (7 bytes)
+    Number of experiments done since last uplink (1 byte)
+    Battery level (1 byte)
+    Boot number (1 byte)
+    Angular velocity (12 bytes, 3 float)
+    Sun sensor values (decimated 6 bytes - 12 bytes)
+    Magnetometer values (12 bytes, 3 float)
+    Warnings of strange sensor values (temp, attitude, is_in_eclipse, battery
+   level 7-day low, high, avg watermark) (1 byte + 3 bytes for lo,hi,avg) ?
+   highly compressed IMU data from the last experiment ? ? some experiment
+   success criteria for each stored experiment ? ? compressed time-series CSS or
+   mag values for secondary experiment verification ?
+*/
