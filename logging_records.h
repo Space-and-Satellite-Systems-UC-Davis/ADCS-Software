@@ -1,7 +1,7 @@
 #include <stdint.h>
 
 #include "ADCS.h"
-#include "adcs_math.h"
+#include "adcs_math/matrix.h"
 
 /**
  *  Tagged structs for all data DOWNLINKED from REALOP
@@ -39,11 +39,16 @@ typedef struct __attribute__((packed)) {
     float mag_y;
     float mag_z;
     uint8_t css_px0;
-    uint8_t css_px1 uint8_t css_py0;
-    uint8_t css_py1 uint8_t css_pz0;
-    uint8_t css_pz1 uint8_t css_nx0;
-    uint8_t css_nx1 uint8_t css_ny0;
-    uint8_t css_ny1 uint8_t css_nz0;
+    uint8_t css_px1;
+    uint8_t css_py0;
+    uint8_t css_py1;
+    uint8_t css_pz0;
+    uint8_t css_pz1;
+    uint8_t css_nx0;
+    uint8_t css_nx1;
+    uint8_t css_ny0;
+    uint8_t css_ny1;
+    uint8_t css_nz0;
     uint8_t css_nz1;
     uint8_t temp_px;
     uint8_t temp_nx;
