@@ -9,7 +9,7 @@
 #include "adcs_math/calibration.h"
 #include "adcs_math/sensors.h"
 #include "adcs_math/vector.h"
-#include "control/bdot/bdot_control.h"
+#include "control/detumble/bdot_control.h"
 #include "control/detumble/detumble_util.h"
 #include "virtual_intellisat.h"
 
@@ -32,15 +32,13 @@ detumble_status detumble(vec3 needle, bool isTesting, uint64_t maxTime,
     bool keepDetumbling = true; // Keep loop running?
     int generation = vi_get_detumbling_generation();
 
-    // Declare varibles for sensor alternation
-    vi_sensor magnetometer;
-    magnetometer.component = MAG;
-    magnetometer.choice =
-        sensor_pair_choice(magnetometer, generation) == 1 ? ONE : TWO;
+    // Declare the sensors
+    vi_sensor magnetometer = makeSensor(MAG, ONE, PX);
+    magnetometer.choice = selectSensor(magnetometer, generation);
 
-    vi_sensor imu;
-    imu.component = IMU;
-    imu.choice = sensor_pair_choice(imu, generation) == 1 ? ONE : TWO;
+    vi_sensor imu = makeSensor(IMU, ONE, PX);
+    imu.choice = selectSensor(imu, generation);
+
 
     // Get startTime
     if (vi_get_curr_millis(&curr_millis))
@@ -61,7 +59,7 @@ detumble_status detumble(vec3 needle, bool isTesting, uint64_t maxTime,
             return DETUMBLING_FAILURE_MAGNETOMETER;
 
         // Compute the magetic dipole moment: M = -k(bDot - n)
-        mdm = computeMDM(mag_curr, mag_prev, delta_t, needle);
+        mdm = computeMDM(magnetometer, mag_curr, mag_prev, delta_t, needle);
 
         // Send control command to coils
         if (vi_control_coil(mdm.x, mdm.y, mdm.z))
