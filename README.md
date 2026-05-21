@@ -1,16 +1,16 @@
-# IntelliSat
-Welcome to code respository for the Space And Systems Satellite Club's REALOP 1 Flight Software! The code here will be run on our flight computer, the Orbital Platform, which will be responsible for controlling and monitoring the CubeSat's various subsystems. Details regarding the Orbital Platform are available on this github repository: [uwu64/orbital-platform](https://github.com/uwu64/orbital-platform).
+# ADCS Flight and Groundstation Software
+This repository holds the Attitude Determination and Control Systems software for UC Davis Space and Satellite Systems' first mission, REALOP-1.
 
-## Getting Started
-To get started with our codebase, you'll need to have a basic understanding of C programming. 
-In order to work on the codebase itself, you'll need the tools to be able to clone, build, and eventually flash and debug the code. For this, refer to the following section:
-- [Getting Started](./Manuals/Getting_Started.md)
+Space and Satellite Systems is an entirely undergraduate-led club that aims to provide undergraduate students with hands-on engineering experience designing CubeSATs.
 
-For those developing code, many elements might be hardware specific. Reference manuals, datasheets, and programming guides of the various chips on the Orbital Platform are located under:
-- [Reference_Manuals](./Manuals/Reference_Manuals/)
+## Overview
+For an overview of REALOP's ADCS software, see: https://docs.google.com/document/d/1nuAq654c_A_WkrFCpJJVsHiTKmIA1E-j
 
-# Note about Board Revisions
-The Orbital Platform goes through revisions. IntelliSat attempts to stay functional on each revision. However, certain GPIO and hardware configurations change across revisions, and thus change within IntelliSat. When using IntelliSat, keep the following in mind:
-- Based on the Revision you are working with, make sure to change the `OP_REV` macro in `Src/globals.h` before building or flashing IntelliSat
-- Differences between the Revisions can be found [here](./Manuals/OrbitalPlatform_Hardware/OP_Hardware.md)
-    - Certain LED function names differ between revisions, so it's important to know those
+## Libraries Used
+- SGP4 by aholinch: https://github.com/aholinch/sgp4
+- SPA by NREL's Ibrahim Reda and Afshin Andreas: https://midcdmz.nrel.gov/spa/
+- IGRF by risherlock: https://github.com/risherlock/ADCS
+
+## License
+See `LICENSE`. Third-party components are licensed separately; see
+`THIRD_PARTY_NOTICES.md`.
