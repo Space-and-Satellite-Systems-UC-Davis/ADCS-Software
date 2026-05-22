@@ -74,7 +74,7 @@ typedef struct {
  * @param name name of the file
  * @param tag A tag denoting which kind of log file this is
  *
- * @return a custom log file pointer
+ * @return a LOG_FILE pointer
  */
 LOG_FILE *createFile(char *name, log_record_tag tag);
 
@@ -83,14 +83,14 @@ LOG_FILE *createFile(char *name, log_record_tag tag);
  *
  * @param name name of the file
  *
- * @return a custom log file pointer
+ * @return a LOG_FILE pointer
  */
 LOG_FILE *openFile(char *name);
 
 /**
  * @brief Close the log file
  *
- * @param file log file pointer
+ * @param file LOG_FILE pointer
  */
 void closeFile(LOG_FILE *file);
 
@@ -100,9 +100,9 @@ void closeFile(LOG_FILE *file);
  * tag: detumblingLOG
  *
  * File Content:
- * TIMESTAMP, IMU01, IMU02, MAG01
- * xxx, xxx, xxx, xxx
- * xxx, xxx, xxx, xxx
+ * TIMESTAMP, IMU01, IMU02, MAG01 \n
+ * xxx, xxx, xxx, xxx \n
+ * xxx, xxx, xxx, xxx \n
  *
  * Essentially we're trying to make csv file to log the data
  */
@@ -112,20 +112,41 @@ void closeFile(LOG_FILE *file);
  *
  * This is to create a header so that the data becomes more readable
  *
- * @param file file pointer
- *
- * @return a custom log file pointer
+ * @param file LOG_FILE pointer
  */
-int logHeader(LOG_FILE *file);
+void logHeader(LOG_FILE *file);
 
 /**
  * @brief Append a new entry to the log file
  *
- * @param name name of the file
- * @param tag A tag denoting which kind of log file this is
- *
- * @return a custom log file pointer
+ * @param file LOG_FILE pointer
+ * @param record the data to store in the
  */
-int logRecord(LOG_FILE *file, void *record);
+void logRecord(LOG_FILE *file, void *record);
+
+/**
+ * @brief Return all the bytes of a log file
+ *
+ * @param file LOG_FILE pointer
+ *
+ * @return Byte buffer storing contents of the file
+ */
+uint8_t *readHeader(LOG_FILE *file);
+
+/**
+ * @brief Return all the bytes of a log file
+ *
+ * @param file LOG_FILE pointer
+ *
+ * @return Byte buffer storing contents of the file
+ */
+uint8_t *readRecord(LOG_FILE *file);
+
+/**
+ * @brief List the log files currently in the file system
+ *
+ * @return string of the list of log files
+ */
+char *lsRecord();
 
 #endif // VIRTUAL_LOGGERS_H
