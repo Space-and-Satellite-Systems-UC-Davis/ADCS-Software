@@ -506,4 +506,22 @@ void
 vi_end_control_transaction();
 
 
+/**
+ * @brief Checks to see if currently in eclipse
+ *
+ * @return 0 or 1 depending on if it is not or is in eclipse respectively
+ */
+int vi_get_is_in_eclipse();
+
+
+/**
+ * @brief Get the current attitude
+ *
+ * @param status (enum) for Return-by-Reference pointer
+ *
+ * @return void
+ */
+void get_attitude(determination_status* status);
+
+
 #endif//VIRTUAL_INTELLISAT_H
