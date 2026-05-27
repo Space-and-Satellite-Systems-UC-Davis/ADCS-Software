@@ -83,7 +83,7 @@ typedef enum {
  * @brief Send a throttle command to the HDD.
  *
  * @param hdd Which HDD to command.
- * @param throttle The desired throttle in the range [-1.0, 1.0].
+ * @param throttle The desired throttle in the range [-1.0, 1.0] Translated into discrete duty steps.
  *
  * Intellisat must check these bounds for the input.
  *
@@ -103,6 +103,21 @@ typedef enum {
 	VI_CONTROL_COIL_SUCCESS,
 	VI_CONTROL_COIL_FAILURE
 } vi_control_coil_status;
+
+/**
+ * @brief Get the current duty value for a given HDD
+ *
+ * @param hdd Which HDD to check for.
+ *
+ * Stored duty uint8_t must be returned directly, ummodified. Should
+ * be in range [0, 100] theoretically, but in practice w/in [50, 100].
+ *
+ * @return uint8_t Stored byte corresponding to whole duty percent used.
+ */
+uint8_t vi_hdd_status(
+		vi_sensor hdd
+);
+
 
 /**
  * @brief Set the coils' dipole vector.
