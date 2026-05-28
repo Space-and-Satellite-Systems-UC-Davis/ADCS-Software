@@ -24,6 +24,8 @@
 
 #include <stdint.h>
 
+#include "determination/determination.h"
+
 
 /*################ SENSORS AND ACTUATORS ################*/
 
