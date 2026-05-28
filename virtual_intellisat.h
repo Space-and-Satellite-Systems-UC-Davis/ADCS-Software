@@ -513,17 +513,61 @@ vi_end_control_transaction();
  *
  * @return 0 or 1 depending on if it is not or is in eclipse respectively
  */
-int vi_get_is_in_eclipse();
+int vi_push_is_in_eclipse(){
+    return is_in_eclipse();
+}
+
+
+typedef enum{
+	VI_PUSH_ATTITUDE_SUCCESS,
+    VI_PUSH_ATTITUDE_NO_TLE,
+    VI_PUSH_ATTITUDE_POS_LOOKUP_ERROR,
+    VI_PUSH_ATTITUDE_IGRF_TIME_ERROR,
+    VI_PUSH_ATTITUDE_TRIAD_ERROR,
+    VI_PUSH_ATTITUDE_EPOCH_FAILURE,
+    VI_PUSH_ATTITUDE_MAG_FAILURE,
+    VI_PUSH_ATTITUDE_CSS_FAILURE
+} vi_push_attitude_status;
+
 
 
 /**
  * @brief Get the current attitude
  *
- * @param status (enum) for Return-by-Reference pointer
+ * @param attitude Return-by-reference ptr to attitude matrix
  *
- * @return void
+ * @return Status code
  */
-void get_attitude(determination_status* status);
+vi_push_attitude_status vi_push_attitude(mat3 *attitude){
+    determination_status det_status = determination(attitude);
+    if (det_status == DET_SUCCESS){
+        return VI_PUSH_ATTITUDE_SUCCESS;
+    }
+    else if(det_status == DET_NO_TLE){
+        return VI_PUSH_ATTITUDE_NO_TLE;
+    }
+    else if(det_status == DET_POS_LOOKUP_ERROR){
+        return VI_PUSH_ATTITUDE_POS_LOOKUP_ERROR;
+    }
+    else if(det_status == DET_IGRF_TIME_ERROR){
+        return VI_PUSH_ATTITUDE_IGRF_TIME_ERROR;
+    }
+    else if(det_status == DET_TRIAD_ERROR){
+        return VI_PUSH_ATTITUDE_TRIAD_ERROR;
+    }
+    else if(det_status == DET_EPOCH_FAILURE){
+        return VI_PUSH_ATTITUDE_EPOCH_FAILURE;
+    }
+    else if(det_status == DET_MAG_FAILURE){
+        return VI_PUSH_ATTITUDE_MAG_FAILURE;
+    }
+    else if(det_status == DET_CSS_FAILURE){
+        return VI_PUSH_ATTITUDE_CSS_FAILURE;
+    }
+}
 
 
 #endif//VIRTUAL_INTELLISAT_H
+
+
+
