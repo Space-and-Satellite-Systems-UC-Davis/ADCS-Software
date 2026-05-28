@@ -8,6 +8,7 @@
  */
 
 #include "ADCS.h"
+#include "adcs_math/sensors.h"
 #include "adcs_math/vector.h"
 #include "control/detumble/detumble.h"
 #include "control/experiment/PID_experiment.h"
@@ -128,4 +129,30 @@ adcs_main_status ADCS_MAIN(adcs_mode mode)
                         }
 
                         return mode;
+                    }
+
+                    int ADCS_is_in_eclipse() { return is_in_eclipse(); }
+
+                    adcs_get_attitude_status ADCS_get_attitude(mat3 * attitude)
+                    {
+                        determination_status det_status =
+                            determination(attitude);
+                        switch (det_status) {
+                        DET_SUCCESS:
+                            return GET_ATTITUDE_SUCCESS;
+                        DET_NO_TLE:
+                            return GET_ATTITUDE_NO_TLE;
+                        DET_POS_LOOKUP_ERROR:
+                            return GET_ATTITUDE_POS_LOOKUP_ERROR;
+                        DET_IGRF_TIME_ERROR:
+                            return GET_ATTITUDE_IGRF_TIME_ERROR;
+                        DET_TRIAD_ERROR:
+                            return GET_ATTITUDE_TRIAD_ERROR;
+                        DET_EPOCH_FAILURE:
+                            return GET_ATTITUDE_EPOCH_FAILURE;
+                        DET_MAG_FAILURE:
+                            return GET_ATTITUDE_MAG_FAILURE;
+                        DET_CSS_FAILURE:
+                            return GET_ATTITUDE_CSS_FAILURE;
+                        }
                     }
