@@ -1,7 +1,8 @@
 #include "sensors.h"
-#include "matrix.h"
 
 #define MAX_RETRIES 3
+#define TIMESTAMP_LEN 20
+#define MAX_FILENAME 50
 
 // Note: sensor calibration is performed in the body frame.
 // Ultimately, as long as prevVal and currVal are in the same frame,
@@ -10,13 +11,13 @@
 
 const vec3 undefined_vec3 = { NAN, NAN, NAN };
 
-const mat3 mag_to_body_transform = { 1.0, 0.0, 0.0,
-                                     0.0, 1.0, 0.0,
-                                     0.0, 0.0, 1.0 };
+const mat3 mag_to_body_transform = {
+    1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0
+};
 
-const mat3 imu_to_body_transform = { 1.0, 0.0, 0.0,
-                                     0.0, 1.0, 0.0,
-                                     0.0, 0.0, 1.0 };
+const mat3 imu_to_body_transform = {
+    1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0
+};
 vi_sensor makeSensor(vi_component component, vi_choice choice, vi_axis axis)
 {
     vi_sensor sensor;
@@ -107,6 +108,36 @@ getCSS_status getCSS(vi_sensor sensor, double prevVal, double *currVal)
     }
 
     return GET_CSS_SUCCESS;
+}
+
+TIMESTAMP getTimeStamp()
+{
+    TIMESTAMP time;
+
+    vi_get_epoch(&time.year, &time.month, &time.day, &time.hour, &time.minute,
+                 &time.second);
+
+    return time;
+}
+
+char *getTimeString()
+{
+    TIMESTAMP time = getTimeStamp();
+    char *timeString;
+
+    // Convert TIMESTAMP to string safely
+    // YYYY - MM - DD_HH - MM - SS
+    snprintf(timeString, TIMESTAMP_LEN, "%04d-%02d-%02d-%02d-%02d-%02d",
+             time.year, time.month, time.day, time.hour, time.minute,
+             time.second);
+
+    return timeString;
+}
+
+char *generateFileName(char *fileType, char *fileName)
+{
+    snprintf(fileName, MAX_FILENAME, "%s_%s", getTimeString(), fileType);
+    return fileName;
 }
 
 int is_in_eclipse()

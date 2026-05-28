@@ -37,17 +37,15 @@ typedef struct {
 typedef enum {
     detumbleLOG = 0,   // IMU, MAG,
     detumbleSTART = 1, // TIME, IMU, MAG, TEMP
-} log_record_tag;
+} file_tag;
 
 typedef struct {
-    TIMESTAMP time;
     vec3 mag;
     vec3 imu;
     vec3 mdm;
 } detumbleLOGdata;
 
 typedef struct {
-    TIMESTAMP time;
     vec3 imu;
     vec3 mag;
     double temp;
@@ -65,7 +63,7 @@ typedef struct {
     int fd;
     int position;
     size_t row_size;
-    log_record_tag header;
+    file_tag header;
 } LOG_FILE;
 
 /**
@@ -76,7 +74,7 @@ typedef struct {
  *
  * @return a LOG_FILE pointer
  */
-LOG_FILE *createFile(char *name, log_record_tag tag);
+LOG_FILE *createFile(char *name, file_tag tag);
 
 /**
  * @brief open the file for logging
@@ -91,18 +89,24 @@ LOG_FILE *openFile(char *name);
  * @brief Close the log file
  *
  * @param file LOG_FILE pointer
+ * @param condition The closing condition of the file
+ *
+ * This function should write out the final row of the log file before closing
+ *
+ * YYYY-MM-DD-HH-MM-SS, EXIT_LOG_FILE, <Completion / Error Message>
  */
-void closeFile(LOG_FILE *file);
+void closeFile(LOG_FILE *file, char *message);
 
-/*
+/**
  * Example File Format:
  * Filename: "YYYY-MM-DD_HH-MM-SS_detumble.csv"
- * tag: detumblingLOG
  *
  * File Content:
- * TIMESTAMP, IMU01, IMU02, MAG01 \n
- * xxx, xxx, xxx, xxx \n
- * xxx, xxx, xxx, xxx \n
+ * detumblingLOG, IMU01, IMU02, MAG01, MAG02\n
+ * YYYY-MM-DD_HH-MM-SS, xxx, xxx, xxx \n
+ * YYYY-MM-DD_HH-MM-SS, xxx, xxx, xxx \n
+ * YYYY-MM-DD_HH-MM-SS, xxx, xxx, xxx \n
+ * YYYY-MM-DD-HH-MM-SS, EXIT_LOG_FILE, Completed
  *
  * Essentially we're trying to make csv file to log the data
  */
@@ -112,7 +116,11 @@ void closeFile(LOG_FILE *file);
  *
  * This is to create a header so that the data becomes more readable
  *
+ * The first entry would be the
+ *
  * @param file LOG_FILE pointer
+ *
+ * Example: detumblingLOG, IMU01, IMU02, MAG01, MAG02\n
  */
 void logHeader(LOG_FILE *file);
 
@@ -121,6 +129,10 @@ void logHeader(LOG_FILE *file);
  *
  * @param file LOG_FILE pointer
  * @param record the data to store in the
+ *
+ * This function should attach a timeStamp at the beginning of every log entry.
+ *
+ * Example: YYYY-MM-DD_HH-MM-SS, <record>
  */
 void logRecord(LOG_FILE *file, void *record);
 

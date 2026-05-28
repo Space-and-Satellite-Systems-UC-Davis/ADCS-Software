@@ -25,6 +25,7 @@ detumble_status detumble(vec3 needle, bool isTesting, uint64_t maxTime,
     vec3 imu_curr = undefined_vec3, imu_prev = undefined_vec3;
 
     // Time varibles
+    TIMESTAMP time;
     uint64_t startTime = 0, curr_millis = 0, prev_millis = 0;
     uint64_t delta_t = 0, timeElapsed = 0;
 
@@ -42,13 +43,15 @@ detumble_status detumble(vec3 needle, bool isTesting, uint64_t maxTime,
     imu.choice = selectSensor(imu, generation);
 
     // Open log file
-    createFile("YYYY-MM-DD_HH-MM-SS_detumble.csv", detumbleLOG);
-    LOG_FILE *file = openFile("YYYY-MM-DD_HH-MM-SS_detumble.csv");
+    char filename[50];
+    generateFileName("Detumbling.csv", &filename);
+    createFile(filename, detumbleLOG);
+    LOG_FILE *file = openFile(filename);
+    logHeader(file);
     detumbleLOGdata data;
 
     // Get startTime
-    if (vi_get_curr_millis(&curr_millis))
-        return DETUMBLING_FAILURE_CURR_MILLIS;
+    vi_get_curr_millis(&curr_millis);
     startTime = curr_millis;
 
     do {
@@ -56,37 +59,41 @@ detumble_status detumble(vec3 needle, bool isTesting, uint64_t maxTime,
 
         if (vi_task_has_restarted()) {
             // Return to Schedulers to restart Detumbling
+            closeFile(file, "DETUMBLING_HAS_RESTARTED");
             return DETUMBLING_HAS_RESTARTED;
         }
 
         // Perform delay for the coil magnetic field decay
-        if (vi_control_coil(0, 0, 0))
+        if (vi_control_coil(0, 0, 0)) {
+            closeFile(file, "DETUMBLING_FAILURE_CONTROL_COILS");
             return DETUMBLING_FAILURE_CONTROL_COILS;
-        if (detumbleDelay())
+        }
+
+        if (detumbleDelay()) {
+            closeFile(file, "DETUMBLING_FAILURE_DELAY_MS");
             return DETUMBLING_FAILURE_DELAY_MS;
+        }
 
         // Get MAG readings
         mag_prev = mag_curr;
-        if (getMag(magnetometer, mag_prev, &mag_curr))
-            return DETUMBLING_FAILURE_MAGNETOMETER;
+        getMag(magnetometer, mag_prev, &mag_curr);
 
         // Compute the magetic dipole moment: M = -k(bDot - n)
         mdm = computeMDM(magnetometer, mag_curr, mag_prev, delta_t, needle);
 
         // Send control command to coils
-        if (vi_control_coil(mdm.x, mdm.y, mdm.z))
+        if (vi_control_coil(mdm.x, mdm.y, mdm.z)) {
+            closeFile(file, "DETUMBLING_FAILURE_CONTROL_COILS");
             return DETUMBLING_FAILURE_CONTROL_COILS;
+        }
 
         // Get IMU readings (A.K.A.: Angular Velocity) for exit condition
         imu_prev = imu_curr;
-        if (getIMU(imu, imu_prev, &imu_curr)) {
-            return DETUMBLING_FAILURE_IMU;
-        }
+        getIMU(imu, imu_prev, &imu_curr);
 
         // Keep track of deltaT and timeElapsed
         prev_millis = curr_millis;
-        if (vi_get_curr_millis(&curr_millis))
-            return DETUMBLING_FAILURE_CURR_MILLIS;
+        vi_get_curr_millis(&curr_millis);
         delta_t = get_delta_t(curr_millis, prev_millis);
 
         // Decide whether detumbling needs to continue
@@ -97,6 +104,7 @@ detumble_status detumble(vec3 needle, bool isTesting, uint64_t maxTime,
 
         keepDetumbling = isTooSoon || (!isTimeOut && isTooFast);
 
+        // Updating the data struct with the new values for logging
         data.imu = imu_curr;
         data.mag = mag_curr;
         data.mdm = mdm;
@@ -108,6 +116,8 @@ detumble_status detumble(vec3 needle, bool isTesting, uint64_t maxTime,
 
     // Increment generation on successful execution
     vi_increment_detumbling_generation();
+
+    closeFile(file, "Completed");
 
     return DETUMBLING_SUCCESS;
 }
