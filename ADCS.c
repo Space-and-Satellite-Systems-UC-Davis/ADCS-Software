@@ -96,7 +96,8 @@ adcs_main_status ADCS_MAIN(adcs_mode mode)
 
 adcs_mode ADCS_recommend_mode()
 {
-    static int iteration = 0; // Starts as true on reboot
+    int iteration = vi_get_experiment_generation(); // Starts as true on reboot
+    vi_increment_experiment_generation();
     adcs_mode mode;
 
     if (iteration == 0) {
@@ -110,6 +111,5 @@ adcs_mode ADCS_recommend_mode()
         mode = ADCS_HDD_EXP_ANGVEL;
     }
 
-    iteration++;
     return mode;
 }
