@@ -108,19 +108,24 @@ adcs_main_status ADCS_MAIN(adcs_mode mode)
                     static int iteration = 0; // Starts as true on reboot
                     adcs_mode mode;
 
-                    if (iteration == 0) {
-                        mode = ADCS_HDD_EXP_ANGVEL;
-                        // loop through other experiments
-                        // loop through other experiments
-                    } else if (iteration % 3 == 1) {
-                        mode = ADCS_HDD_EXP_TRIAD;
-                    } else if (iteration % 3 == 2) {
-                        mode = ADCS_HDD_EXP_RAMP;
-                    } else /*if (iteration % 3 == 0)*/ {
-                        mode = ADCS_HDD_EXP_ANGVEL;
-                    }
-                }
+                    adcs_mode ADCS_recommend_mode()
+                    {
+                        int iteration =
+                            vi_get_experiment_generation(); // Starts as true on
+                                                            // reboot
+                        vi_increment_experiment_generation();
+                        adcs_mode mode;
 
-                iteration++;
-                return mode;
-            }
+                        if (iteration == 0) {
+                            mode = ADCS_HDD_EXP_ANGVEL;
+                            // loop through other experiments
+                        } else if (iteration % 3 == 1) {
+                            mode = ADCS_HDD_EXP_TRIAD;
+                        } else if (iteration % 3 == 2) {
+                            mode = ADCS_HDD_EXP_RAMP;
+                        } else /*if (iteration % 3 == 0)*/ {
+                            mode = ADCS_HDD_EXP_ANGVEL;
+                        }
+
+                        return mode;
+                    }
