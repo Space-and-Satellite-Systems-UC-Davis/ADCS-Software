@@ -43,8 +43,7 @@ detumble_status detumble(vec3 needle, bool isTesting, uint64_t maxTime,
     imu.choice = selectSensor(imu, generation);
 
     // Open log file
-    char filename[50];
-    generateFileName("Detumbling.csv", &filename);
+    char *filename = prependTimeStamp("detumbling.csv");
     createFile(filename, detumbleLOG);
     LOG_FILE *file = openFile(filename);
     logHeader(file);

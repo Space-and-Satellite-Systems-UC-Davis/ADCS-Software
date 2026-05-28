@@ -69,9 +69,20 @@ typedef enum getCSS {
  */
 getCSS_status getCSS(vi_sensor sensor, double prevVal, double *currVal);
 
+/**
+ *
+ */
 TIMESTAMP getTimeStamp();
+
+/**
+ *
+ */
 char *getTimeString();
-char *generateFileName(char *fileType, char *fileName);
+
+/**
+ *
+ */
+char *prependTimeStamp(char *fileType);
 
 /**
  * returns 1 if in eclipse, 0 if not

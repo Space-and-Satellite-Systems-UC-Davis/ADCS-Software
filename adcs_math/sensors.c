@@ -134,8 +134,9 @@ char *getTimeString()
     return timeString;
 }
 
-char *generateFileName(char *fileType, char *fileName)
+char *prependTimeStamp(char *fileType)
 {
+    char fileName[MAX_FILENAME];
     snprintf(fileName, MAX_FILENAME, "%s_%s", getTimeString(), fileType);
     return fileName;
 }
