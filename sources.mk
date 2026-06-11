@@ -5,6 +5,10 @@ SOURCES := \
     control/detumble/detumble.c \
     control/detumble/detumble_util.c \
     $(wildcard control/experiment/*.c) \
+    control/hdd/hdd_tests/hdd_test.c\
+    control/hdd/hdd_tests/hdd_test1.c\
+    control/hdd/hdd_drive.c\
+    control/hdd/hdd_init.c\
     control/PID/PID.c \
     control/ramp/ramp.c \
     determination/TRIAD/triad.c \
