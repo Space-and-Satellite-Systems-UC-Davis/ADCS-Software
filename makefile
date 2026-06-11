@@ -55,11 +55,17 @@ $(TEST_DIR)/bin/test_calibration: $(TEST_DIR)/adcs_math/test_calibration.c adcs_
 
 test: $(TEST_BINS)
 	@for t in $(TEST_BINS); do ./$$t || exit 1; done
+version:
+	$(Q)$(CC) --version
 
 clean:
 	@echo "CLEAN"
 	$(Q)rm -f $(TARGET) $(OBJECTS) $(DEPENDENCIES)
 	$(Q)rm -rf $(TEST_DIR)/bin
 
+<<<<<<< HEAD
 .PHONY: all clean run test
+=======
+.PHONY: all clean run version
+>>>>>>> ccb02e8 (Trying to see what GCC version is on GitHub)
 
