@@ -4,7 +4,6 @@ CFLAGS += -g
 #CFLAGS += -Werror 
 CFLAGS += -Wall 
 CFLAGS += -Wextra
-CFLAGS += -Wstringop-overflow
 CFLAGS += -Wno-unused-variable 
 CFLAGS += -Wno-unused-value 
 CFLAGS += -Wno-unused-but-set-variable
