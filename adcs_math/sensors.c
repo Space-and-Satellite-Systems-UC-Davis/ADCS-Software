@@ -10,13 +10,14 @@
 
 const vec3 undefined_vec3 = { NAN, NAN, NAN };
 
-const mat3 mag_to_body_transform = { 1.0, 0.0, 0.0,
-                                     0.0, 1.0, 0.0,
-                                     0.0, 0.0, 1.0 };
+const mat3 mag_to_body_transform = {
+    1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0
+};
 
-const mat3 imu_to_body_transform = { 1.0, 0.0, 0.0,
-                                     0.0, 1.0, 0.0,
-                                     0.0, 0.0, 1.0 };
+const mat3 imu_to_body_transform = {
+    1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0
+};
+
 vi_sensor makeSensor(vi_component component, vi_choice choice, vi_axis axis)
 {
     vi_sensor sensor;
@@ -39,13 +40,6 @@ vi_choice selectSensor(vi_sensor sensor, int generation)
 
     return sensor.choice;
 }
-const mat3 mag_to_body_transform = {
-    1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0
-};
-
-const mat3 imu_to_body_transform = {
-    1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0
-};
 
 getMag_status getMag(vi_sensor sensor, vec3 prevVal, vec3 *currVal)
 {
