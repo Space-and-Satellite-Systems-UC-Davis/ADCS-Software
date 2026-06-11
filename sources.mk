@@ -19,7 +19,10 @@ EXCLUDE += determination/novasc3.1/cio_file.c
 EXCLUDE += determination/novasc3.1/example.c     
 
 # SGP4 test harness — has its own main()
-EXCLUDE += determination/pos_lookup/sgp4/src/c/TestSGP4.c  
+EXCLUDE += determination/pos_lookup/sgp4/src/c/TestSGP4.c
+
+# unit tests and test stubs — not part of the library, built by the test target
+EXCLUDE += tests/%
 
 # standalone ground-station tool — has its own main()
 EXCLUDE += groundstation/inrange.c                         
