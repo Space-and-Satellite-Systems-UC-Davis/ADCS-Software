@@ -25,7 +25,6 @@ detumble_status detumble(vec3 needle, bool isTesting, uint64_t maxTime,
     vec3 imu_curr = undefined_vec3, imu_prev = undefined_vec3;
 
     // Time varibles
-    TIMESTAMP time;
     uint64_t startTime = 0, curr_millis = 0, prev_millis = 0;
     uint64_t delta_t = 0, timeElapsed = 0;
 

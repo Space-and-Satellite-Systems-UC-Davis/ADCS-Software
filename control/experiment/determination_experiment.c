@@ -30,6 +30,7 @@ determination_exp_status determination_experiment()
     // Get the current time (Virtual Intellisat)
     uint64_t prev_millis = 0;
     uint64_t curr_millis = 0;
+
     if (vi_get_curr_millis(&prev_millis) == GET_CURR_MILLIS_FAILURE)
         return DETERMINATION_EXPERIMENT_MILLIS_FAILURE;
 
@@ -41,13 +42,12 @@ determination_exp_status determination_experiment()
     // Run a while loop
     while (fabs(target - angvel_z) > 0.1) {
         vi_delay_ms(100);
-      
+
         vi_enter_critical();
         if (vi_task_has_restarted()) {
             // Return to Schedulers to restart Detumbling
             return DETERMINATION_EXPERIMENT_HAS_RESTARTED;
         }
-
 
         // default values for now, waiting for sun sensors to implement get_sun
         sun.x = 0;
