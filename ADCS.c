@@ -65,7 +65,6 @@ adcs_main_status ADCS_MAIN(adcs_mode mode)
 
         case ADCS_HDD_EXP_ANGVEL:
             PID_experiment(0, 0);
-            PID_experiment(0, 0);
             break;
 
         case ADCS_HDD_EXP_TRIAD:
@@ -78,7 +77,6 @@ adcs_main_status ADCS_MAIN(adcs_mode mode)
 
         case ADCS_HDD_TESTING:
             PID_experiment(0, 1); // for infinite
-            PID_experiment(0, 1); // for infinite
             break;
 
         case ADCS_TESTING:
@@ -87,14 +85,12 @@ adcs_main_status ADCS_MAIN(adcs_mode mode)
 
         case ADCS_ROTISSERIE:
             switch (PID_experiment(.0872665, 1)) {
-                switch (PID_experiment(.0872665, 1)) {
-                    case PID_EXPERIMENT_SUCCESS:
-                        break;
-                    case PID_EXPERIMENT_ANGVEL_FAILURE:
-                    case PID_EXPERIMENT_MILLIS_FAILURE:
-                    case PID_EXPERIMENT_COMMAND_FAILURE:
-                        return ADCS_ROTISSERIE_ERR;
-                }
+                case PID_EXPERIMENT_SUCCESS:
+                    break;
+                case PID_EXPERIMENT_ANGVEL_FAILURE:
+                case PID_EXPERIMENT_MILLIS_FAILURE:
+                case PID_EXPERIMENT_COMMAND_FAILURE:
+                    return ADCS_ROTISSERIE_ERR;
             }
 
             return ADCS_MAIN_SUCCESS;
