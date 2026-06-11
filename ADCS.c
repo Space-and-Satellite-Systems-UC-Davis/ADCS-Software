@@ -14,6 +14,7 @@
 #include "control/experiment/PID_experiment.h"
 #include "control/experiment/determination_experiment.h"
 #include "control/experiment/ramp_experiment.h"
+#include "adcs_math/sensors.h"
 #include "determination/determination.h"
 #include "virtual_intellisat.h"
 
