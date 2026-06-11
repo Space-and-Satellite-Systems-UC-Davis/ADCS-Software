@@ -17,6 +17,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+    - name: get compiler version
+      run: make version
     - name: make project
       run: make
     - name: groundstation

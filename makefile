@@ -20,9 +20,12 @@ $(TARGET): $(OBJECTS)
 run:
 	./$(TARGET)
 
+version:
+	$(Q)$(CC) --version
+
 clean:
 	@echo "CLEAN"
 	$(Q)rm -f $(TARGET) $(OBJECTS) $(DEPENDENCIES)
 
-.PHONY: all clean run
+.PHONY: all clean run version
 
