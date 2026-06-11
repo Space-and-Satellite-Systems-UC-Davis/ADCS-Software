@@ -12,3 +12,4 @@ tests/bin/
 
 # macOS debug symbols
 *.dSYM/
+local.mk
