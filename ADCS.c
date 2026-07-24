@@ -20,6 +20,8 @@
 
 #include <stdbool.h>
 
+adcs_main_status detumbleEX(vec3 needle, uint64_t minTime, uint64_t maxTime);
+
 void ADCS_DETUMBLING_MODE (void *pvParameters)
 {
     for (;;)
@@ -50,7 +52,6 @@ void ADCS_HDD_EXP_RAMP_MODE (void *pvParameters)
 {
     for (;;)
         ramp_experiment();
-
 }
 
 // note testing modes are not included here either, see below for OG
