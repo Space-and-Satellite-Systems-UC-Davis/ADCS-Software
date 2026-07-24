@@ -12,6 +12,13 @@
 
 #include "adcs_math/matrix.h"
 
+void ADCS_DETUMBLING_MODE (void *pvParameters);
+void ADCS_INITIAL_DETUMBLING_MODE (void *pvParameters);
+void ADCS_HDD_EXP_ANGVEL_MODE (void *pvParamters);
+void ADCS_HDD_EXP_TRIAD_MODE (void *pvParameters);
+void ADCS_HDD_EXP_RAMP_MODE (void *pvParameters);
+void ADCS_ROTISSERIE_MODE (void *pvParameters);
+
 typedef enum {
     ADCS_DETUMBLE,
     ADCS_INITIAL_DETUMBLE,
