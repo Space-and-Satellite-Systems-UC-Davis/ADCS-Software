@@ -19,6 +19,13 @@ void ADCS_HDD_EXP_TRIAD_MODE (void *pvParameters);
 void ADCS_HDD_EXP_RAMP_MODE (void *pvParameters);
 void ADCS_ROTISSERIE_MODE (void *pvParameters);
 
+typedef struct {
+    uint8_t error;
+    uint32_t unix_timestamp;
+} adcs_err;
+
+void ADCS_get_n_error(int n, adcs_err *err);
+
 typedef enum {
     ADCS_DETUMBLE,
     ADCS_INITIAL_DETUMBLE,
