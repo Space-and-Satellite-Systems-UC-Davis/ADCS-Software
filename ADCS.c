@@ -185,3 +185,8 @@ adcs_get_attitude_status ADCS_get_attitude(mat3 *attitude)
             return GET_ATTITUDE_CSS_FAILURE;
     }
 }
+
+vi_choice ADCS_get_sensor_alteration(vi_sensor sensor){
+    int generation = get_vi_get_experiment_generation();
+    return sensor_pair_choice(sensor, generation);
+}
