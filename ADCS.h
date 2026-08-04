@@ -11,6 +11,7 @@
 #define ADCS_H
 
 #include "adcs_math/matrix.h"
+#include <stdint.h>
 
 void ADCS_DETUMBLING_MODE (void *pvParameters);
 void ADCS_INITIAL_DETUMBLING_MODE (void *pvParameters);
@@ -53,6 +54,13 @@ typedef enum{
     GET_ATTITUDE_CSS_FAILURE
 } adcs_get_attitude_status;
 
+typedef struct {
+    uint8_t error;
+    uint32_t unix_timestamp;
+} __attribute__((packed)) adcs_err;
+
+#define ADCS_ERROR_LOG_SIZE 15
+
 #ifdef __cplusplus
 extern "C" {
 #endif //__cplusplus
@@ -89,8 +97,10 @@ int ADCS_is_in_eclipse();
  */
 adcs_get_attitude_status ADCS_get_attitude(mat3 *attitude);
 
+void ADCS_get_n_error(int n, adcs_err *err);
+
 #ifdef __cplusplus
 }
 #endif //__cplusplus
 
-#endif // ADCS_H
+#endif//ADCS_H
