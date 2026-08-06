@@ -11,6 +11,7 @@
 #define ADCS_H
 
 #include "adcs_math/matrix.h"
+#include <stdint.h>
 
 void ADCS_DETUMBLING_MODE (void *pvParameters);
 void ADCS_INITIAL_DETUMBLING_MODE (void *pvParameters);
