@@ -20,13 +20,6 @@ void ADCS_HDD_EXP_TRIAD_MODE (void *pvParameters);
 void ADCS_HDD_EXP_RAMP_MODE (void *pvParameters);
 void ADCS_ROTISSERIE_MODE (void *pvParameters);
 
-typedef struct {
-    uint8_t error;
-    uint32_t unix_timestamp;
-} adcs_err;
-
-void ADCS_get_n_error(int n, adcs_err *err);
-
 typedef enum {
     ADCS_DETUMBLE,
     ADCS_INITIAL_DETUMBLE,
@@ -62,8 +55,8 @@ typedef enum{
 } adcs_get_attitude_status;
 
 typedef struct {
-    uint8_t error;
     uint32_t unix_timestamp;
+    uint8_t error;
 } __attribute__((packed)) adcs_err;
 
 #define ADCS_ERROR_LOG_SIZE 15
@@ -103,6 +96,9 @@ int ADCS_is_in_eclipse();
  * @return Status code
  */
 adcs_get_attitude_status ADCS_get_attitude(mat3 *attitude);
+
+void ADCS_get_n_error(int n, adcs_err *err);
+
 
 #ifdef __cplusplus
 }
