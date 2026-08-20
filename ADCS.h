@@ -61,6 +61,13 @@ typedef enum{
     GET_ATTITUDE_CSS_FAILURE
 } adcs_get_attitude_status;
 
+typedef struct {
+    uint8_t error;
+    uint32_t unix_timestamp;
+} __attribute__((packed)) adcs_err;
+
+#define ADCS_ERROR_LOG_SIZE 15
+
 #ifdef __cplusplus
 extern "C" {
 #endif //__cplusplus
@@ -101,4 +108,4 @@ adcs_get_attitude_status ADCS_get_attitude(mat3 *attitude);
 }
 #endif //__cplusplus
 
-#endif // ADCS_H
+#endif//ADCS_H
