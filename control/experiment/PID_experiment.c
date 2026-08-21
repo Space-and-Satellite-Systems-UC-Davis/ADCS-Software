@@ -1,7 +1,7 @@
 #include "control/experiment/PID_experiment.h"
 #include "adcs_math/sensors.h"
 #include "virtual_intellisat.h"
-#include "virtual_ros.h"
+#include "virtual_rtos.h"
 
 #include <math.h>
 #include <stdint.h>
