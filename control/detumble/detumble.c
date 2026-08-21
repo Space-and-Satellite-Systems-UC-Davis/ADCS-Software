@@ -12,7 +12,7 @@
 #include "control/detumble/bdot_control.h"
 #include "control/detumble/detumble_util.h"
 #include "virtual_intellisat.h"
-#include "virtual_ros.h"
+#include "virtual_rtos.h"
 
 #include <math.h>
 
