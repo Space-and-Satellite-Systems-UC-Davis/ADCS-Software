@@ -48,5 +48,8 @@ tests/bin/
 build
 .vscode/c_cpp_properties.json
 
+# Makefiles
+*.d
+
 # MacOS 
 .DS_Store
