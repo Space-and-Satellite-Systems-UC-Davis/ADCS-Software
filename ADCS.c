@@ -187,6 +187,6 @@ adcs_get_attitude_status ADCS_get_attitude(mat3 *attitude)
 }
 
 vi_choice ADCS_get_sensor_alteration(vi_sensor sensor){
-    int generation = get_vi_get_experiment_generation();
+    int generation = vi_get_experiment_generation();
     return sensor_pair_choice(sensor, generation);
 }
