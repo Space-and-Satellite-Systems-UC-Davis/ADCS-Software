@@ -2,7 +2,7 @@
 #include "adcs_math/calibration.h"
 #include "adcs_math/sensors.h"
 #include "virtual_intellisat.h"
-#include "virtual_ros.h"
+#include "virtual_rtos.h"
 
 // TODO: HDD alternation?
 #define HDD_CHOICE VI_HDD1
