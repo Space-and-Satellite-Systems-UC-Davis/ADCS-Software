@@ -35,10 +35,6 @@ typedef struct Determination_Cache {
 
 static determination_cache cache;
 
-// TODO: Call getXXX from virtual_intellisat.h for time and mag
-// TODO: Write function to get all 12 sun sensor readings
-// TODO: Implement logic to turn CSS readings into a vec3
-
 vi_get_css_status get_measured_sun(int generation, vec3 *measured_sun)
 {
 

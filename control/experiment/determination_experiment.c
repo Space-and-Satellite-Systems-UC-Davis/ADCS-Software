@@ -11,17 +11,12 @@ determination_exp_status determination_experiment()
         makeSensor(HDD, selectSensor(makeSensor(HDD, ONE, PZ), generation), PZ);
     mat3 prevAttitude;
     mat3 currAttitude;
-    vec3 sun;
-
-    // TODO: default values for now, waiting for sun sensors to implement
-    // get_sun
-    sun.x = 0;
-    sun.y = 0;
-    sun.z = 0;
 
     determination(&prevAttitude);
 
-    // TODO: generalizing initial angular velocity as 0; might have to fix
+    // Assuming initial angular velocity is 0.
+    // This is a fair assumption since we detumble regularly, and
+    // our maximum expected angular rate isn't very high anyway.
     int angvel_z = 0;
 
     // Get the current time (Virtual Intellisat)
@@ -44,12 +39,6 @@ determination_exp_status determination_experiment()
             // Return to Schedulers to restart Detumbling
             return DETERMINATION_EXPERIMENT_HAS_RESTARTED;
         }
-
-
-        // default values for now, waiting for sun sensors to implement get_sun
-        sun.x = 0;
-        sun.y = 0;
-        sun.z = 0;
 
         determination(&currAttitude);
         // Get the current time (Virtual Intellisat)
