@@ -4,17 +4,14 @@
 #include "adcs_math/vector.h"
 #include "determination/determination.h"
 
-// TODO: HDD alternation? (Update: rn it's defaulted to VI_HDD1)
-
 determination_exp_status determination_experiment()
 {
+    int generation = vi_get_experiment_generation();
+    vi_sensor hdd =
+        makeSensor(HDD, selectSensor(makeSensor(HDD, ONE, PZ), generation), PZ);
     mat3 prevAttitude;
     mat3 currAttitude;
     vec3 sun;
-    vi_sensor hdd = makeSensor(HDD, ONE, PX);
-
-    // Get current generation for sensor alternation
-    // int generation = vi_get_experiment_generation();
 
     // TODO: default values for now, waiting for sun sensors to implement
     // get_sun
@@ -41,7 +38,7 @@ determination_exp_status determination_experiment()
     // Run a while loop
     while (fabs(target - angvel_z) > 0.1) {
         vi_delay_ms(100);
-      
+
         vi_enter_critical();
         if (vi_task_has_restarted()) {
             // Return to Schedulers to restart Detumbling
