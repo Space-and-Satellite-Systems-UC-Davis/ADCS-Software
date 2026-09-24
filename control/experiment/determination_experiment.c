@@ -12,7 +12,18 @@ determination_exp_status determination_experiment()
     mat3 prevAttitude;
     mat3 currAttitude;
 
-    determination(&prevAttitude);
+    switch (determination(&prevAttitude)) {
+        case DET_NO_TLE:
+        case DET_POS_LOOKUP_ERROR:
+        case DET_IGRF_TIME_ERROR:
+        case DET_TRIAD_ERROR:
+        case DET_EPOCH_FAILURE:
+        case DET_MAG_FAILURE:
+        case DET_CSS_FAILURE:
+            return DETERMINATION_EXPERIMENT_DETERMINATION_FAILURE;
+        case DET_SUCCESS:
+            break;
+    }
 
     // Assuming initial angular velocity is 0.
     // This is a fair assumption since we detumble regularly, and
@@ -40,7 +51,18 @@ determination_exp_status determination_experiment()
             return DETERMINATION_EXPERIMENT_HAS_RESTARTED;
         }
 
-        determination(&currAttitude);
+        switch (determination(&currAttitude)) {
+            case DET_NO_TLE:
+            case DET_POS_LOOKUP_ERROR:
+            case DET_IGRF_TIME_ERROR:
+            case DET_TRIAD_ERROR:
+            case DET_EPOCH_FAILURE:
+            case DET_MAG_FAILURE:
+            case DET_CSS_FAILURE:
+                return DETERMINATION_EXPERIMENT_DETERMINATION_FAILURE;
+            case DET_SUCCESS:
+                break;
+        }
         // Get the current time (Virtual Intellisat)
         if (vi_get_curr_millis(&curr_millis) == GET_CURR_MILLIS_FAILURE)
             return DETERMINATION_EXPERIMENT_MILLIS_FAILURE;
