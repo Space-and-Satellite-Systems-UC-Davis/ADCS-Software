@@ -1,4 +1,4 @@
-#include "control/experiment/PID_experiment.h"
+#include "PID_experiment.h"
 #include "adcs_math/sensors.h"
 #include "virtual_intellisat.h"
 #include "virtual_rtos.h"

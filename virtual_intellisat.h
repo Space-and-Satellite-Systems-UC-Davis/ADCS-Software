@@ -165,7 +165,6 @@ vi_get_curr_millis(
     uint64_t *curr_millis
 );
 
-
 typedef enum {
     GET_ANGVEL_SUCCESS,
     GET_ANGVEL_FAILURE
@@ -425,7 +424,7 @@ void vi_increment_determination_generation();
 /**
  * @brief Get the number of experiments since last uplink.
  */
-void vi_get_experiments_since_uplink();
+uint8_t vi_get_experiments_since_uplink();
 
 
 /*###################### OPERATIONS ######################*/
@@ -453,9 +452,7 @@ vi_delay_ms(
  *
  * @param string The string to print.
  */
-void vi_print (
-  const char *message, ...
-);
+void vi_print (const char *message);
 
 
 

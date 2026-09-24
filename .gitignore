@@ -1,21 +1,55 @@
-*.vim
-.vscode
 
-# Build artifacts
-*.so
+# Object files
 *.o
+*.ko
+*.obj
+*.elf
+
+# Linker output
+*.ilk
+*.map
+*.exp
+
+# Test binaries
+tests/bin/
+
+# Libraries
+*.lib
 *.a
+*.la
+*.lo
+
+# Shared objects
+*.dll
+*.so
+*.so.*
+*.dylib
+
+# Executables
+*.exe
+*.out
+*.app
+*.i*86
+*.x86_64
+*.hex
+*.bin
+
+# Debug files
+*.dSYM/
+*.su
+*.idb
+*.pdb
+
+# Launch file
+*.launch
+.vscode/*
+
+# CMake build files
+build
+.vscode/c_cpp_properties.json
+
+# Makefiles
 *.d
 
-# Test binaries
-tests/bin/
-
-# macOS debug symbols
-*.dSYM/
-local.mk
-
-# Test binaries
-tests/bin/
-
-# macOS debug symbols
-*.dSYM/
+# MacOS 
+.DS_Store
