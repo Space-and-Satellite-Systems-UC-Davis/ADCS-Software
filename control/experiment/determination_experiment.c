@@ -4,27 +4,30 @@
 #include "adcs_math/vector.h"
 #include "determination/determination.h"
 
-// TODO: HDD alternation? (Update: rn it's defaulted to VI_HDD1)
-
 determination_exp_status determination_experiment()
 {
+    int generation = vi_get_experiment_generation();
+    vi_sensor hdd =
+        makeSensor(HDD, selectSensor(makeSensor(HDD, ONE, PZ), generation), PZ);
     mat3 prevAttitude;
     mat3 currAttitude;
-    vec3 sun;
-    vi_sensor hdd = makeSensor(HDD, ONE, PX);
 
-    // Get current generation for sensor alternation
-    // int generation = vi_get_experiment_generation();
+    switch (determination(&prevAttitude)) {
+        case DET_NO_TLE:
+        case DET_POS_LOOKUP_ERROR:
+        case DET_IGRF_TIME_ERROR:
+        case DET_TRIAD_ERROR:
+        case DET_EPOCH_FAILURE:
+        case DET_MAG_FAILURE:
+        case DET_CSS_FAILURE:
+            return DETERMINATION_EXPERIMENT_DETERMINATION_FAILURE;
+        case DET_SUCCESS:
+            break;
+    }
 
-    // TODO: default values for now, waiting for sun sensors to implement
-    // get_sun
-    sun.x = 0;
-    sun.y = 0;
-    sun.z = 0;
-
-    determination(&prevAttitude);
-
-    // TODO: generalizing initial angular velocity as 0; might have to fix
+    // Assuming initial angular velocity is 0.
+    // This is a fair assumption since we detumble regularly, and
+    // our maximum expected angular rate isn't very high anyway.
     int angvel_z = 0;
 
     // Get the current time (Virtual Intellisat)
@@ -41,20 +44,25 @@ determination_exp_status determination_experiment()
     // Run a while loop
     while (fabs(target - angvel_z) > 0.1) {
         vi_delay_ms(100);
-      
+
         vi_enter_critical();
         if (vi_task_has_restarted()) {
             // Return to Schedulers to restart Detumbling
             return DETERMINATION_EXPERIMENT_HAS_RESTARTED;
         }
 
-
-        // default values for now, waiting for sun sensors to implement get_sun
-        sun.x = 0;
-        sun.y = 0;
-        sun.z = 0;
-
-        determination(&currAttitude);
+        switch (determination(&currAttitude)) {
+            case DET_NO_TLE:
+            case DET_POS_LOOKUP_ERROR:
+            case DET_IGRF_TIME_ERROR:
+            case DET_TRIAD_ERROR:
+            case DET_EPOCH_FAILURE:
+            case DET_MAG_FAILURE:
+            case DET_CSS_FAILURE:
+                return DETERMINATION_EXPERIMENT_DETERMINATION_FAILURE;
+            case DET_SUCCESS:
+                break;
+        }
         // Get the current time (Virtual Intellisat)
         if (vi_get_curr_millis(&curr_millis) == GET_CURR_MILLIS_FAILURE)
             return DETERMINATION_EXPERIMENT_MILLIS_FAILURE;
