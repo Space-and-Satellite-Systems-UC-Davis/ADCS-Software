@@ -11,9 +11,6 @@ double linear_ramp_command (
     unsigned int t_curr,
     ramp_controller *c
 ) {
-    if (c->starting_ms + c->left_leg_length_ms + c->plateau_length_ms + c->right_leg_length_ms < 0) {
-        return 0.0;
-    }
     unsigned int region_ms;
     region_ms  = c->starting_ms;
     if (t_curr < region_ms)
