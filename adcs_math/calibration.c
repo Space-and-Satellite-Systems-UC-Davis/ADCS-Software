@@ -1,6 +1,8 @@
 #include <math.h>
 
 #include "calibration.h"
+#include "virtual_intellisat.h"
+#include "adcs_math/sensors.h"
 
 float lowpass_filter(float currValue, float prevValue, float filterConstant)
 {

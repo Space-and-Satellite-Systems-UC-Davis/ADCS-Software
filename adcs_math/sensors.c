@@ -1,7 +1,14 @@
 #include "sensors.h"
 #include "matrix.h"
 
+#include <math.h>
+
 #define MAX_RETRIES 3
+
+#define SLIP_DUTY 0.7f
+#define SLIP_TIME 750
+#define STALE_TIME 2000
+
 
 // Note: sensor calibration is performed in the body frame.
 // Ultimately, as long as prevVal and currVal are in the same frame,
@@ -222,4 +229,59 @@ vi_choice sensor_pair_choice(vi_sensor sensor, int generation)
     } else {
         return ONE;
     }
+}
+
+/*
+From document WEEK 7.5 SM25 HDD MEETING:
+```
+The HDD, or possibly this specific ESC with HDD's (?), cannot jump to a high
+duty from a standstill, or else slipping will occur. To avoid slipping, an
+experimentally determined maximum "slip duty" was determined, which can be
+jumped to from a standstill. After reaching this duty w/in ~750ms, the HDD can
+be ramped up to higher duties. Jumping from a standstill to the slip duty and
+then again to the target was not tested, but may work better
+```
+This is the basis for this function, which aims to implement the 750ms delay.
+*/
+void hdd_command(double throttle) {
+    static uint64_t slip_start_time = 0;
+    static uint64_t last_time = 0;
+
+    vi_sensor hdd_one = makeSensor(HDD, ONE, PX);
+    vi_sensor hdd_two = makeSensor(HDD, TWO, PX);
+
+    bool positive = (throttle > 0.0);
+    throttle = fabs(throttle);
+
+    uint64_t curr_time = 0;
+    (void)vi_get_curr_millis(&curr_time);
+
+    // slip_start_time is when we last commanded a throttle < SLIP_DUTY.
+    // If slip_start_time is stale, reset it.
+    if (throttle <= SLIP_DUTY || get_delta_t(curr_time, last_time) > STALE_TIME)
+        slip_start_time = curr_time;
+
+    double slip_throttle;
+
+    // Case 1: throttle < SLIP_DUTY: just use throttle.
+    // Case 2: throttle > SLIP_DUTY and it's been less than SLIP_TIME: use SLIP_DUTY.
+    // Case 3: throttle > SLIP_DUTY and it's been more than SLIP_TIME: just use throttle.
+    // SLIP_TIME is compared to the difference between curr_time and slip_start_time.
+    // This is the time since a throttle less than SLIP_DUTY was commanded.
+    if (throttle > SLIP_DUTY && get_delta_t(curr_time, slip_start_time) < SLIP_TIME)
+        slip_throttle = SLIP_DUTY;
+    else
+        slip_throttle = throttle;
+
+    if (positive) {
+        // Assume hdd_one corresponds with the positive z axis
+        vi_hdd_command(hdd_one, slip_throttle);
+        vi_hdd_command(hdd_two, 0.0f);
+    } else {
+        // Assume hdd_two corresponds with the negative z axis
+        vi_hdd_command(hdd_one, 0.0f);
+        vi_hdd_command(hdd_two, slip_throttle);
+    }
+
+    last_time = curr_time;
 }
