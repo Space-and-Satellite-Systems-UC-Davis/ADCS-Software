@@ -85,11 +85,11 @@ typedef enum {
  * @brief Send a throttle command to the HDD.
  *
  * @param hdd Which HDD to command.
- * @param throttle The desired throttle in the range [-1.0, 1.0].
+ * @param throttle The desired throttle in the range [0.0, 1.0].
  *
  * Intellisat must check these bounds for the input.
  *
- * Positive throttle must correspond to positive angular
+ * Throttle on HDD0 must correspond to positive angular
  * acceleration as defined by the satellite's positive Z axis
  * and the Right-Hand-Rule.
  *
