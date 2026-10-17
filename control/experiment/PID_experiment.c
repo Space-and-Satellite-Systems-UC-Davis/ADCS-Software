@@ -60,7 +60,7 @@ PID_status PID_experiment(double target, int infinite)
             return PID_EXPERIMENT_MILLIS_FAILURE;
 
         // PLug it into the control function
-        throttle +=
+        throttle =
             PID_command(target, angVel_curr.z, curr_millis, &controller);
 
         // Clamp the output
