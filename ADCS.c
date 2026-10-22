@@ -39,7 +39,7 @@ void ADCS_INITIAL_DETUMBLING_MODE (void *pvParameters)
 void ADCS_HDD_EXP_ANGVEL_MODE (void *pvParamters)
 {
     for (;;)
-        PID_experiment(0, 0);
+        PID_experiment(0);
 }
 
 void ADCS_HDD_EXP_TRIAD_MODE (void *pvParameters)
@@ -59,7 +59,7 @@ void ADCS_HDD_EXP_RAMP_MODE (void *pvParameters)
 void ADCS_ROTISSERIE_MODE (void *pvParameters)
 {
     for (;;)
-        PID_experiment(.0872665, 1);
+        PID_experiment(1);
 }
 
 adcs_main_status detumbleEX(vec3 needle, uint64_t minTime, uint64_t maxTime)
@@ -107,7 +107,7 @@ adcs_main_status ADCS_MAIN(adcs_mode mode)
             break;
 
         case ADCS_HDD_EXP_ANGVEL:
-            PID_experiment(0, 0);
+            PID_experiment(0);
             break;
 
         case ADCS_HDD_EXP_TRIAD:
@@ -119,7 +119,7 @@ adcs_main_status ADCS_MAIN(adcs_mode mode)
             break;
 
         case ADCS_HDD_TESTING:
-            PID_experiment(0, 1); // for infinite
+            PID_experiment(1); // for infinite
             break;
 
         case ADCS_TESTING:
@@ -127,7 +127,7 @@ adcs_main_status ADCS_MAIN(adcs_mode mode)
             break;
 
         case ADCS_ROTISSERIE:
-            switch (PID_experiment(.0872665, 1)) {
+            switch (PID_experiment(1)) {
                 case PID_EXPERIMENT_SUCCESS:
                     break;
                 case PID_EXPERIMENT_ANGVEL_FAILURE:
