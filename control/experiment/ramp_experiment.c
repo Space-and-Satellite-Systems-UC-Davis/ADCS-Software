@@ -4,16 +4,13 @@
 #include "virtual_intellisat.h"
 #include "virtual_rtos.h"
 
-// TODO: HDD alternation?
-#define HDD_CHOICE VI_HDD1
-
-run_ramp_experiment_status ramp_experiment()
+static run_ramp_experiment_status ramp_experiment_helper(vi_choice choice)
 {
 
     ramp_controller controller;
     uint64_t t0;
 
-    vi_sensor Hdd = makeSensor(HDD, ONE, PX);
+    vi_sensor Hdd = makeSensor(HDD, choice, PX);
     vi_hdd_command_status command_status;
     vi_get_curr_millis_status millis_status = vi_get_curr_millis(&t0);
     if (millis_status == GET_CURR_MILLIS_FAILURE) {
@@ -49,4 +46,11 @@ run_ramp_experiment_status ramp_experiment()
     }
 
     return RUN_RAMP_EXPERIMENT_SUCCESS;
+}
+
+run_ramp_experiment_status ramp_experiment() {
+    run_ramp_experiment_status status = ramp_experiment_helper(ONE);
+    if (status != RUN_RAMP_EXPERIMENT_SUCCESS)
+        return status;
+    return ramp_experiment_helper(TWO);
 }

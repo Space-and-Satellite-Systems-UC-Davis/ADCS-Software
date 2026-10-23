@@ -88,4 +88,18 @@ int is_in_eclipse();
  */
 vi_choice sensor_pair_choice(vi_sensor sensor, int generation);
 
+/**
+ * @brief Send throttle command to the HDDs.
+ * 
+ * This wrapper function dispatches commands to either one HDD or
+ * the other depending on the sign of the throttle.
+ *
+ * @param throttle The desired throttle in the range [-1.0, 1.0].
+ * Throttle > 0 commands one HDD, while throttle < 0 commands the
+ * other.
+ *
+ * @return Void.
+ */
+void hdd_command(double throttle);
+
 #endif
