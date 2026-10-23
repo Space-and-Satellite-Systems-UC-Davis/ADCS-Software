@@ -7,8 +7,6 @@
 determination_exp_status determination_experiment()
 {
     int generation = vi_get_experiment_generation();
-    vi_sensor hdd =
-        makeSensor(HDD, selectSensor(makeSensor(HDD, ONE, PZ), generation), PZ);
     mat3 prevAttitude;
     mat3 currAttitude;
 
@@ -76,13 +74,13 @@ determination_exp_status determination_experiment()
         mat_scalar(1.0 / delta_t, derivative, &derivative);
         double zrotation = derivative.y1;
 
-        // PLug it into the control function
+        // Plug it into the control function
         double throttle =
             PID_command(target, zrotation, curr_millis, &controller);
 
         // Take output and plug it into HDD
-        if (vi_hdd_command(hdd, throttle) == HDD_COMMAND_FAILURE)
-            return DETERMINATION_EXPERIMENT_HDD_COMMAND_FAILURE;
+        hdd_command(throttle);
+
         prevAttitude = currAttitude;
         prev_millis = curr_millis;
 
