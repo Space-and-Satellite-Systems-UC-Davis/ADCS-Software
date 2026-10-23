@@ -14,6 +14,7 @@ determination_exp_status determination_experiment()
 
     switch (determination(&prevAttitude)) {
         case DET_NO_TLE:
+            return DETERMINATION_EXPERIMENT_NO_TLE;
         case DET_POS_LOOKUP_ERROR:
         case DET_IGRF_TIME_ERROR:
         case DET_TRIAD_ERROR:
@@ -53,6 +54,7 @@ determination_exp_status determination_experiment()
 
         switch (determination(&currAttitude)) {
             case DET_NO_TLE:
+                return DETERMINATION_EXPERIMENT_NO_TLE;
             case DET_POS_LOOKUP_ERROR:
             case DET_IGRF_TIME_ERROR:
             case DET_TRIAD_ERROR:
