@@ -4,7 +4,12 @@
 #include "adcs_math/vector.h"
 #include "determination/determination.h"
 
-determination_exp_status determination_experiment()
+#define P_GAIN 0.4
+#define I_GAIN 0
+#define D_GAIN 0.1
+
+determination_exp_status determination_experiment_helper(double target,
+                                                         uint64_t timeout)
 {
     int generation = vi_get_experiment_generation();
     mat3 prevAttitude;
@@ -30,20 +35,20 @@ determination_exp_status determination_experiment()
     int angvel_z = 0;
 
     // Get the current time (Virtual Intellisat)
+    uint64_t start_millis = 0;
     uint64_t prev_millis = 0;
     uint64_t curr_millis = 0;
     if (vi_get_curr_millis(&prev_millis) == GET_CURR_MILLIS_FAILURE)
         return DETERMINATION_EXPERIMENT_MILLIS_FAILURE;
+    start_millis = prev_millis;
 
     // Declare and initlialize PID controller
     PID_controller controller;
-    double target = 0;
-    PID_init(target, angvel_z, prev_millis, 1, 1, 1, &controller);
+    PID_init(target, angvel_z, prev_millis, P_GAIN, I_GAIN, D_GAIN,
+             &controller);
 
     // Run a while loop
-    while (fabs(target - angvel_z) > 0.1) {
-        vi_delay_ms(100);
-
+    while (get_delta_t(curr_millis, start_millis) < timeout) {
         vi_enter_critical();
         if (vi_task_has_restarted()) {
             // Return to Schedulers to restart Detumbling
@@ -89,6 +94,22 @@ determination_exp_status determination_experiment()
 
     // Increment generation on successful execution
     vi_increment_experiment_generation();
+
+    return DETERMINATION_EXPERIMENT_SUCCESS;
+}
+
+determination_exp_status determination_experiment()
+{
+    for (float target = .0872665; target > 0.0; target /= 2.0) {
+        determination_exp_status s =
+            determination_experiment_helper(target, 4000);
+        if (s != DETERMINATION_EXPERIMENT_SUCCESS)
+            return s;
+
+        s = determination_experiment_helper(-target, 4000);
+        if (s != DETERMINATION_EXPERIMENT_SUCCESS)
+            return s;
+    }
 
     return DETERMINATION_EXPERIMENT_SUCCESS;
 }
