@@ -40,8 +40,8 @@ typedef enum {
 
 typedef enum {
     NSA = 0, //No Sensor Alternation
-	ONE = 1,
-	TWO = 2,
+	One = 1,
+	Two = 2,
 } vi_choice;
 
 typedef enum {

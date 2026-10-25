@@ -8,7 +8,7 @@ determination_exp_status determination_experiment()
 {
     int generation = vi_get_experiment_generation();
     vi_sensor hdd =
-        makeSensor(HDD, selectSensor(makeSensor(HDD, ONE, PZ), generation), PZ);
+        makeSensor(HDD, selectSensor(makeSensor(HDD, One, PZ), generation), PZ);
     mat3 prevAttitude;
     mat3 currAttitude;
 
